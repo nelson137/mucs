@@ -53,7 +53,7 @@ class Homeworks(dict):
                 raise ValidationError(self.ERROR_INVALID_TYPE_ENTRY % name)
 
             try:
-                self[name.upper()] = self.parse_duedate(duedate)
+                self[name.lower()] = self.parse_duedate(duedate)
             except ValueError:
                 raise ValidationError(self.ERROR_FMT % name)
 
@@ -109,7 +109,7 @@ class LabSessions(dict):
             if end is None:
                 raise ValidationError(self.ERROR_TIME_FMT % letter)
 
-            self[letter] = LabSesh(weekday, start, end)
+            self[letter.upper()] = LabSesh(weekday, start, end)
 
     def pretty_grid(self):
         for letter, sesh in self.items():
@@ -146,7 +146,7 @@ class Roster(dict):
             if not isinstance(letter, str):
                 raise ValidationError(self.ERROR_INVALID_TYPE_ENTRY % pawprint)
 
-            self[pawprint] = letter.upper()
+            self[pawprint.lower()] = letter.upper()
 
 
 class CourseConfig(dict):
