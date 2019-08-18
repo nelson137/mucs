@@ -1,7 +1,8 @@
 ask for password if `mucs admin` and not root
 implement mucs-update-roster
 don't require config to specify 'homeworks', 'labs', 'roster'
-wordwrap files list in submission review
+sanitize homework name input for directory names
+fix print_table for rows that need wrapping
 
 relative paths:
     admin_update()
