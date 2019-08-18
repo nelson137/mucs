@@ -1,0 +1,9 @@
+ask for password if `mucs admin` and not root
+implement mucs-update-roster
+don't require config to specify 'homeworks', 'labs', 'roster'
+wordwrap files list in submission review
+
+relative paths:
+    admin_update()
+    CONFIG_DIR
+    submission destination

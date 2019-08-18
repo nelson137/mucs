@@ -1,0 +1,45 @@
+{
+    "course_number": "1050",
+    "homeworks": {
+        "HW1": "2019-08-02 03:04:05",
+        "this-is-hw-3": "2019-08-28 23:42:06",
+        "HW2": "2019-08-22 04:05:07"
+    },
+    "labs": {
+        "E": "fri 00:00:00 - 23:59:00",
+        "A": "monday 00:00:00 - 23:59:00",
+        "C": "wednesday 00:00:00 - 23:59:59",
+        "B": "tue 00:00:00 - 23:59:00",
+        "D": "thursday 00:00:00 - 10:00:00"
+    },
+    "current_lab": "lab3",
+    "roster": {
+        "jma8hf": "e",
+        "devinbalestra": "c",
+        "crbygx": "b",
+        "mabnvt": "c",
+        "mgbuttress": "b",
+        "tkdghc": "e",
+        "amd882": "d",
+        "rvgr43": "a",
+        "jakcqc": "e",
+        "hmlmvn": "b",
+        "atmmh2": "d",
+        "dlmmh9": "b",
+        "ktmcbk": "a",
+        "nhmbx2": "b",
+        "jmszq6": "d",
+        "cws3p4": "c",
+        "ms597": "b",
+        "ncth7t": "c",
+        "damontatum": "e",
+        "hosannatesfaye": "c",
+        "mjwcbc": "a",
+        "sawgzq": "a",
+        "aswd62": "b",
+        "crw5xf": "e",
+        "cawknh": "b",
+        "mvw6fc": "d",
+        "rsw7vc": "a"
+    }
+}

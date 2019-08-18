@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo 'usage: src-search <pattern>' >&2
+    exit 1
+fi
+
+grep --exclude mucs -nRI "$@"

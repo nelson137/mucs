@@ -1,0 +1,20 @@
+{
+    "course_number": "2050",
+    "homeworks": {
+        "HW8": "2019-10-02 03:04:05",
+        "HW9": "2019-11-22 04:05:07"
+    },
+    "labs": {
+        "E": "fri 00:00:00 - 23:59:00",
+        "C": "wednesday 00:00:00 - 23:59:59",
+        "A": "monday 00:00:00 - 23:59:00",
+        "D": "thursday 00:00:00 - 10:00:00"
+    },
+    "current_lab": "lab3",
+    "roster": {
+        "jma8hf": "b",
+        "devinbalestra": "b",
+        "crbygx": "e",
+        "mabnvt": "d"
+    }
+}

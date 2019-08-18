@@ -1,0 +1,4 @@
+script runs itself then sys.exit()s after saving in an admin panel sub menu
+OR calls set_globals() because model data is kept in files?
+
+make sure assignment matches current lab

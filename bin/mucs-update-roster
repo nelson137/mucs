@@ -1,0 +1,25 @@
+#!/bin/bash
+
+[ "$EUID" -ne 0 ] && { echo 'Must be root' >&2; exit 1; }
+
+# TODO: download real roster
+
+CFG="$HOME/Projects/Python/mucs/mucs/config.d/cs1050.json"
+
+rand_letter() {
+    LETTERS=abcde
+    echo "${LETTERS:$(( RANDOM % ${#LETTERS} )):1}"
+}
+
+template="$(cat roster.xls |
+    tr -d '[:space:]' |
+    grep -Eo '(<td>[^<]*</td>){5}' |
+    sed -E 's#^.*<td>([^@]+)[^<]+</td>$#"\1":"%s",#'
+)"
+nlines="$(wc -l <<< "$template" | awk '{print $1}')"
+
+subs=( $(for ((i=0; i<nlines; i++)); do rand_letter; done) )
+
+roster="$(printf "$template" "${subs[@]}")"
+config="$(jq --indent 4 -M ".roster={$roster}" < "$CFG")"
+echo "$config" > "$CFG"
