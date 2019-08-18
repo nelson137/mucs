@@ -43,13 +43,17 @@ class Homeworks(dict):
         fmt = HOMEWORK_PRETTY_FMT
         return str({n: e.strftime(fmt) for n, e in self.items()})
 
+    @staticmethod
+    def parse_duedate(dd):
+        return datetime.datetime.strptime(dd, HOMEWORK_FMT)
+
     def parse(self, homeworks):
-        for name, entry in homeworks.items():
-            if not isinstance(entry, str):
+        for name, duedate in homeworks.items():
+            if not isinstance(duedate, str):
                 raise ValidationError(self.ERROR_INVALID_TYPE_ENTRY % name)
 
             try:
-                self[name] = datetime.datetime.strptime(entry, HOMEWORK_FMT)
+                self[name.upper()] = self.parse_duedate(duedate)
             except ValueError:
                 raise ValidationError(self.ERROR_FMT % name)
 
