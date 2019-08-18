@@ -73,13 +73,16 @@ def print_table(data, fmt=None, indent=''):
     fmt = ('  %s' * ncols)[2:] if fmt is None else fmt
 
     # Get the max width for each column
-    max_widths = [max(len(row[i]) for row in data) for i in range(ncols)]
+    max_widths = [max(len(row[i]) for row in data)
+                  for i in range(ncols)]
 
     for row in data:
         # Format each column with ljust
-        padded_cols = tuple(row[i].ljust(max_widths[i]) for i in range(ncols))
+        padded_cols = tuple(
+            col.ljust(width)
+            for col, width in zip(row, max_widths))
 
-        sub_indent = ' ' * len(indent + padded_cols[0])
+        sub_indent = ' ' * len(padded_cols[0])
         wrapper = TextWrapper(width=w, subsequent_indent=sub_indent)
 
         # Print the formatted row
