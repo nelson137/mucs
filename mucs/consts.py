@@ -13,8 +13,7 @@ UNBOLD = '\33[21m'
 GREEN = '\33[32m'
 RED = '\33[91m'
 
-# TERM_WIDTH_FACTOR = .75
-TERM_WIDTH_FACTOR = .4
+TERM_WIDTH_FACTOR = .75
 
 CONFIG_DIR = './etc/mucs'
 
