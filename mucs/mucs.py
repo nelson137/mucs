@@ -11,6 +11,7 @@ from argparse import ArgumentParser
 from subprocess import DEVNULL
 
 from consts import *
+from exc import *
 from models import *
 from util import *
 
