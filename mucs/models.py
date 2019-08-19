@@ -125,7 +125,7 @@ class LabSessions(dict):
 class Roster(dict):
     key = 'roster'
 
-    def __init__(self, config):
+    def __init__(self, config, session_letters):
         self.ERROR_NO_ROSTER = \
             'Config must specify a roster object: ' + config.filename
         self.ERROR_INVALID_TYPE_ROSTER = \
@@ -135,6 +135,10 @@ class Roster(dict):
         parse_obj = '%s["%s"]["%s"]' % (config.filename, self.key, '%s')
         self.ERROR_INVALID_TYPE_ENTRY = \
             'Roster entries must be of type string: ' + parse_obj
+        self.ERROR_UNKNOWN_LETTER = \
+            'Lab session letter not recognized: ' + parse_obj
+
+        self.session_letters = list(session_letters)
 
         if self.key not in config:
             raise ValidationError(self.ERROR_NO_ROSTER)
@@ -148,6 +152,11 @@ class Roster(dict):
         for pawprint, letter in roster.items():
             if not isinstance(letter, str):
                 raise ValidationError(self.ERROR_INVALID_TYPE_ENTRY % pawprint)
+
+            letter = letter.upper()
+
+            if letter not in self.session_letters:
+                raise ValidationError(self.ERROR_UNKNOWN_LETTER % pawprint)
 
             self[pawprint.lower()] = letter.upper()
 
@@ -179,7 +188,7 @@ class CourseConfig(dict):
         self['homeworks'] = Homeworks(self)
         self['labs'] = LabSessions(self)
         self['current_lab'] = data.get('current_lab')
-        self['roster'] = Roster(self)
+        self['roster'] = Roster(self, self['labs'].keys())
 
     def get_current_hw(self):
         now = datetime.datetime.now()
