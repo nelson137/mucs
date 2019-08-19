@@ -59,7 +59,12 @@ class Homeworks(dict):
                 raise ValidationError(self.ERROR_FMT % name)
 
 
-LabSesh = namedtuple('LabSesh', 'weekday start end')
+class LabSesh(namedtuple('LabSesh', 'weekday start end')):
+    def get_tuple(self):
+        weekday = weekday_to_str(self.weekday)
+        start = self.start.strftime(TIME_PRETTY_FMT)
+        end = self.end.strftime(TIME_PRETTY_FMT)
+        return (weekday, start, end)
 
 
 class LabSessions(dict):
@@ -114,10 +119,7 @@ class LabSessions(dict):
 
     def pretty_grid(self):
         for letter, sesh in self.items():
-            weekday = weekday_to_str(sesh.weekday)
-            start = sesh.start.strftime(TIME_PRETTY_FMT)
-            end = sesh.end.strftime(TIME_PRETTY_FMT)
-            yield (letter, weekday, start, end)
+            yield (letter, *sesh.get_tuple())
 
 
 class Roster(dict):
