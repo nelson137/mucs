@@ -11,6 +11,7 @@ from subprocess import DEVNULL
 from textwrap import TextWrapper
 
 from consts import *
+from exc import *
 
 # }}}
 

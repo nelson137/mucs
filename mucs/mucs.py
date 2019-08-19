@@ -11,6 +11,7 @@ from argparse import ArgumentParser
 from subprocess import DEVNULL
 
 from consts import *
+from dao import *
 from exc import *
 from models import *
 from util import *
@@ -130,8 +131,10 @@ def submit(ns, configs):
         if user_in.lower() != 'y':
             die(0, 'Submission cancelled\n')
 
-    # TODO: submit files
-    # filedao.submit(ns.course, current_assignment, ns.sources)
+    try:
+        FileDao(ns.course, current_assignment).submit(ns.sources)
+    except SubmissionError as se:
+        raise SubcommandError(se.full_msg)
 
     print(W_GREEN('Submission complete\n'))
     die(0)
@@ -220,7 +223,7 @@ def main(argv):
         else:
             parser.print_help()
     except SubcommandError as se:
-        die(se.color_message)
+        die(se.color_message + '\n')
 
     return 0
 

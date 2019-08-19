@@ -11,6 +11,7 @@ from consts import *
 
 class _ColorException(Exception):
     def __init__(self, full_msg):
+        self.full_msg = full_msg
         super().__init__(full_msg)
 
         mo = re.search('^(.+):\s*(.+)$', full_msg)
