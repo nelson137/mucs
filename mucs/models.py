@@ -235,7 +235,7 @@ class Configs(dict):
             course_num = cfg['course_number']
             self[course_num] = cfg
 
-    def get_course_config(self, course):
+    def get_config(self, course):
         if course not in self.keys():
             raise SubcommandError('Course not recognized: ' + course)
         return self[course]

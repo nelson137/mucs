@@ -23,7 +23,7 @@ def admin(ns, configs):
     if os.geteuid() != 0:
         raise SubcommandError('Not authorized')
 
-    cfg = configs.get_course_config(ns.course)
+    cfg = configs.get_config(ns.course)
 
     if ns.admin_cmd == 'dump':
         admin_dump(ns, cfg)
@@ -83,7 +83,7 @@ def examples():
 
 
 def submit(ns, configs):
-    cfg = configs.get_course_config(ns.course)
+    cfg = configs.get_config(ns.course)
 
     if ns.assignment_type == 'hw':
         current_assignment = cfg.get_current_hw()
