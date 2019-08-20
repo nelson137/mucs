@@ -100,10 +100,8 @@ def admin_update_password(ns, config):
 
 
 def admin_update_roster(ns, config):
-    print('update:', ns)
-
     print()
-    p = subprocess.run(['../bin/mucs-update-roster'], stdout=DEVNULL)
+    p = subprocess.run(['../bin/mucs-update-roster'])
     if p.returncode == 0:
         print(W_GREEN('Successfully updated %s roster' % ns.course))
     elif p.returncode == 1:

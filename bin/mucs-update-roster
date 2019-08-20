@@ -4,7 +4,8 @@
 
 exec >/dev/null 2>&1
 
-CFG="$HOME/Projects/Python/mucs/mucs/config.d/cs1050.json"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CFG="$HERE/../mucs/etc/mucs/cs1050.json"
 
 rand_letter() {
     LETTERS=abcde
