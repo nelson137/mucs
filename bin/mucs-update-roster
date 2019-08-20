@@ -1,8 +1,8 @@
 #!/bin/bash
 
-[ "$EUID" -ne 0 ] && { echo 'Must be root' >&2; exit 1; }
-
 # TODO: download real roster
+
+exec >/dev/null 2>&1
 
 CFG="$HOME/Projects/Python/mucs/mucs/config.d/cs1050.json"
 
