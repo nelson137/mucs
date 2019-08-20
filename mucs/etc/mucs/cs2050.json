@@ -1,5 +1,6 @@
 {
-    "course_number": "2050",
+   "course_number": "2050",
+   "admin_hash": "5f4dcc3b5aa765d61d8327deb882cf99",
     "homeworks": {
         "HW8": "2019-10-02 03:04:05",
         "HW9": "2019-11-22 04:05:07"

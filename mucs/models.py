@@ -167,6 +167,8 @@ class CourseConfig(dict):
             'Config expected root to be an object: ' + fn
         ERROR_NO_COURSE_NUM = \
             'Configs must specify a course_number: ' + fn
+        ERROR_NO_ADMIN_HASH = \
+            'Configs must specify an admin_hash: ' + fn
 
         self.filename = fn
 
@@ -182,9 +184,13 @@ class CourseConfig(dict):
         if 'course_number' not in data:
             raise ValidationError(ERROR_NO_COURSE_NUM)
 
+        if 'admin_hash' not in data:
+            raise ValidationError(ERROR_NO_ADMIN_HASH)
+
         super().__init__(data)
 
         self['course_number'] = data['course_number']
+        self['admin_hash'] = data['admin_hash']
         self['homeworks'] = Homeworks(self)
         self['labs'] = LabSessions(self)
         self['current_lab'] = data.get('current_lab')

@@ -4,11 +4,10 @@
 # Imports {{{
 
 import getpass
-import os
 import subprocess
 import sys
 from argparse import ArgumentParser
-from subprocess import DEVNULL
+from subprocess import DEVNULL, PIPE
 
 from consts import *
 from dao import *
@@ -20,19 +19,28 @@ from util import *
 
 
 def admin(ns, configs):
-    if os.geteuid() != 0:
-        raise SubcommandError('Not authorized')
+    ERROR_NOT_AUTHORIZED = '\nNot authorized'
+    ERROR_NO_COMMAND = '\nNo command given'
 
-    cfg = configs.get_config(ns.course)
+    print()
+
+    try:
+        cfg = configs.get_config(ns.course)
+    except AttributeError:
+        raise SubcommandError(ERROR_NOT_AUTHORIZED)
+
+    passwd_in = get_password('Admin password for %s: ' % ns.course)
+    if md5(passwd_in) != cfg['admin_hash']:
+        raise SubcommandError(ERROR_NOT_AUTHORIZED)
 
     if ns.admin_cmd == 'dump':
         admin_dump(ns, cfg)
-    elif ns.admin_cmd == 'update':
-        admin_update(ns, cfg)
+    elif ns.admin_cmd == 'update-password':
+        admin_update_password(ns, cfg)
+    elif ns.admin_cmd == 'update-roster':
+        admin_update_roster(ns, cfg)
     else:
-        # Error: invalid subcommand
-        # Not possible, caught by argparse
-        pass
+        raise SubcommandError(ERROR_NO_COMMAND)
 
 
 def admin_dump(ns, config):
@@ -60,7 +68,30 @@ def admin_dump(ns, config):
     print()
 
 
-def admin_update(ns, config):
+def admin_update_password(ns, config):
+    print()
+    new_passwd = get_password('New admin password for %s: ' % ns.course)
+    confirm = get_password('Confirm new admin password for %s: ' % ns.course)
+
+    if confirm != new_passwd:
+        raise SubcommandError('\nPasswords do not match')
+
+    h = md5(new_passwd)
+
+    with open('./etc/mucs/cs1050.json', 'r') as f:
+        p = subprocess.run(
+            ['/usr/bin/jq', '-M', '--indent', '4', '.admin_hash="%s"' % h],
+            stdin=f, stdout=PIPE, stderr=DEVNULL)
+    if p.returncode == 0:
+        with open('./etc/mucs/cs1050.json', 'w') as f:
+            f.write(p.stdout.decode())
+    else:
+        raise SubcommandError('\nError updating admin hash')
+
+    print()
+
+
+def admin_update_roster(ns, config):
     print('update:', ns)
 
     print()
@@ -157,10 +188,15 @@ def main(argv):
         action='append_const', const=DumpFlags.current, dest='dump_flags',
         help='print the current assignments')
 
-    # Subcommand Admin Update
+    # Subcommand Admin Update-Password
 
     parser_admin_update = subparsers_admin.add_parser(
-        'update', parents=[admin_subcmd_args])
+        'update-password', parents=[admin_subcmd_args])
+
+    # Subcommand Admin Update-Roster
+
+    parser_admin_update = subparsers_admin.add_parser(
+        'update-roster', parents=[admin_subcmd_args])
 
     # Subcommand Examples
 

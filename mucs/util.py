@@ -4,6 +4,8 @@
 
 import calendar
 import datetime
+import getpass
+import hashlib
 import shutil
 import subprocess
 import sys
@@ -15,9 +17,8 @@ from exc import *
 
 # }}}
 
-__all__ = ['die', 'get_term_width', 'parse_time', 'parse_weekday',
-           'print_table', 'weekday_to_str', 'DumpFlags', 'SubcommandError',
-           'ValidationError']
+__all__ = ['die', 'get_password', 'get_term_width', 'md5', 'parse_time',
+           'parse_weekday', 'print_table', 'weekday_to_str']
 
 
 def die(*args):
@@ -38,9 +39,23 @@ def file_compiles(fn):
     return p.returncode == 0
 
 
+def get_password(prompt):
+    print(prompt, end='', flush=True, file=sys.stderr)
+    try:
+        return getpass.getpass('')
+    except KeyboardInterrupt:
+        print()
+        die(0)
+
+
 def get_term_width(factor=TERM_WIDTH_FACTOR):
     w = shutil.get_terminal_size((80, 24)).columns
     return int(w * factor)
+
+
+def md5(msg):
+    """Return the hex digest of an md5-hashed string."""
+    return hashlib.md5(msg.encode()).hexdigest()
 
 
 def parse_time(time_str):
