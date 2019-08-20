@@ -196,7 +196,7 @@ class CourseConfig(dict):
         self['current_lab'] = data.get('current_lab')
         self['roster'] = Roster(self, self['labs'].keys())
 
-    def get_current_hw(self, supress=False):
+    def get_current_hw(self, suppress=False):
         now = datetime.datetime.now()
         homeworks = sorted(
             self['homeworks'].items(),
@@ -206,15 +206,15 @@ class CourseConfig(dict):
             if now < duedate:
                 return name
 
-        if not supress:
+        if not suppress:
             # No hw found
             raise SubcommandError(
                 'No open homework assignments for course: ' + course)
 
-    def get_current_lab(self, supress=False):
+    def get_current_lab(self, suppress=False):
         current_lab = self['current_lab']
 
-        if not supress:
+        if not suppress:
             # No current_lab in config
             if current_lab is None:
                 raise SubcommandError(

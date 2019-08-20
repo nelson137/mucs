@@ -53,8 +53,8 @@ def admin_dump(ns, config):
         print()
         print(W_BOLD('Current Assignments:'))
         print_table([
-            ('hw:', config.get_current_hw(supress=True)),
-            ('lab:', config.get_current_lab(supress=True))
+            ('hw:', config.get_current_hw(suppress=True)),
+            ('lab:', config.get_current_lab(suppress=True))
         ])
 
     if ns.dump_flags & DumpFlags.homeworks:
