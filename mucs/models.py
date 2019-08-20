@@ -200,7 +200,19 @@ class CourseConfig(dict):
             if now < duedate:
                 return name
 
-        return None
+        # No hw found
+        raise SubcommandError(
+            'No open homework assignments for course: ' + course)
+
+    def get_current_lab(self):
+        current_lab = self['current_lab']
+
+        # No current_lab in config
+        if current_lab is None:
+            raise SubcommandError(
+                'No open labs for course: ' + self['course_number'])
+
+        return current_lab
 
 
 class Configs(dict):

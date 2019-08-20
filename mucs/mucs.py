@@ -82,35 +82,15 @@ def examples():
     print()
 
 
-def get_current_assignment(config, assignment_type):
-    course = config['course_number']
-
-    if assignment_type == 'hw':
-        current_assignment = config.get_current_hw()
-        if current_assignment is None:
-            raise SubcommandError(
-                'No open homework assignments for course: ' + course)
-        else:
-            return current_assignment
-
-    elif assignment_type == 'lab':
-        current_assignment = config['current_lab']
-        if current_assignment is None:
-            raise SubcommandError(
-                'No open labs for course: ' + course)
-        else:
-            return current_assignment
-
-    else:
-        raise SubcommandError(
-            'Assignment type not recognized (must be hw or lab): '
-            + assignment_type)
-
-
 def submit(ns, configs):
     cfg = configs.get_course_config(ns.course)
 
-    current_assignment = get_current_assignment(cfg, ns.assignment_type)
+    if ns.assignment_type == 'hw':
+        current_assignment = cfg.get_current_hw()
+    elif ns.assignment_type == 'lab':
+        current_assignment = cfg.get_current_lab()
+    else:
+        pass  # Not possible, caught by parser
 
     if not ns.yes:
         spacer = get_term_width() * '='
