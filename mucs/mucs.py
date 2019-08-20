@@ -141,7 +141,7 @@ def submit(ns, configs):
             ('Course:', W_BOLD(ns.course)),
             ('Assignment:', W_BOLD(current_assignment)),
             ('Files:', W_BOLD(' '.join(ns.sources)))
-        ], indent='        ')
+        ], indent='  ')
         print(W_GREEN(spacer))
         print()
 
