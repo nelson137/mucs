@@ -49,6 +49,14 @@ def admin_dump(ns, config):
     else:
         ns.dump_flags = DumpFlags.all_flags()
 
+    if ns.dump_flags & DumpFlags.current:
+        print()
+        print(W_BOLD('Current Assignments:'))
+        print_table([
+            ('hw:', config.get_current_hw(supress=True)),
+            ('lab:', config.get_current_lab(supress=True))
+        ])
+
     if ns.dump_flags & DumpFlags.homeworks:
         print()
         print(W_BOLD('Homeworks:'))

@@ -37,10 +37,10 @@ def W_RED(*msgs):
 
 
 class DumpFlags(IntFlag):
+    current = auto()
     homeworks = auto()
     labs = auto()
     roster = auto()
-    current = auto()
 
     @staticmethod
     def combine(flags):
