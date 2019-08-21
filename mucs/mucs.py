@@ -19,15 +19,14 @@ from util import *
 
 
 def admin(ns, configs):
-    ERROR_NOT_AUTHORIZED = '\nNot authorized'
-    ERROR_NO_COMMAND = '\nNo command given'
+    ERROR_NOT_AUTHORIZED = 'Not authorized'
+    ERROR_NO_COMMAND = 'No command given'
 
     print()
-
     try:
         cfg = configs.get_config(ns.course)
     except AttributeError:
-        raise SubcommandError(ERROR_NOT_AUTHORIZED)
+        raise SubcommandError(ERROR_NO_COMMAND)
 
     passwd_in = get_password('Admin password for %s: ' % ns.course)
     if md5(passwd_in) != cfg['admin_hash']:
