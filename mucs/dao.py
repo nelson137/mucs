@@ -11,7 +11,7 @@ from pathlib import PosixPath
 from subprocess import DEVNULL
 
 from consts import *
-from exc import *
+from exc import MucsError
 from util import *
 
 # }}}
@@ -31,27 +31,27 @@ class FileDao:
 
     def pre_submit(self):
         if not self.course_d.exists():
-            raise SubmissionError(
-                'Course submission directory does not exist: ' +
-                str(self.course_d))
+            raise MucsError(
+                'Course submission directory does not exist',
+                reason=str(self.course_d))
 
         if not self.course_makefile_f.exists():
-            raise SubmissionError(
-                'Course Makefile does not exist: ' +
-                str(self.course_makefile_f))
+            raise MucsError(
+                'Course Makefile does not exist',
+                reason=str(self.course_makefile_f))
 
         if not self.assignment_d.exists():
-            raise SubmissionError(
-                'Assignment directory does not exist: ' +
-                str(self.assignment_d))
+            raise MucsError(
+                'Assignment directory does not exist',
+                reason=str(self.assignment_d))
 
         if not self.submit_d.exists():
             try:
                 self.submit_d.mkdir()
             except (FileNotFoundError, OSError):
-                raise SubmissionError(
-                    'Could not make submission directory: ' +
-                    str(self.submit_d))
+                raise MucsError(
+                    'Could not make submission directory',
+                    reason=str(self.submit_d))
 
     def submit(self, sources):
         cwd = PosixPath.cwd()
@@ -67,7 +67,7 @@ class FileDao:
         # Check that all sources exist
         for src in sources:
             if not PosixPath(src).exists():
-                raise SubmissionError('File not found: ' + src)
+                raise MucsError('File not found', reason=src)
 
         # Copy sources into submit directory
         for src in sources:
@@ -81,5 +81,6 @@ class FileDao:
             if p.returncode != 0:
                 subprocess.run([*make_args, '__wipe'],
                                stdout=DEVNULL, stderr=DEVNULL)
-                raise SubmissionError(
-                    'Could not compile sources: ' + ' '.join(sources))
+                raise MucsError(
+                    'Could not compile sources',
+                    reason=' '.join(sources))

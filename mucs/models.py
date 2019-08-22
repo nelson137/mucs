@@ -9,7 +9,7 @@ import re
 from collections import namedtuple
 
 from consts import *
-from exc import *
+from exc import MucsError
 from util import *
 
 # }}}
@@ -19,24 +19,17 @@ class Homeworks(dict):
     key = 'homeworks'
 
     def __init__(self, config):
-        self.ERROR_NO_HOMEWORKS = \
-            'Config must specify a homeworks object: ' + config.filename
-        self.ERROR_INVALID_TYPE_HOMEWORKS = \
-            'Config expected type object for key "%s": %s' \
-            % (self.key, config.filename)
-
-        parse_obj = '%s["%s"]["%s"]' % (config.filename, self.key, '%s')
-        self.ERROR_INVALID_TYPE_ENTRY = \
-            'Homework entries must be of type string: ' + parse_obj
-        self.ERROR_FMT = \
-            'Homework entries must be in the format ' \
-            '"yyyy-mm-dd hh:mm:ss": ' + parse_obj
+        self.parse_obj = config.filename + ('["%s"]' % self.key) + '["%s"]'
 
         if self.key not in config:
-            raise ValidationError(self.ERROR_NO_HOMEWORKS)
+            raise MucsError(
+                'Config must specify a homeworks object',
+                reason=config.filename)
 
         if not isinstance(config[self.key], dict):
-            raise ValidationError(self.ERROR_INVALID_TYPE_HOMEWORKS)
+            raise MucsError(
+                'Config expected type object for key "%s"' % self.key,
+                reason=config.filename)
 
         self.parse(config[self.key])
 
@@ -51,12 +44,17 @@ class Homeworks(dict):
     def parse(self, homeworks):
         for name, duedate in homeworks.items():
             if not isinstance(duedate, str):
-                raise ValidationError(self.ERROR_INVALID_TYPE_ENTRY % name)
+                raise MucsError(
+                    'Homework entries must be of type string',
+                    reason=self.parse_obj % name)
 
             try:
                 self[name.lower()] = self.parse_duedate(duedate)
             except ValueError:
-                raise ValidationError(self.ERROR_FMT % name)
+                raise MucsError(
+                    'Homework entries must be in the format '
+                    '"yyyy-mm-dd hh:mm:ss"',
+                    reason=self.parse_obj % name)
 
 
 class LabSesh(namedtuple('LabSesh', 'weekday start end')):
@@ -77,49 +75,53 @@ class LabSessions(dict):
     key = 'labs'
 
     def __init__(self, config):
-        self.ERROR_NO_LABS = \
-            'Config must specify a labs object: ' + config.filename
-        self.ERROR_INVALID_TYPE_LABS = \
-            'Config expected type object for key "%s": %s' \
-            % (self.key, config.filename)
-
-        parse_obj = '%s["%s"]["%s"]' % (config.filename, self.key, '%s')
-        self.ERROR_INVALID_TYPE_ENTRY = \
-            'Lab entries must be of type string: ' + parse_obj
-        self.ERROR_FMT = \
-            'Lab entries must be in the format ' \
-            '"<weekday> <start_time> - <end_type>": ' + parse_obj
+        self.parse_obj = config.filename + ('["%s"]' % self.key) + '["%s"]'
 
         if self.key not in config:
-            raise ValidationError(self.ERROR_NO_LABS)
+            raise MucsError(
+                'Config must specify a labs object',
+                reason=config.filename)
 
         if not isinstance(config[self.key], dict):
-            raise ValidationError(self.ERROR_INVALID_TYPE_LABS)
+            raise MucsError(
+                'Config expected type object for key "%s"' % self.key,
+                reason=config.filename)
 
         self.parse(config[self.key])
 
     def parse(self, labs):
         for letter, entry in labs.items():
             if not isinstance(entry, str):
-                raise ValidationError(self.ERROR_INVALID_TYPE_ENTRY % letter)
+                raise MucsError(
+                    'Lab entries must be of type string',
+                    reason=self.parse_obj % letter)
 
             mo = re.search('(\S+)\s*(\S+)\s*-\s*(\S+)', entry)
             if not mo:
-                raise ValidationError(self.ERROR_FMT % letter)
+                raise MucsError(
+                    'Lab entries must be in the format '
+                    '"<weekday> <start_time> - <end_type>"',
+                    reason=self.parse_obj % letter)
 
             weekday_, start_, end_ = mo.groups()
 
             weekday = parse_weekday(weekday_)
             if weekday is None:
-                raise ValidationError(self.ERROR_WEEKDAY_FMT % letter)
+                raise MucsError(
+                    'Lab entry invalid weekday',
+                    reason=self.parse_obj % letter)
 
             start = parse_time(start_)
             if start is None:
-                raise ValidationError(self.ERROR_TIME_FMT % letter)
+                raise MucsError(
+                    'Lab entry invalid start time',
+                    reason=self.parse_obj % letter)
 
             end = parse_time(end_)
             if end is None:
-                raise ValidationError(self.ERROR_TIME_FMT % letter)
+                raise MucsError(
+                    'Lab entry invalid end time',
+                    reason=self.parse_obj % letter)
 
             self[letter.upper()] = LabSesh(weekday, start, end)
 
@@ -132,66 +134,57 @@ class Roster(dict):
     key = 'roster'
 
     def __init__(self, config, session_letters):
-        self.ERROR_NO_ROSTER = \
-            'Config must specify a roster object: ' + config.filename
-        self.ERROR_INVALID_TYPE_ROSTER = \
-            'Config expected type object for key "%s": %s' \
-            % (self.key, config.filename)
-
-        parse_obj = '%s["%s"]["%s"]' % (config.filename, self.key, '%s')
-        self.ERROR_INVALID_TYPE_ENTRY = \
-            'Roster entries must be of type string: ' + parse_obj
-        self.ERROR_UNKNOWN_LETTER = \
-            'Lab session letter not recognized: ' + parse_obj
+        self.parse_obj = '%s["%s"]["%s"]' % (config.filename, self.key, '%s')
 
         self.session_letters = list(session_letters)
 
         if self.key not in config:
-            raise ValidationError(self.ERROR_NO_ROSTER)
+            raise MucsError(
+                'Config must specify a roster object',
+                reason=config.filename)
 
         if not isinstance(config[self.key], dict):
-            raise ValidationError(self.ERROR_INVALID_TYPE_ROSTER)
+            raise MucsError(
+                'Config expected type object for key "%s"' % self.key,
+                reason=config.filename)
 
         self.parse(config[self.key])
 
     def parse(self, roster):
         for pawprint, letter in roster.items():
             if not isinstance(letter, str):
-                raise ValidationError(self.ERROR_INVALID_TYPE_ENTRY % pawprint)
+                raise MucsError(
+                    'Roster entries must be of type string',
+                    reason=self.parse_obj % pawprint)
 
             letter = letter.upper()
 
             if letter not in self.session_letters:
-                raise ValidationError(self.ERROR_UNKNOWN_LETTER % pawprint)
+                raise MucsError(
+                    'Lab session letter not recognized',
+                    reason=self.parse_obj % pawprint)
 
             self[pawprint.lower()] = letter.upper()
 
 
 class CourseConfig(dict):
     def __init__(self, fn):
-        ERROR_INVALID_TYPE_ROOT = \
-            'Config expected root to be an object: ' + fn
-        ERROR_NO_COURSE_NUM = \
-            'Configs must specify a course_number: ' + fn
-        ERROR_NO_ADMIN_HASH = \
-            'Configs must specify an admin_hash: ' + fn
-
         self.filename = fn
 
         try:
             with open(fn, 'r') as f:
                 data = json.load(f)
         except json.JSONDecodeError:
-            raise ValidationError('Invalid json: ' + fn)
+            raise MucsError('Invalid json: ' + fn)
 
         if not isinstance(data, dict):
-            raise ValidationError(ERROR_INVALID_TYPE_ROOT)
+            raise MucsError('Config expected root to be an object', reason=fn)
 
         if 'course_number' not in data:
-            raise ValidationError(ERROR_NO_COURSE_NUM)
+            raise MucsError('Configs must specify a course_number', reason=fn)
 
         if 'admin_hash' not in data:
-            raise ValidationError(ERROR_NO_ADMIN_HASH)
+            raise MucsError('Configs must specify an admin_hash', reason=fn)
 
         super().__init__(data)
 
@@ -222,9 +215,10 @@ class CourseConfig(dict):
 class Configs(dict):
     def __init__(self, config_dir):
         if not os.path.exists(config_dir):
-            die('Config path does not exist:', config_dir)
+            raise MucsError('Config path does not exist', reason=config_dir)
         if not os.path.isdir(config_dir):
-            die('Config path must be a directory:', config_dir)
+            raise MucsError(
+                'Config path must be a directory', reason=config_dir)
 
         config_filenames = []
         for dirpath, dirnames, filenames in os.walk(config_dir):
@@ -241,5 +235,5 @@ class Configs(dict):
 
     def get_config(self, course):
         if course not in self.keys():
-            raise SubcommandError('Course not recognized: ' + course)
+            raise MucsError('Course not recognized', reason=course)
         return self[course]

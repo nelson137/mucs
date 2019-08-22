@@ -9,30 +9,23 @@ from consts import *
 # }}}
 
 
-class _ColorException(Exception):
-    def __init__(self, full_msg):
-        self.full_msg = full_msg
-        super().__init__(full_msg)
+__all__ = ['MucsError']
 
-        mo = re.search('^(.+):\s*(.+)$', full_msg)
-        if mo:
-            msg, reason = mo.groups()
-            msg += ':'
-            self.message = '%s %s' % (msg, reason)
-            self.color_message = '%s %s' % (W_RED(msg), W_BOLD(reason))
+
+class _ColorError(Exception):
+    def __init__(self, *msg_pieces, reason=None):
+        self.msg = ' '.join(msg_pieces)
+
+        if reason is None:
+            self.color_msg = W_RED(self.msg)
         else:
-            msg, reason = full_msg, ''
-            self.message = msg
-            self.color_message = W_RED(msg)
+            reason = str(reason)
+            self.msg += ': '
+            self.color_msg = W_RED(self.msg) + W_BOLD(reason)
+            self.msg += reason
+
+        super().__init__(self.msg)
 
 
-class SubcommandError(_ColorException):
-    pass
-
-
-class SubmissionError(_ColorException):
-    pass
-
-
-class ValidationError(_ColorException):
+class MucsError(_ColorError):
     pass

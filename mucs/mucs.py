@@ -11,7 +11,7 @@ from subprocess import DEVNULL, PIPE
 
 from consts import *
 from dao import *
-from exc import *
+from exc import MucsError
 from models import *
 from util import *
 
@@ -19,18 +19,17 @@ from util import *
 
 
 def admin(ns, configs):
-    ERROR_NOT_AUTHORIZED = 'Not authorized'
-    ERROR_NO_COMMAND = 'No command given'
+    error_no_command = 'No command given'
 
     print()
     try:
         cfg = configs.get_config(ns.course)
     except AttributeError:
-        raise SubcommandError(ERROR_NO_COMMAND)
+        raise MucsError(error_no_command)
 
     passwd_in = get_password('Admin password for %s: ' % ns.course)
     if md5(passwd_in) != cfg['admin_hash']:
-        raise SubcommandError(ERROR_NOT_AUTHORIZED)
+        raise MucsError('Not authorized')
 
     if ns.admin_cmd == 'dump':
         admin_dump(ns, cfg)
@@ -39,7 +38,7 @@ def admin(ns, configs):
     elif ns.admin_cmd == 'update-roster':
         admin_update_roster(ns, cfg)
     else:
-        raise SubcommandError(ERROR_NO_COMMAND)
+        raise MucsError(error_no_command)
 
 
 def admin_dump(ns, config):
@@ -81,7 +80,7 @@ def admin_update_password(ns, config):
     confirm = get_password('Confirm new admin password for %s: ' % ns.course)
 
     if confirm != new_passwd:
-        raise SubcommandError('\nPasswords do not match')
+        raise MucsError('\nPasswords do not match')
 
     h = md5(new_passwd)
 
@@ -93,7 +92,7 @@ def admin_update_password(ns, config):
         with open('./etc/mucs/cs1050.json', 'w') as f:
             f.write(p.stdout.decode())
     else:
-        raise SubcommandError('\nError updating admin hash')
+        raise MucsError('\nError updating admin hash')
 
     print()
 
@@ -127,26 +126,25 @@ def submit(ns, configs):
     if ns.assignment_type == 'hw':
         current_assignment = cfg.get_current_hw()
         if current_assignment is None:
-            raise SubcommandError(
-                'No open homework assignments for course: ' + ns.course)
+            raise MucsError(
+                'No open homework assignments for course',
+                reason=ns.course)
 
     elif ns.assignment_type == 'lab':
         current_assignment = cfg.get_current_lab()
         if current_assignment is None:
-            raise SubcommandError('No open labs for course: ' + ns.course)
+            raise MucsError('No open labs for course', reason=ns.course)
 
         if username not in cfg['roster']:
-            raise SubcommandError(
-                'User %s not in course %s'
-                % (W_BOLD(username), W_BOLD(ns.course)))
+            raise MucsError('User not in course', ns.course, reason=username)
 
         letter = cfg['roster'][username]
         sesh = cfg['labs'][letter]
-        weekday = weekday_to_str(sesh.weekday)
         if not sesh.is_active():
-            raise SubcommandError(
-                'Lab %s is not in session: %s from %s to %s'
-                % (letter, weekday, sesh.start, sesh.end))
+            weekday, start, end = sesh.get_tuple()
+            raise MucsError(
+                'Lab %s is not in session' % letter,
+                reason='%s from %s to %s' % (weekday, start, end))
 
     else:
         pass  # Not possible, caught by parser
@@ -170,10 +168,7 @@ def submit(ns, configs):
         if user_in.lower() != 'y':
             die(0, 'Submission cancelled\n')
 
-    try:
-        FileDao(ns.course, current_assignment).submit(ns.sources)
-    except SubmissionError as se:
-        raise SubcommandError(se.full_msg)
+    FileDao(ns.course, current_assignment).submit(ns.sources)
 
     print(W_GREEN('Submission complete\n'))
     die(0)
@@ -252,8 +247,8 @@ def main(argv):
 
     try:
         configs = Configs(CONFIG_DIR)
-    except ValidationError as ve:
-        die(ve.color_message)
+    except MucsError as me:
+        die(me.color_msg)
 
     # Execute
 
@@ -266,8 +261,8 @@ def main(argv):
             submit(namespace, configs)
         else:
             parser.print_help()
-    except SubcommandError as se:
-        die(se.color_message + '\n')
+    except MucsError as me:
+        die(me.color_msg + '\n')
 
     return 0
 
