@@ -82,8 +82,9 @@ class FileDao:
         # Copy sources into submit directory
         # chmod 060 src
         for src in sources:
-            shutil.copy(src, self.submit_d)
-            os.chmod(src, stat.S_IRGRP | stat.S_IWGRP)
+            src_submit_fn = self.submit_d / os.path.basename(src)
+            shutil.copyfile(src, src_submit_fn)
+            os.chmod(src_submit_fn, stat.S_IRGRP | stat.S_IWGRP)
 
         # Run make
         # Delete
