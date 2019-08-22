@@ -2,10 +2,11 @@
 
 # Imports {{{
 
-import datetime
 import getpass
 import os
+import re
 import shutil
+import stat
 import subprocess
 from pathlib import PosixPath
 from subprocess import DEVNULL
@@ -20,14 +21,23 @@ from util import *
 class FileDao:
     def __init__(self, course, current_assignment):
         username = getpass.getuser()
-        now = datetime.datetime.now().strftime(MAKE_LOG_FMT)
 
         self.course_d = PosixPath('./group') / ('cs' + course)
         self.course_makefile_f = self.course_d / 'Makefile'
         self.assignment_d = self.course_d / current_assignment
         self.submit_d = self.assignment_d / username
         self.submit_makefile = self.submit_d / 'Makefile'
-        self.make_log = self.submit_d / ('makelog.' + now)
+
+    def new_logfile(self):
+        logfile_nums = [0]
+        for fn in os.listdir(self.submit_d):
+            try:
+                num = re.search('make.(\d+).log', fn).groups()[0]
+                logfile_nums.append(int(num))
+            except AttributeError:
+                pass  # re.search() found no match in fn
+        next_num = max(logfile_nums) + 1
+        return open('make.%d.log' % next_num, 'w')
 
     def pre_submit(self):
         if not self.course_d.exists():
@@ -70,12 +80,14 @@ class FileDao:
                 raise MucsError('File not found', reason=src)
 
         # Copy sources into submit directory
+        # chmod 060 src
         for src in sources:
             shutil.copy(src, self.submit_d)
+            os.chmod(src, stat.S_IRGRP | stat.S_IWGRP)
 
         # Run make
         # Delete
-        with open(self.make_log, 'w') as log:
+        with self.new_logfile() as log:
             make_args = ['/usr/bin/make', '-C', str(self.submit_d)]
             p = subprocess.run(make_args, stdout=log, stderr=log)
             if p.returncode != 0:
