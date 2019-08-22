@@ -145,7 +145,7 @@ def submit(ns, configs):
         weekday = weekday_to_str(sesh.weekday)
         if not sesh.is_active():
             raise SubcommandError(
-                'Lab %s is not not in session: %s from %s to %s'
+                'Lab %s is not in session: %s from %s to %s'
                 % (letter, weekday, sesh.start, sesh.end))
 
     else:
