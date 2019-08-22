@@ -66,6 +66,12 @@ class LabSesh(namedtuple('LabSesh', 'weekday start end')):
         end = self.end.strftime(TIME_PRETTY_FMT)
         return (weekday, start, end)
 
+    def is_active(self):
+        now = datetime.datetime.now()
+        if now.weekday() != self.weekday:
+            return False
+        return self.start <= now.time() <= self.end
+
 
 class LabSessions(dict):
     key = 'labs'
@@ -206,20 +212,10 @@ class CourseConfig(dict):
             if now < duedate:
                 return name
 
-        if not suppress:
-            # No hw found
-            raise SubcommandError(
-                'No open homework assignments for course: ' + course)
+        return None
 
     def get_current_lab(self, suppress=False):
         current_lab = self['current_lab']
-
-        if not suppress:
-            # No current_lab in config
-            if current_lab is None:
-                raise SubcommandError(
-                    'No open labs for course: ' + self['course_number'])
-
         return current_lab
 
 

@@ -120,23 +120,46 @@ def examples():
 
 def submit(ns, configs):
     cfg = configs.get_config(ns.course)
+    username = getpass.getuser()
+
+    print()
 
     if ns.assignment_type == 'hw':
         current_assignment = cfg.get_current_hw()
+        if current_assignment is None:
+            raise SubcommandError(
+                'No open homework assignments for course: ' + ns.course)
+
     elif ns.assignment_type == 'lab':
         current_assignment = cfg.get_current_lab()
+        if current_assignment is None:
+            raise SubcommandError('No open labs for course: ' + ns.course)
+
+        if username not in cfg['roster']:
+            raise SubcommandError(
+                'User %s not in course %s'
+                % (W_BOLD(username), W_BOLD(ns.course)))
+
+        letter = cfg['roster'][username]
+        sesh = cfg['labs'][letter]
+        weekday = weekday_to_str(sesh.weekday)
+        if not sesh.is_active():
+            raise SubcommandError(
+                'Lab %s is not not in session: %s from %s to %s'
+                % (letter, weekday, sesh.start, sesh.end))
+
     else:
         pass  # Not possible, caught by parser
 
     if not ns.yes:
         spacer = get_term_width() * '='
 
-        print()
         print(W_GREEN(spacer))
         print('Submission Review:')
         print_table([
             ('Course:', W_BOLD(ns.course)),
             ('Assignment:', W_BOLD(current_assignment)),
+            ('User:', W_BOLD(username)),
             ('Files:', W_BOLD(' '.join(ns.sources)))
         ], indent='  ')
         print(W_GREEN(spacer))
