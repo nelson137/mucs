@@ -202,7 +202,7 @@ class CourseConfig(dict):
         self['current_lab'] = data.get('current_lab')
         self['roster'] = Roster(self, self['labs'].keys())
 
-    def get_current_hw(self, suppress=False):
+    def get_current_hw(self):
         now = datetime.datetime.now()
         homeworks = sorted(
             self['homeworks'].items(),
@@ -214,7 +214,7 @@ class CourseConfig(dict):
 
         return None
 
-    def get_current_lab(self, suppress=False):
+    def get_current_lab(self):
         current_lab = self['current_lab']
         return current_lab
 
