@@ -17,6 +17,7 @@ from exc import *
 
 # }}}
 
+
 __all__ = ['die', 'get_password', 'get_term_width', 'md5', 'parse_time',
            'parse_weekday', 'print_table', 'weekday_to_str']
 
