@@ -3,6 +3,7 @@ implement mucs-update-roster
 don't require config to specify 'homeworks', 'labs', 'roster'
 sanitize homework name input for directory names
 fix print_table for rows that need wrapping
+"... expected type object for key" -> "... expected object for key"
 
 relative paths:
     admin_update()
