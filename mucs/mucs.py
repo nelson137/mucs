@@ -168,7 +168,8 @@ def submit(ns, configs):
         if user_in.lower() != 'y':
             die(0, 'Submission cancelled\n')
 
-    FileDao(ns.course, current_assignment).submit(ns.sources)
+    filedao = FileDao(ns.course, current_assignment)
+    filedao.submit(ns.sources)
 
     print(W_GREEN('Submission complete\n'))
     die(0)

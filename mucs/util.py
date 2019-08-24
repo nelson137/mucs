@@ -93,8 +93,8 @@ def print_table(data, fmt=None, indent='', sep='  ', wrap_last=True):
             col.ljust(width) for col, width in zip(row, max_widths))
 
         if wrap_last:
-            sub_indent = ' ' * len(fmt_minus_one % padded_cols[:-1])
-            wrapper = TextWrapper(width=wrap_w, subsequent_indent=sub_indent)
+            sub_i = ' ' * len(fmt_minus_one % padded_cols[:-1])
+            wrapper = TextWrapper(width=wrap_w, subsequent_indent=sub_i)
             for line_seg in wrapper.wrap(fmt % padded_cols):
                 print(indent + line_seg)
         else:
