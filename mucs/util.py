@@ -32,14 +32,6 @@ def die(*args):
     sys.exit(code)
 
 
-# XXX
-def file_compiles(fn):
-    p = subprocess.run(
-        ['gcc', '-Wall', '-Werror', '-c', fn, '-o', '/dev/null'],
-        stdout=DEVNULL, stderr=DEVNULL)
-    return p.returncode == 0
-
-
 def get_password(prompt):
     print(prompt, end='', flush=True, file=sys.stderr)
     try:
