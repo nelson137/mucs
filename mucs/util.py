@@ -70,33 +70,35 @@ def parse_weekday(weekday_str):
     }.get(weekday_str.lower())
 
 
-def print_table(data, fmt=None, indent=''):
-    w = get_term_width()
+def print_table(data, fmt=None, indent='', sep='  ', wrap_last=True):
+    wrap_w = get_term_width() - len(indent) * 2
 
     # Convert data to a list of tuples of strings
     data = list(tuple(map(str, row)) for row in data)
     ncols = len(data[0])
 
     # Default format is the columns joined by 2 spaces
-    fmt = ('  %s' * ncols)[2:] if fmt is None else fmt
+    if fmt is None:
+        fmt = sep.join(['%s'] * ncols)
+
+    fmt_minus_one = fmt[:fmt.rfind('%s')]
 
     # Get the max width for each column
-    max_widths = [max(len(row[i]) for row in data)
-                  for i in range(ncols)]
+    max_widths = [max(len(row[c]) for row in data)
+                  for c in range(ncols-1)]
+    max_widths.append(-1)  # Don't pad last column with spaces
 
     for row in data:
-        # Format each column with ljust
         padded_cols = tuple(
-            col.ljust(width)
-            for col, width in zip(row, max_widths))
+            col.ljust(width) for col, width in zip(row, max_widths))
 
-        sub_indent = ' ' * len(padded_cols[0])
-        wrapper = TextWrapper(width=w, subsequent_indent=sub_indent)
-
-        # Print the formatted row
-        # Lines that don't need wrapping only have one line segment
-        for line_seg in wrapper.wrap(fmt % padded_cols):
-            print(indent + line_seg)
+        if wrap_last:
+            sub_indent = ' ' * len(fmt_minus_one % padded_cols[:-1])
+            wrapper = TextWrapper(width=wrap_w, subsequent_indent=sub_indent)
+            for line_seg in wrapper.wrap(fmt % padded_cols):
+                print(indent + line_seg)
+        else:
+            print(indent + fmt % padded_cols)
 
 
 def weekday_to_str(weekday):
