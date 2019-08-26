@@ -52,9 +52,12 @@ class FileDao:
                 # reason=str(self.course_makefile_f))
 
         if not self.assignment_d.exists():
-            raise MucsError(
-                'Assignment directory does not exist',
-                reason=str(self.assignment_d))
+            try:
+                self.assignment_d.mkdir()
+            except (FileNotFoundError, OSError):
+                raise MucsError(
+                    'Could not make assignment directory',
+                    reason=str(self.assignment_d))
 
         if not self.submit_d.exists():
             try:
