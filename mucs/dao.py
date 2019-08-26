@@ -37,7 +37,8 @@ class FileDao:
             except AttributeError:
                 pass  # re.search() found no match in fn
         next_num = max(logfile_nums) + 1
-        return open('make.%d.log' % next_num, 'w')
+        basename = 'make.%d.log' % next_num
+        return open(self.submit_d / basename, 'w')
 
     def pre_submit(self):
         if not self.course_d.exists():
