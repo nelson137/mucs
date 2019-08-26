@@ -13,6 +13,7 @@ from consts import *
 from dao import *
 from exc import MucsError
 from models import *
+from printer import Printer, printline
 from util import *
 
 # }}}
@@ -21,7 +22,6 @@ from util import *
 def admin(ns, configs):
     error_no_command = 'No command given'
 
-    print()
     try:
         cfg = configs.get_config(ns.course)
     except AttributeError:
@@ -48,80 +48,72 @@ def admin_dump(ns, config):
         ns.dump_flags = DumpFlags.all_flags()
 
     if ns.dump_flags & DumpFlags.current:
-        print()
-        print(W_BOLD('Current Assignments:'))
-        print_table([
-            ('hw:', config.get_current_hw()),
-            ('lab:', config.get_current_lab())
-        ])
+        with Printer():
+            print(W_BOLD('Current Assignments:'))
+            print_table([
+                ('hw:', config.get_current_hw()),
+                ('lab:', config.get_current_lab())
+            ])
 
     if ns.dump_flags & DumpFlags.homeworks:
-        print()
-        print(W_BOLD('Homeworks:'))
-        print_table(config['homeworks'].items())
+        with Printer():
+            print(W_BOLD('Homeworks:'))
+            print_table(config['homeworks'].items())
 
     if ns.dump_flags & DumpFlags.labs:
-        print()
-        print(W_BOLD('Lab Sessions:'))
-        grid = sorted(config['labs'].pretty_grid())
-        print_table(grid, fmt='%s:  %s  %s - %s')
+        with Printer():
+            print(W_BOLD('Lab Sessions:'))
+            grid = sorted(config['labs'].pretty_grid())
+            print_table(grid, fmt='%s:  %s  %s - %s')
 
     if ns.dump_flags & DumpFlags.roster:
-        print()
-        print(W_BOLD('Roster:'))
-        print_table(sorted(config['roster'].items()))
-
-    print()
+        with Printer():
+            print(W_BOLD('Roster:'))
+            print_table(sorted(config['roster'].items()))
 
 
 def admin_update_password(ns, config):
-    print()
-    new_passwd = get_password('New admin password for %s: ' % ns.course)
-    confirm = get_password('Confirm new admin password for %s: ' % ns.course)
+    with Printer():
+        new_passwd = get_password('New admin password for %s: ' % ns.course)
+        confirm = get_password(
+            'Confirm new admin password for %s: ' % ns.course)
 
-    if confirm != new_passwd:
-        raise MucsError('\nPasswords do not match')
+        if confirm != new_passwd:
+            raise MucsError('Passwords do not match')
 
-    h = md5(new_passwd)
+        h = md5(new_passwd)
 
-    with open('./etc/mucs/cs1050.json', 'r') as f:
-        p = subprocess.run(
-            ['/usr/bin/jq', '-M', '--indent', '4', '.admin_hash="%s"' % h],
-            stdin=f, stdout=PIPE, stderr=DEVNULL)
-    if p.returncode == 0:
-        with open('./etc/mucs/cs1050.json', 'w') as f:
-            f.write(p.stdout.decode())
-    else:
-        raise MucsError('\nError updating admin hash')
-
-    print()
+        with open('./etc/mucs/cs1050.json', 'r') as f:
+            p = subprocess.run(
+                ['/usr/bin/jq', '-M', '--indent', '4', '.admin_hash="%s"' % h],
+                stdin=f, stdout=PIPE, stderr=DEVNULL)
+        if p.returncode == 0:
+            with open('./etc/mucs/cs1050.json', 'w') as f:
+                f.write(p.stdout.decode())
+        else:
+            raise MucsError('Error updating admin hash')
 
 
 def admin_update_roster(ns, config):
-    print()
     p = subprocess.run(['../bin/mucs-update-roster'])
     if p.returncode == 0:
-        print(W_GREEN('Successfully updated %s roster' % ns.course))
+        printline(W_GREEN('Successfully updated %s roster' % ns.course))
     elif p.returncode == 1:
-        print(W_RED('Could not update %s roster' % ns.course))
-    print()
+        printline(W_RED('Could not update %s roster' % ns.course))
 
 
 def examples():
-    print()
-    print('To submit all of the files in the current directory:')
-    print('    mucs submit 1050 hw *')
-    print()
-    print('To submit specific files:')
-    print('    mucs submit 2050 lab impl.c impl.h')
-    print()
+    with Printer():
+        print('To submit all of the files in the current directory:')
+        print('    mucs submit 1050 hw *')
+        print()
+        print('To submit specific files:')
+        print('    mucs submit 2050 lab impl.c impl.h')
 
 
 def submit(ns, configs):
     cfg = configs.get_config(ns.course)
     username = getpass.getuser()
-
-    print()
 
     if ns.assignment_type == 'hw':
         current_assignment = cfg.get_current_hw()
@@ -152,27 +144,25 @@ def submit(ns, configs):
     if not ns.yes:
         spacer = get_term_width() * '='
 
-        print(W_GREEN(spacer))
-        print('Submission Review:')
-        print_table([
-            ('Course:', W_BOLD(ns.course)),
-            ('Assignment:', W_BOLD(current_assignment)),
-            ('User:', W_BOLD(username)),
-            ('Files:', W_BOLD(' '.join(ns.sources)))
-        ], indent='  ')
-        print(W_GREEN(spacer))
-        print()
+        with Printer():
+            print(W_GREEN(spacer))
+            print('Submission Review:')
+            print_table([
+                ('Course:', W_BOLD(ns.course)),
+                ('Assignment:', W_BOLD(current_assignment)),
+                ('User:', W_BOLD(username)),
+                ('Files:', W_BOLD(' '.join(ns.sources)))
+            ], indent='  ')
+            print(W_GREEN(spacer))
 
-        user_in = input('Are you sure you want to submit [Y/n]? ')
-        print()
-        if user_in.lower() != 'y':
-            die(0, 'Submission cancelled\n')
+            user_in = input('Are you sure you want to submit [Y/n]? ')
+            if user_in.lower() != 'y':
+                die(0, '\nSubmission cancelled')
 
     filedao = FileDao(ns.course, current_assignment)
     filedao.submit(ns.sources)
 
-    print(W_GREEN('Submission complete\n'))
-    die(0)
+    printline(W_GREEN('Submission complete'))
 
 
 def main(argv):
@@ -263,7 +253,7 @@ def main(argv):
         else:
             parser.print_help()
     except MucsError as me:
-        die(me.color_msg + '\n')
+        die(me.color_msg)
 
     return 0
 

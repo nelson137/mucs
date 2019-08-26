@@ -14,6 +14,7 @@ from textwrap import TextWrapper
 
 from consts import *
 from exc import *
+from printer import printline
 
 # }}}
 
@@ -28,7 +29,7 @@ def die(*args):
     if args and isinstance(args[0], int):
         code = args.pop(0)
     if args:
-        print(W_RED(' '.join(args)), file=sys.stderr)
+        printline(W_RED(' '.join(args)), file=sys.stderr)
     sys.exit(code)
 
 
