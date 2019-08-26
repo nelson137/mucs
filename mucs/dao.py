@@ -26,7 +26,7 @@ class FileDao:
         self.course_makefile_f = self.course_d / 'Makefile'
         self.assignment_d = self.course_d / current_assignment
         self.submit_d = self.assignment_d / username
-        self.submit_makefile = self.submit_d / 'Makefile'
+        # self.submit_makefile = self.submit_d / 'Makefile'
 
     def new_logfile(self):
         logfile_nums = [0]
@@ -46,10 +46,10 @@ class FileDao:
                 'Course submission directory does not exist',
                 reason=str(self.course_d))
 
-        if not self.course_makefile_f.exists():
-            raise MucsError(
-                'Course Makefile does not exist',
-                reason=str(self.course_makefile_f))
+        # if not self.course_makefile_f.exists():
+            # raise MucsError(
+                # 'Course Makefile does not exist',
+                # reason=str(self.course_makefile_f))
 
         if not self.assignment_d.exists():
             raise MucsError(
@@ -69,11 +69,11 @@ class FileDao:
 
         self.pre_submit()
 
-        # Symbolic link course Makefile into submission directory
-        if not self.submit_makefile.exists():
-            os.chdir(self.submit_d)
-            PosixPath('Makefile').symlink_to('../../Makefile')
-            os.chdir(cwd)
+        # # Symbolic link course Makefile into submission directory
+        # if not self.submit_makefile.exists():
+            # os.chdir(self.submit_d)
+            # PosixPath('Makefile').symlink_to('../../Makefile')
+            # os.chdir(cwd)
 
         # Check that all sources exist
         for src in sources:
@@ -87,14 +87,14 @@ class FileDao:
             shutil.copyfile(src, src_submit_fn)
             os.chmod(src_submit_fn, stat.S_IRGRP | stat.S_IWGRP)
 
-        # Run make
-        # Delete
-        with self.new_logfile() as log:
-            make_args = ['/usr/bin/make', '-C', str(self.submit_d)]
-            p = subprocess.run(make_args, stdout=log, stderr=log)
-            if p.returncode != 0:
-                subprocess.run([*make_args, '__wipe'],
-                               stdout=DEVNULL, stderr=DEVNULL)
-                raise MucsError(
-                    'Could not compile sources',
-                    reason=' '.join(sources))
+        # # Run make
+        # # Delete
+        # with self.new_logfile() as log:
+        #     make_args = ['/usr/bin/make', '-C', str(self.submit_d)]
+        #     p = subprocess.run(make_args, stdout=log, stderr=log)
+        #     if p.returncode != 0:
+        #         subprocess.run([*make_args, '__wipe'],
+        #                        stdout=DEVNULL, stderr=DEVNULL)
+        #         raise MucsError(
+        #             'Could not compile sources',
+        #             reason=' '.join(sources))
