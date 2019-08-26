@@ -1,9 +1,9 @@
-ask for password if `mucs admin` and not root
 implement mucs-update-roster
 don't require config to specify 'homeworks', 'labs', 'roster'
 sanitize homework name input for directory names
-fix print_table for rows that need wrapping
 "... expected type object for key" -> "... expected object for key"
+success/error message for admin update-password
+don't load all config files -- only the one needed
 
 relative paths:
     admin_update()
