@@ -11,7 +11,8 @@
         "A": "monday 00:00:00 - 23:59:00",
         "C": "wednesday 00:00:00 - 23:59:59",
         "B": "tue 00:00:00 - 23:59:00",
-        "D": "thursday 00:00:00 - 10:00:00"
+        "D": "thursday 00:00:00 - 10:00:00",
+        "X": "fri 00:00:00 - 23:59:00"
     },
     "current_lab": "lab3",
     "roster": {
@@ -42,6 +43,6 @@
         "cawknh": "c",
         "mvw6fc": "a",
         "rsw7vc": "e",
-        "nelson": "d"
+        "nelson": "x"
     }
 }
