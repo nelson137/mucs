@@ -3,6 +3,7 @@
 # Imports {{{
 
 from enum import IntFlag, auto
+from pathlib import PosixPath
 
 # }}}
 
@@ -15,7 +16,9 @@ RED = '\33[91m'
 
 TERM_WIDTH_FACTOR = .75
 
-CONFIG_DIR = './etc/mucs'
+MUCS_D = PosixPath('/group/cs1050')
+CONFIG_D = MUCS_D / 'config.d'
+SUBMISSION_D = MUCS_D / 'submissions'
 
 HOMEWORK_FMT = '%Y-%m-%d %H:%M:%S'
 HOMEWORK_PRETTY_FMT = '%b %d, %Y %I:%M:%S %p'

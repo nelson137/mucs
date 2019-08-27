@@ -5,7 +5,6 @@
 
 import getpass
 import subprocess
-import sys
 from argparse import ArgumentParser
 from subprocess import DEVNULL, PIPE
 
@@ -159,13 +158,34 @@ def submit(ns, configs):
             if user_in.lower() != 'y':
                 die(0, '\nSubmission cancelled')
 
-    filedao = FileDao(ns.course, current_assignment)
+    filedao = FileDao(SUBMISSION_D, ns.course, current_assignment)
     filedao.submit(ns.sources)
 
     printline(W_GREEN('Submission complete'))
 
 
-def main(argv):
+def mucs(namespace):
+    # Parse Configs
+    try:
+        configs = Configs(CONFIG_D)
+    except MucsError as me:
+        die(me.color_msg)
+
+    # Execute
+    try:
+        if namespace.cmd == 'admin':
+            admin(namespace, configs)
+        elif namespace.cmd == 'examples':
+            examples()
+        elif namespace.cmd == 'submit':
+            submit(namespace, configs)
+        else:
+            parser.print_help()
+    except MucsError as me:
+        die(me.color_msg)
+
+
+def main():
     parser = ArgumentParser(prog='mucs')
 
     subparsers = parser.add_subparsers(dest='cmd')
@@ -232,31 +252,8 @@ def main(argv):
         'sources', nargs='+',
         help='source files to turn in')
 
-    namespace = parser.parse_args()
-
-    # Parse Configs
-
-    try:
-        configs = Configs(CONFIG_DIR)
-    except MucsError as me:
-        die(me.color_msg)
-
-    # Execute
-
-    try:
-        if namespace.cmd == 'admin':
-            admin(namespace, configs)
-        elif namespace.cmd == 'examples':
-            examples()
-        elif namespace.cmd == 'submit':
-            submit(namespace, configs)
-        else:
-            parser.print_help()
-    except MucsError as me:
-        die(me.color_msg)
-
-    return 0
+    mucs(parser.parse_args())
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    main()

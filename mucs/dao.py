@@ -19,11 +19,11 @@ from util import *
 
 
 class FileDao:
-    def __init__(self, course, current_assignment):
+    def __init__(self, submission_d, course, current_assignment):
         username = getpass.getuser()
 
-        self.course_d = PosixPath('./group') / ('cs' + course)
-        self.course_makefile_f = self.course_d / 'Makefile'
+        self.course_d = submission_d / ('cs' + course)
+        # self.course_makefile_f = self.course_d / 'Makefile'
         self.assignment_d = self.course_d / current_assignment
         self.submit_d = self.assignment_d / username
         # self.submit_makefile = self.submit_d / 'Makefile'
