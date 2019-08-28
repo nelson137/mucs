@@ -24,7 +24,6 @@ HOMEWORK_FMT = '%Y-%m-%d %H:%M:%S'
 HOMEWORK_PRETTY_FMT = '%b %d, %Y %I:%M:%S %p'
 TIME_FMT = '%H:%M:%S'
 TIME_PRETTY_FMT = '%I:%M:%S %p'
-MAKE_LOG_FMT = '%Y-%m-%d_%H:%M:%S'
 
 
 def W_BOLD(*msgs):
