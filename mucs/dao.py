@@ -27,6 +27,7 @@ class FileDao:
         self.assignment_d = self.course_d / current_assignment
         self.submit_d = self.assignment_d / username
         # self.submit_makefile = self.submit_d / 'Makefile'
+        self.submit_exe = PosixPath('/group/cs1050/bin/mucs-submit')
 
     def new_logfile(self):
         logfile_nums = [0]
@@ -67,6 +68,9 @@ class FileDao:
                     'Could not make submission directory',
                     reason=str(self.submit_d))
 
+        if not shutil.which(self.submit_exe):
+            raise MucsError('Executable not found', reason=self.submit_exe)
+
     def submit(self, sources):
         cwd = PosixPath.cwd()
 
@@ -84,11 +88,9 @@ class FileDao:
                 raise MucsError('File not found', reason=src)
 
         # Copy sources into submit directory
-        # chmod 060 src
-        for src in sources:
-            src_submit_fn = self.submit_d / os.path.basename(src)
-            shutil.copyfile(src, src_submit_fn)
-            os.chmod(src_submit_fn, stat.S_IRGRP | stat.S_IWGRP)
+        subprocess.run(
+            [self.submit_exe, str(self.submit_d), *sources],
+            stdout=DEVNULL, stderr=DEVNULL)
 
         # # Run make
         # # Delete
