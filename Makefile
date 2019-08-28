@@ -1,5 +1,5 @@
 HERE = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-DEST = /group/cs1050
+DEST ?= /group/cs1050
 
 SRCS = $(wildcard $(HERE)mucs/*)
 CPP_SRC = $(HERE)/cpp/mucs-submit.cpp
@@ -9,9 +9,10 @@ INSTALL = install -g cs1050-ta
 GPP = g++ -std=c++11 -Wall -Werror
 
 install:
+	[ -d "$(DEST)" ] || false
 	# Create directory structure
-	cd "$(DEST)"; \
-		$(INSTALL) -d -m 775 bin mucs; \
+	cd "$(DEST)" && \
+		$(INSTALL) -d -m 775 bin mucs && \
 		$(INSTALL) -d -m 770 config.d submissions
 	# Copy project files
 	$(INSTALL) -C -m 664 $(SRCS) -t "$(DEST)/mucs"
