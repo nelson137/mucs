@@ -9,10 +9,10 @@ from argparse import ArgumentParser
 from subprocess import DEVNULL, PIPE
 
 from consts import *
-from dao import *
 from exc import MucsError
 from models import *
 from printer import Printer, printline
+from submit_wrapper import SubmitWrapper
 from util import *
 
 # }}}
@@ -158,8 +158,8 @@ def submit(ns, configs):
             if user_in.lower() != 'y':
                 die(0, '\nSubmission cancelled')
 
-    filedao = FileDao(SUBMISSION_D, ns.course, current_assignment)
-    filedao.submit(ns.sources)
+    sw = SubmitWrapper(SUBMISSION_D, ns.course, current_assignment)
+    sw.submit(ns.sources)
 
     printline(W_GREEN('Submission complete'))
 

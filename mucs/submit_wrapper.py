@@ -18,7 +18,7 @@ from util import *
 # }}}
 
 
-class FileDao:
+class SubmitWrapper:
     def __init__(self, submission_d, course, current_assignment):
         username = getpass.getuser()
 
