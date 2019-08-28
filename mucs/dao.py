@@ -84,6 +84,8 @@ class FileDao:
 
         # Check that all sources exist
         for src in sources:
+            if PosixPath(src).is_dir():
+                raise MucsError('Directories cannot be submitted', reason=src)
             if not PosixPath(src).exists():
                 raise MucsError('File not found', reason=src)
 
