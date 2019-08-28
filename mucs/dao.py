@@ -91,7 +91,7 @@ class FileDao:
 
         # Copy sources into submit directory
         subprocess.run(
-            [self.submit_exe, str(self.submit_d), *sources],
+            [self.submit_exe, self.submit_d, *sources],
             stdout=DEVNULL, stderr=DEVNULL)
 
         # # Run make
