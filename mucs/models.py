@@ -215,7 +215,8 @@ class CourseConfig(dict):
 class Configs(dict):
     def __init__(self, config_dir):
         if not os.path.exists(config_dir):
-            raise MucsError('Config path does not exist', reason=config_dir)
+            raise MucsError(
+                'Config directory does not exist', reason=config_dir)
         if not os.path.isdir(config_dir):
             raise MucsError(
                 'Config path must be a directory', reason=config_dir)
