@@ -164,7 +164,7 @@ def submit(ns, configs):
     printline(W_GREEN('Submission complete'))
 
 
-def mucs(namespace):
+def mucs(parser, namespace):
     # Parse Configs
     try:
         configs = Configs(CONFIG_D)
@@ -252,7 +252,7 @@ def main():
         'sources', nargs='+',
         help='source files to turn in')
 
-    mucs(parser.parse_args())
+    mucs(parser, parser.parse_args())
 
 
 if __name__ == '__main__':
