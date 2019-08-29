@@ -72,6 +72,9 @@ def parse_weekday(weekday_str):
 
 
 def print_table(data, fmt=None, indent='', sep='  ', wrap_last=True):
+    if not data:
+        return
+
     wrap_w = get_term_width() - len(indent) * 2
 
     # Convert data to a list of tuples of strings
