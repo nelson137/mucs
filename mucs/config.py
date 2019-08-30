@@ -221,18 +221,13 @@ class Configs(dict):
             raise MucsError(
                 'Config path must be a directory', reason=config_dir)
 
-        config_filenames = []
         for dirpath, dirnames, filenames in os.walk(config_dir):
             for fn in filenames:
-                path = os.path.join(dirpath, fn)
-                ext = os.path.splitext(path)[1]
+                base, ext = os.path.splitext(fn)
                 if ext == '.json':
-                    config_filenames.append(path)
-
-        for fn in config_filenames:
-            cfg = CourseConfig(fn)
-            course_num = cfg['course_number']
-            self[course_num] = cfg
+                    cfg = CourseConfig(os.path.join(dirpath, fn))
+                    num = cfg['course_number']
+                    self[num] = cfg
 
     def get_config(self, course):
         if course not in self.keys():
