@@ -8,9 +8,9 @@ import os
 import re
 from collections import namedtuple
 
-from consts import *
-from exc import MucsError
-from util import *
+from .consts import *
+from .exc import MucsError
+from .util import *
 
 # }}}
 

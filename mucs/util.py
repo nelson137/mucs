@@ -12,9 +12,9 @@ import sys
 from subprocess import DEVNULL
 from textwrap import TextWrapper
 
-from consts import *
-from exc import *
-from printer import printline
+from .consts import *
+from .exc import *
+from .printer import printline
 
 # }}}
 

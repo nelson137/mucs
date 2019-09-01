@@ -4,7 +4,7 @@
 
 import re
 
-from consts import *
+from .consts import *
 
 # }}}
 
