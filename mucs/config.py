@@ -168,14 +168,8 @@ class Roster(dict):
 
 
 class CourseConfig(dict):
-    def __init__(self, fn):
+    def __init__(self, fn, data):
         self.filename = fn
-
-        try:
-            with open(fn, 'r') as f:
-                data = json.load(f)
-        except json.JSONDecodeError:
-            raise MucsError('Invalid json: ' + fn)
 
         if not isinstance(data, dict):
             raise MucsError('Config expected root to be an object', reason=fn)
@@ -225,9 +219,17 @@ class Configs(dict):
             for fn in filenames:
                 base, ext = os.path.splitext(fn)
                 if ext == '.json':
-                    cfg = CourseConfig(os.path.join(dirpath, fn))
-                    num = cfg['course_number']
-                    self[num] = cfg
+                    self.read_config(os.path.join(dirpath, fn))
+
+    def read_config(self, fn):
+        try:
+            with open(fn, 'r') as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            raise MucsError('Invalid json: ' + fn)
+
+        cfg = CourseConfig(fn, data)
+        self[cfg['course_number']] = cfg
 
     def get_config(self, course):
         if course not in self.keys():
