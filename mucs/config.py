@@ -191,9 +191,7 @@ class CourseConfig(dict):
 
     def get_current_hw(self):
         now = datetime.datetime.now()
-        homeworks = sorted(
-            self['homeworks'].items(),
-            key=lambda hw: hw[1])
+        homeworks = sorted(self['homeworks'].items(), key=lambda hw: hw[1])
 
         for name, duedate in homeworks:
             if now < duedate:
