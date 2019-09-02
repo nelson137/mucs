@@ -100,7 +100,7 @@ class LabSessions(dict):
             if not mo:
                 raise MucsError(
                     'Lab entries must be in the format '
-                    '"<weekday> <start_time> - <end_type>"',
+                    '"<weekday> <start_time> - <end_time>"',
                     reason=self.parse_obj % letter)
 
             weekday_, start_, end_ = mo.groups()
