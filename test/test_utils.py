@@ -14,6 +14,10 @@ def random_string(n=10, hex=False):
     return ''.join(random.choice(chars) for i in range(n))
 
 
+def random_char(hex=False):
+    return random_string(n=1, hex=hex)
+
+
 def random_number(digits=4):
     s = str(random.randint(1, 9))
     for n in range(digits - 1):
