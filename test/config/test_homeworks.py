@@ -1,6 +1,6 @@
 import unittest
 
-from mucs.config import CourseConfig, Homeworks
+from mucs.config import Homeworks
 from mucs.consts import *
 from mucs.exc import MucsError
 from test_utils import *

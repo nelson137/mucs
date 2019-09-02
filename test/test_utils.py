@@ -29,9 +29,8 @@ class MockCourseConfig(dict):
     def __init__(self, data, fn=None):
         super().__init__(data)
         if fn is None:
-            self.filename = random_string(n=4) + '.json'
-        else:
-            self.filename = fn
+            fn = random_string(n=4) + '.json'
+        self.filename = fn
 
 
 class TempFile:
