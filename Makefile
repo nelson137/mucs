@@ -14,8 +14,8 @@ install:
 	[ -d "$(DEST)" ] || false
 	# Create directory structure
 	cd "$(DEST)" && \
-		$(INSTALL) -d -m 775 bin mucs && \
-		$(INSTALL) -d -m 770 config.d submissions
+		$(INSTALL) -d -m 775 bin mucs config.d && \
+		$(INSTALL) -d -m 770 submissions
 	# Install Python files
 	$(INSTALL) -C -m 664 $(PY_SRCS) -t "$(PY_DEST)"
 	# Install C++ files
