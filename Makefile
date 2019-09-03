@@ -25,4 +25,4 @@ install:
 	# Install C++ files
 	$(GPP) "$(CPP_SRC)" -o "$(CPP_DEST)"
 	chown nwewnh:cs1050-ta "$(CPP_DEST)"
-	chmod g+s "$(CPP_DEST)"
+	chmod u+s "$(CPP_DEST)"
