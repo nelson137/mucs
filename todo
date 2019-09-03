@@ -13,8 +13,3 @@ new roster config structure:
         "B": [...],
         ...
     }
-
-relative paths:
-    admin_update()
-    CONFIG_D
-    submission destination
