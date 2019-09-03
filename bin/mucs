@@ -1,0 +1,3 @@
+#!/bin/bash
+
+PYTHONPATH=/group/cs1050 python3 -m mucs "$@"
