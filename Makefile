@@ -1,7 +1,11 @@
 HERE = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-DEST ?= /group/cs1050
+HERE = $(HERE:%/=%)
 
-SRCS = $(wildcard $(HERE)mucs/*)
+DEST ?= /group/cs1050
+DEST_BIN = $(DEST)/bin
+
+PY_SRCS = $(wildcard $(HERE)/mucs/*.py)
+PY_DEST = $(DEST)/mucs
 CPP_SRC = $(HERE)/cpp/mucs-submit.cpp
 CPP_DEST = $(DEST)/bin/mucs-submit
 
@@ -14,13 +18,11 @@ install:
 	cd "$(DEST)" && \
 		$(INSTALL) -d -m 775 bin mucs && \
 		$(INSTALL) -d -m 770 config.d submissions
-	# Copy project files
-	$(INSTALL) -C -m 664 $(SRCS) -t "$(DEST)/mucs"
-	# Setup project files
+	# Install Python files
+	$(INSTALL) -C -m 664 $(PY_SRCS) -t "$(PY_DEST)"
 	chmod +x "$(DEST)/mucs/mucs.py"
-	ln -fs "$(DEST)/mucs/mucs.py" "$(DEST)/bin/mucs"
-	# Compile mucs-submit
+	ln -fs "$(DEST)/mucs/mucs.py" "$(DEST_BIN)"
+	# Install C++ files
 	$(GPP) "$(CPP_SRC)" -o "$(CPP_DEST)"
-	# Setup mucs-submit
-	chown :cs1050-ta "$(CPP_DEST)"
+	chown nwewnh:cs1050-ta "$(CPP_DEST)"
 	chmod g+s "$(CPP_DEST)"
