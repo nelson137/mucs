@@ -8,6 +8,7 @@ PY_SRCS := $(wildcard $(HERE)/mucs/*.py)
 PY_DEST := $(DEST)/mucs
 CPP_SRC := $(HERE)/cpp/mucs-submit.cpp
 CPP_DEST := $(DEST)/bin/mucs-submit
+SCRIPTS := $(HERE)/bin/mucs-gen-roster
 
 INSTALL := install -g cs1050-ta
 GPP := g++ -std=c++11 -Wall -Werror
@@ -26,3 +27,5 @@ install:
 	$(GPP) "$(CPP_SRC)" -o "$(CPP_DEST)"
 	chown nwewnh:cs1050-ta "$(CPP_DEST)"
 	chmod u+s "$(CPP_DEST)"
+	# Install scripts
+	$(INSTALL) -C -m 770 $(SCRIPTS) -t "$(DEST_BIN)"
