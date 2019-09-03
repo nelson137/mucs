@@ -1,16 +1,16 @@
-HERE = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-HERE = $(HERE:%/=%)
+HERE := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+HERE := $(HERE:%/=%)
 
 DEST ?= /group/cs1050
-DEST_BIN = $(DEST)/bin
+DEST_BIN := $(DEST)/bin
 
-PY_SRCS = $(wildcard $(HERE)/mucs/*.py)
-PY_DEST = $(DEST)/mucs
-CPP_SRC = $(HERE)/cpp/mucs-submit.cpp
-CPP_DEST = $(DEST)/bin/mucs-submit
+PY_SRCS := $(wildcard $(HERE)/mucs/*.py)
+PY_DEST := $(DEST)/mucs
+CPP_SRC := $(HERE)/cpp/mucs-submit.cpp
+CPP_DEST := $(DEST)/bin/mucs-submit
 
-INSTALL = install -g cs1050-ta
-GPP = g++ -std=c++11 -Wall -Werror
+INSTALL := install -g cs1050-ta
+GPP := g++ -std=c++11 -Wall -Werror
 
 install:
 	[ -d "$(DEST)" ] || false
