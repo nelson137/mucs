@@ -21,7 +21,7 @@ install:
 	# Install Python files
 	$(INSTALL) -C -m 664 $(PY_SRCS) -t "$(PY_DEST)"
 	chmod +x "$(DEST)/mucs/mucs.py"
-	ln -fs "$(DEST)/mucs/mucs.py" "$(DEST_BIN)"
+	ln -fs "$(DEST)/mucs/mucs.py" "$(DEST_BIN)/mucs"
 	# Install C++ files
 	$(GPP) "$(CPP_SRC)" -o "$(CPP_DEST)"
 	chown nwewnh:cs1050-ta "$(CPP_DEST)"
