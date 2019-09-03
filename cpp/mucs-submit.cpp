@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     cmd_argv = {
         "install", "-C",
         "-g", "cs1050-ta",
-        "-m", "060",
+        "-m", "660",
         "-t", argv[1]
     };
     cmd_argv.insert(cmd_argv.end(), files.begin(), files.end());
