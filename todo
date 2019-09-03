@@ -1,9 +1,10 @@
-implement mucs-update-roster
+use terminology course_id instead of course_number
 don't require config to specify 'homeworks', 'labs', 'roster'
 sanitize homework name input for directory names
 "... expected type object for key" -> "... expected object for key"
 success/error message for admin update-password
 don't load all config files -- only the one needed
+    make config filenames the course id
 remove seconds from lab session times
 use makefiles dir, use default if none is specified in configs
 new roster config structure:
