@@ -11,9 +11,9 @@ import subprocess
 from pathlib import PosixPath
 from subprocess import DEVNULL
 
-from consts import *
-from exc import MucsError
-from util import *
+from .consts import *
+from .exc import MucsError
+from .util import *
 
 # }}}
 

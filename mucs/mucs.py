@@ -8,12 +8,12 @@ import subprocess
 from argparse import ArgumentParser
 from subprocess import DEVNULL, PIPE
 
-from config import *
-from consts import *
-from exc import MucsError
-from printer import Printer, printline
-from submit_wrapper import SubmitWrapper
-from util import *
+from .config import *
+from .consts import *
+from .exc import MucsError
+from .printer import Printer, printline
+from .submit_wrapper import SubmitWrapper
+from .util import *
 
 # }}}
 
