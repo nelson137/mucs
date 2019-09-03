@@ -7,9 +7,3 @@ don't load all config files -- only the one needed
     make config filenames the course id
 remove seconds from lab session times
 use makefiles dir, use default if none is specified in configs
-new roster config structure:
-    "roster": {
-        "A": [<pawprints>...],
-        "B": [...],
-        ...
-    }
