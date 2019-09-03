@@ -49,7 +49,7 @@ class TestLabSessions(unittest.TestCase):
         t = NOW.time()
         w = weekday_to_str(NOW.weekday())
         s = t.strftime(TIME_FMT)
-        e = t.replace(hour=t.hour+2, minute=t.minute+30).strftime(TIME_FMT)
+        e = t.replace(hour=t.hour+1 % 24).strftime(TIME_FMT)
         self.data['labs'] = {random_char(): '%s %s - %s' % (w, s, e)}
         mock_config = MockCourseConfig(self.data)
 
