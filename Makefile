@@ -1,14 +1,11 @@
-HERE := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-HERE := $(HERE:%/=%)
-
 DEST ?= /group/cs1050
 DEST_BIN := $(DEST)/bin
 
-PY_SRCS := $(wildcard $(HERE)/mucs/*.py)
+PY_SRCS := $(wildcard ./mucs/*.py)
 PY_DEST := $(DEST)/mucs
-CPP_SRC := $(HERE)/cpp/mucs-submit.cpp
+CPP_SRC := ./cpp/mucs-submit.cpp
 CPP_DEST := $(DEST)/bin/mucs-submit
-SCRIPTS := $(addprefix $(HERE)/bin/,mucs mucs-gen-roster)
+SCRIPTS := $(addprefix ./bin/,mucs mucs-gen-roster)
 
 INSTALL := install -g cs1050-ta
 GPP := g++ -std=c++11 -Wall -Werror
