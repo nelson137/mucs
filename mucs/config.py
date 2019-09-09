@@ -136,7 +136,7 @@ class Roster(dict):
     def __init__(self, config, session_letters):
         self.parse_obj = '%s["%s"]["%s"]' % (config.filename, self.key, '%s')
 
-        self.session_letters = list(session_letters)
+        self.session_letters = list(l.upper() for l in session_letters)
 
         if self.key not in config:
             raise MucsError(
