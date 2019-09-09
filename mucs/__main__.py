@@ -130,8 +130,8 @@ def submit(ns, configs):
 
         letter = cfg['roster'][username]
         sesh = cfg['labs'][letter]
-        if not sesh.is_active():
-            weekday, start, end = sesh.get_tuple()
+        if not sesh._is_active():
+            weekday, start, end = sesh._get_pretty()
             raise MucsError(
                 'Lab %s is not in session' % letter,
                 reason='%s from %s to %s' % (weekday, start, end))

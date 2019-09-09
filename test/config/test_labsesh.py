@@ -14,7 +14,7 @@ class TestLabSesh(unittest.TestCase):
             end=datetime.time(23, 59, 59, 999999))
 
     def test_is_active_true(self):
-        self.assertTrue(self.labsesh.is_active())
+        self.assertTrue(self.labsesh._is_active())
 
     def test_is_active_false(self):
         # If current hour is after noon
@@ -28,4 +28,4 @@ class TestLabSesh(unittest.TestCase):
             self.labsesh = self.labsesh._replace(
                 start=self.labsesh.start.replace(hour=13))
 
-        self.assertFalse(self.labsesh.is_active())
+        self.assertFalse(self.labsesh._is_active())

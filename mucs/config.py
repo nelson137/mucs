@@ -58,13 +58,13 @@ class Homeworks(dict):
 
 
 class LabSesh(namedtuple('LabSesh', 'weekday start end')):
-    def get_tuple(self):
+    def _get_pretty(self):
         weekday = weekday_to_str(self.weekday)
         start = self.start.strftime(TIME_PRETTY_FMT)
         end = self.end.strftime(TIME_PRETTY_FMT)
         return (weekday, start, end)
 
-    def is_active(self):
+    def _is_active(self):
         now = datetime.datetime.now()
         if now.weekday() != self.weekday:
             return False
@@ -127,7 +127,7 @@ class LabSessions(dict):
 
     def pretty_grid(self):
         for letter, sesh in self.items():
-            yield (letter, *sesh.get_tuple())
+            yield (letter, *sesh._get_pretty())
 
 
 class Roster(dict):
