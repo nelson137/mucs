@@ -35,8 +35,12 @@ class TestRoster(unittest.TestCase):
         self.assertRaisesRegexp(MucsError, msg_re, Roster, mock_config, [])
 
     def test_valid_roster(self):
-        letter = random_char()
-        self.data['roster'] = {random_string(n=6): letter}
+        user = random_string(n=6)
+        letter = random_char().upper()
+        self.data['roster'] = {user: letter}
         mock_config = MockCourseConfig(self.data)
 
         roster = Roster(mock_config, [letter])
+
+        self.assertIn(user, roster)
+        self.assertEqual(roster[user], letter)

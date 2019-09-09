@@ -44,7 +44,13 @@ class TestHomeworks(unittest.TestCase):
         self.assertRaisesRegexp(MucsError, msg_re, Homeworks, mock_config)
 
     def test_valid_homeworks(self):
-        self.data['homeworks'] = {'hw1': NOW.strftime(HOMEWORK_FMT)}
+        hw1 = 'hw1'
+        duedate = NOW.replace(microsecond=0)
+        duedate_f = duedate.strftime(HOMEWORK_FMT)
+        self.data['homeworks'] = {hw1: duedate_f}
         mock_config = MockCourseConfig(self.data)
 
         hws = Homeworks(mock_config)
+
+        self.assertIn(hw1, hws)
+        self.assertEqual(hws[hw1], duedate)

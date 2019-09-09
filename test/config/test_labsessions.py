@@ -46,11 +46,22 @@ class TestLabSessions(unittest.TestCase):
         self.assertRaisesRegexp(MucsError, msg_re, LabSessions, mock_config)
 
     def test_valid_labsessions(self):
-        t = NOW.time()
-        w = weekday_to_str(NOW.weekday())
-        s = t.strftime(TIME_FMT)
-        e = t.replace(hour=(t.hour+1) % 24).strftime(TIME_FMT)
-        self.data['labs'] = {random_char(): '%s %s - %s' % (w, s, e)}
+        letter = random_char().upper()
+        time = NOW.time()
+        weekday = NOW.weekday()
+        weekday_f = weekday_to_str(weekday)
+        start = time.replace(microsecond=0)
+        start_f = start.strftime(TIME_FMT)
+        end = time.replace(hour=(time.hour+1) % 24, microsecond=0)
+        end_f = end.strftime(TIME_FMT)
+
+        self.data['labs'] = {
+            letter: '%s %s - %s' % (weekday_f, start_f, end_f)}
         mock_config = MockCourseConfig(self.data)
 
         labs = LabSessions(mock_config)
+
+        self.assertIn(letter, labs)
+        self.assertEqual(labs[letter].weekday, weekday)
+        self.assertEqual(labs[letter].start, start)
+        self.assertEqual(labs[letter].end, end)
