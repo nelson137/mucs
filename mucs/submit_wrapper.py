@@ -52,29 +52,13 @@ class SubmitWrapper:
                 # 'Course Makefile does not exist',
                 # reason=str(self.course_makefile_f))
 
-        if not self.assignment_d.exists():
-            try:
-                self.assignment_d.mkdir()
-            except (FileNotFoundError, OSError):
-                raise MucsError(
-                    'Could not make assignment directory',
-                    reason=str(self.assignment_d))
-
-        if not self.submit_d.exists():
-            try:
-                self.submit_d.mkdir()
-            except (FileNotFoundError, OSError):
-                raise MucsError(
-                    'Could not make submission directory',
-                    reason=str(self.submit_d))
-
         if not shutil.which(self.submit_exe):
             raise MucsError('Executable not found', reason=self.submit_exe)
 
     def submit(self, sources):
-        cwd = PosixPath.cwd()
-
         self.pre_submit()
+
+        cwd = PosixPath.cwd()
 
         # # Symbolic link course Makefile into submission directory
         # if not self.submit_makefile.exists():
