@@ -158,9 +158,13 @@ def submit(ns, configs):
                 die(0, '\nSubmission cancelled')
 
     sw = SubmitWrapper(SUBMISSION_D, ns.course, current_assignment)
-    sw.submit(ns.sources)
+    ret = sw.submit(ns.sources)
 
-    printline(W_GREEN('Submission complete'))
+    if ret.returncode == 0:
+        printline(W_GREEN('Submission complete'))
+    else:
+        printline(W_RED('Submission failed'))
+        printline(ret.stderr.decode().strip())
 
 
 def mucs(parser, namespace):

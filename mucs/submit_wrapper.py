@@ -8,8 +8,10 @@ import re
 import shutil
 import stat
 import subprocess
+import tempfile
 from pathlib import PosixPath
-from subprocess import DEVNULL
+from stat import S_IRWXG, S_IRWXO, S_IRWXU
+from subprocess import DEVNULL, PIPE
 
 from .consts import *
 from .exc import MucsError
@@ -20,14 +22,23 @@ from .util import *
 
 class SubmitWrapper:
     def __init__(self, submission_d, course, current_assignment):
-        username = getpass.getuser()
+        self.course = course
+        self.current_assignment = current_assignment
+        self.username = getpass.getuser()
 
+        self.submit_d = submission_d
         self.course_d = submission_d / ('cs' + course)
         # self.course_makefile_f = self.course_d / 'Makefile'
         self.assignment_d = self.course_d / current_assignment
-        self.submit_d = self.assignment_d / username
+        self.submit_d = self.assignment_d / self.username
         # self.submit_makefile = self.submit_d / 'Makefile'
         self.submit_exe = PosixPath('/group/cs1050/bin/mucs-submit')
+
+    @staticmethod
+    def make_tempdir():
+        tempdir = tempfile.mkdtemp(prefix=TEMPDIR_PREFIX)
+        os.chmod(tempdir, S_IRWXU | S_IRWXG | S_IRWXO)
+        return PosixPath(tempdir)
 
     def new_logfile(self):
         logfile_nums = [0]
@@ -42,11 +53,6 @@ class SubmitWrapper:
         return open(self.submit_d / basename, 'w')
 
     def pre_submit(self):
-        if not self.course_d.exists():
-            raise MucsError(
-                'Course submission directory does not exist',
-                reason=str(self.course_d))
-
         # if not self.course_makefile_f.exists():
             # raise MucsError(
                 # 'Course Makefile does not exist',
@@ -59,6 +65,17 @@ class SubmitWrapper:
         self.pre_submit()
 
         cwd = PosixPath.cwd()
+        tempdir = self.make_tempdir()
+
+        for src in sources:
+            src = PosixPath(src)
+            if not src.is_absolute():
+                src = cwd / src
+            if not src.exists():
+                raise MucsError('File not found', reason=src)
+            if src.is_dir():
+                raise MucsError('Cannot submit directories', reason=src)
+            shutil.copyfile(src, tempdir / src.name)
 
         # # Symbolic link course Makefile into submission directory
         # if not self.submit_makefile.exists():
@@ -66,17 +83,11 @@ class SubmitWrapper:
             # PosixPath('Makefile').symlink_to('../../Makefile')
             # os.chdir(cwd)
 
-        # Check that all sources exist
-        for src in sources:
-            if PosixPath(src).is_dir():
-                raise MucsError('Directories cannot be submitted', reason=src)
-            if not PosixPath(src).exists():
-                raise MucsError('File not found', reason=src)
-
         # Copy sources into submit directory
-        subprocess.run(
-            [self.submit_exe, self.submit_d, *sources],
-            stdout=DEVNULL, stderr=DEVNULL)
+        return subprocess.run(
+            [self.submit_exe, self.course, self.current_assignment,
+             self.username, tempdir],
+            stdout=DEVNULL, stderr=PIPE)
 
         # # Run make
         # # Delete

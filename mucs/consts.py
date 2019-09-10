@@ -19,6 +19,7 @@ TERM_WIDTH_FACTOR = .75
 MUCS_D = PosixPath('/group/cs1050')
 CONFIG_D = MUCS_D / 'config.d'
 SUBMISSION_D = MUCS_D / 'submissions'
+TEMPDIR_PREFIX = 'mucs-tmp.'
 
 HOMEWORK_FMT = '%Y-%m-%d %H:%M:%S'
 HOMEWORK_PRETTY_FMT = '%b %d, %Y %I:%M:%S %p'
