@@ -8,3 +8,22 @@ don't load all config files -- only the one needed
 remove seconds from lab session times
 use makefiles dir, use default if none is specified in configs
 check submission files exist before confirmation prompt
+new submission dir structre
+    /group/cs1050/submissions/
+      1050/
+        A/
+          lab1/
+            pawprint1/
+              m-lab1.c
+              ...
+            pawprint2/
+            ...
+          lab2/
+          ...
+          hw1/
+          hw2/
+          ...
+        B/
+        D/
+        ...
+      2050/
