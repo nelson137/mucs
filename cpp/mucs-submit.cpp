@@ -30,6 +30,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 using namespace std;
 
@@ -48,23 +49,19 @@ void die(string msg) {
 }
 
 
-string make_tree(string path, vector<string> descendants) {
+void make_submit_component(string path) {
     struct stat s;
-    for (auto d : descendants) {
-        path += "/" + d;
-        // If path already exists
-        if(stat(path.c_str(), &s) == 0) {
-            // Error if not a directory
-            if (S_ISDIR(s.st_mode) == 0)
-                die(ERR_NOT_A_DIR + path);
-        // If path doesn't exist
-        } else {
-            // Attempt to make directory
-            if (mkdir(path.c_str(), 0770))
-                die(ERR_MKDIR + path);
-        }
+    // If path already exists
+    if(stat(path.c_str(), &s) == 0) {
+        // Error if not a directory
+        if (S_ISDIR(s.st_mode) == 0)
+            die(ERR_NOT_A_DIR + path);
+    // If path doesn't exist
+    } else {
+        // Attempt to make directory
+        if (mkdir(path.c_str(), 0770))
+            die(ERR_MKDIR + path);
     }
-    return path;
 }
 
 
@@ -74,6 +71,26 @@ bool path_is_valid(string& p) {
     if (p.find("/") != string::npos)
         return false;
     return true;
+}
+
+
+void rmdir(string path) {
+    char *argv[] = {
+        (char*)"rm", (char*)"-rf",
+        const_cast<char*>(path.c_str()),
+        (char*)NULL
+    };
+    int ret;
+
+    pid_t pid = fork();
+    if (pid < 0) {
+        die("Could not fork");
+    } else if (pid == 0) {
+        execv("/bin/rm", argv);
+        _exit(1);
+    } else {
+        wait(&ret);
+    }
 }
 
 
@@ -152,17 +169,31 @@ int main(int argc, char **argv) {
     verify_submit_dir(submit_base_d);
     verify_paths(components);
 
-    string submit_d = make_tree(submit_base_d, components);
+    string submit_d = submit_base_d;
+    // submit_base_d
+    make_submit_component(submit_d);
+    // submit_base_d/course
+    submit_d += "/" + course;
+    make_submit_component(submit_d);
+    // submit_base_d/course/assignment
+    submit_d += "/" + assignment;
+    make_submit_component(submit_d);
+    // submit_base_d/course/assignment/username
+    submit_d += "/" + username;
+    struct stat s;
+    if (stat(submit_d.c_str(), &s) == 0)
+        rmdir(submit_d);
+    make_submit_component(submit_d);
 
+    chdir(source_d.c_str());
+
+    // Copy files
     vector<string> cmd_argv = {
         "find", ".", "-type", "f", "-exec",
         "/usr/bin/install", "-C", "-g", "cs1050-ta",
         "-m", "660", "-t", submit_d, "{}",
         ";"
     };
-
-    chdir(source_d.c_str());
-
     ExecArgs ea(cmd_argv);
     return execv("/usr/bin/find", ea.get());
 }
