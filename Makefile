@@ -1,9 +1,7 @@
 DEST ?= /group/cs1050
 DEST_BIN := $(DEST)/bin
 
-PY_SRCS := $(wildcard ./mucs/*.py)
-PY_DEST := $(DEST)/mucs
-CPP_SRC := ./cpp/mucs-submit.cpp
+CPP_SRCS := $(wildcard ./cpp/*.cpp)
 CPP_DEST := $(DEST)/bin/mucs-submit
 SCRIPTS := ./bin/mucs
 TA_SCRIPTS := ./bin/mucs-gen-roster
@@ -17,10 +15,8 @@ install:
 	cd "$(DEST)" && \
 		$(INSTALL) -d -m 775 bin mucs config.d && \
 		$(INSTALL) -d -m 770 submissions
-	# Install Python files
-	$(INSTALL) -C -m 664 $(PY_SRCS) -t "$(PY_DEST)"
 	# Install C++ files
-	$(GPP) "$(CPP_SRC)" -o "$(CPP_DEST)"
+	$(GPP) $(CPP_SRCS) -o "$(CPP_DEST)"
 	chown nwewnh:cs1050-ta "$(CPP_DEST)"
 	chmod u+s "$(CPP_DEST)"
 	# Install scripts
