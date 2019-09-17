@@ -37,10 +37,63 @@ using namespace std;
 
 #define USAGE              "Usage: mucs-submit SUBMIT_DIR ASSIGNMENT " \
                                "USERNAME SOURCE_DIR"
-#define ERR_INVALID_PARAM  "Parameters may not contain '..' or '/': "
+#define ERR_DIR_NOT_FOUND  "Directory not found: "
+#define ERR_FORK           "Could not fork"
+#define ERR_INVALID_PARAM  "Parameters course, assignment, and username may " \
+                               "not contain '..' or '/': "
 #define ERR_MKDIR          "Unable to make directory: "
 #define ERR_NOT_A_DIR      "Path exists but is not directory: "
-#define ERR_NO_SUBMIT_DIR  "Submission directory not found: "
+
+
+class ExecArgs {
+
+private:
+    int _argc = 0;
+    char **_argv = nullptr;
+    vector<string> _vec;
+
+public:
+    ExecArgs(const vector<string>&  v) : _vec(v) {}
+    ExecArgs(const vector<string>&& v) : _vec(v) {}
+    template<typename... T>
+    ExecArgs(string arg0, T... args) : _vec({ arg0, args... }) {}
+
+    ~ExecArgs() {
+        if (this->_argv) {
+            for (int i=0; i<this->size(); i++)
+                free(this->_argv[i]);
+            free(this->_argv);
+        }
+    }
+
+    int size() const {
+        return this->_vec.size();
+    }
+
+    char **prepare() {
+        if (this->_argv)
+            return this->_argv;
+
+        int argc = this->_argc = this->size() + 1;
+        char **argv = this->_argv = static_cast<char**>(
+            malloc(argc * sizeof(char*))
+        );
+
+        int size;
+        for (int i=0; i<argc-1; i++) {
+            size = this->_vec[i].size() + 1;
+            argv[i] = static_cast<char*>(
+                malloc(size * sizeof(char))
+            );
+            strncpy(argv[i], this->_vec[i].c_str(), size);
+        }
+
+        argv[argc-1] = nullptr;
+
+        return argv;
+    }
+
+};
 
 
 void die(string msg) {
@@ -49,151 +102,116 @@ void die(string msg) {
 }
 
 
-void make_submit_component(string path) {
+template<typename... T>
+string join_paths(string a, string b, T... rest) {
+    vector<string> components = { b, rest... };
+    string p = a;
+    for (auto c : components)
+        p += "/" + c;
+    return p;
+}
+
+
+template<typename... T>
+void make_path(string base, T... comps) {
     struct stat s;
-    // If path already exists
-    if(stat(path.c_str(), &s) == 0) {
-        // Error if not a directory
-        if (S_ISDIR(s.st_mode) == 0)
-            die(ERR_NOT_A_DIR + path);
-    // If path doesn't exist
-    } else {
-        // Attempt to make directory
-        if (mkdir(path.c_str(), 0770))
-            die(ERR_MKDIR + path);
+    string path = base;
+    vector<string> components = { comps... };
+
+    for (auto c : components) {
+        path = join_paths(path, c);
+        if(stat(path.c_str(), &s) == 0) {   // If path exists
+            if (S_ISDIR(s.st_mode) == 0)    //   If not a directory
+                die(ERR_NOT_A_DIR + path);  //     Error
+        } else {                            // If path doesn't exist
+            if (mkdir(path.c_str(), 0770))  //   Attempt to make directory
+                die(ERR_MKDIR + path);      //     Error if failed
+        }
     }
 }
 
 
-bool path_is_valid(string& p) {
-    if (p.find("..") != string::npos)
+bool path_is_valid(string& path) {
+    if (path.find("..") != string::npos)
         return false;
-    if (p.find("/") != string::npos)
+    if (path.find("/") != string::npos)
         return false;
     return true;
 }
 
 
-void rmdir(string path) {
-    char *argv[] = {
-        (char*)"rm", (char*)"-rf",
-        const_cast<char*>(path.c_str()),
-        (char*)NULL
-    };
+void rmdir(string& path) {
+    ExecArgs ea("rm", "-rf", path);
     int ret;
 
     pid_t pid = fork();
     if (pid < 0) {
-        die("Could not fork");
+        // Error forking
+        die(ERR_FORK);
     } else if (pid == 0) {
-        execv("/bin/rm", argv);
+        // Child
+        execv("/bin/rm", ea.prepare());
         _exit(1);
     } else {
+        // Parent
         wait(&ret);
     }
 }
 
 
-void verify_paths(vector<string> paths) {
+template<typename... T>
+void verify_paths(string comp1, T... ts) {
+    vector<string> paths = { comp1, ts... };
     for (auto p : paths) {
-        if (path_is_valid(p) == false)
+        if (not path_is_valid(p))
             die(ERR_INVALID_PARAM + p);
     }
 }
 
 
-void verify_submit_dir(string path) {
+void verify_dir_exists(string dirpath) {
     struct stat s;
-    if (stat(path.c_str(), &s) == 0) {
+    if (stat(dirpath.c_str(), &s) == 0) {
         if (S_ISDIR(s.st_mode) == 0)
-            die(ERR_NOT_A_DIR + path);
+            die(ERR_NOT_A_DIR + dirpath);
     } else {
-        die(ERR_NO_SUBMIT_DIR + path);
+        die(ERR_NOT_A_DIR + dirpath);
     }
 }
-
-
-class ExecArgs {
-
-private:
-    int _argc = -1;
-    char **_argv = nullptr;
-
-public:
-    ExecArgs(const vector<string>&  v) { init(v); }
-    ExecArgs(const vector<string>&& v) { init(v); }
-
-    void init(const vector<string>& vec) {
-        int size = this->_argc = vec.size() + 1;
-        char **argv = this->_argv = static_cast<char**>(
-            malloc(size * sizeof(char*))
-        );
-
-        int len;
-        for (int i=0; i<size-1; i++) {
-            len = strlen(vec[i].c_str()) + 1;
-            argv[i] = static_cast<char*>(
-                malloc(len * sizeof(char))
-            );
-            strncpy(argv[i], vec[i].c_str(), len);
-        }
-
-        argv[size-1] = nullptr;
-    }
-
-    ~ExecArgs() {
-        for (int i=0; i<this->_argc; i++)
-            free(this->_argv[i]);
-        free(this->_argv);
-    }
-
-    char **get() const {
-        return this->_argv;
-    }
-
-};
 
 
 int main(int argc, char **argv) {
     if (argc != 5)
         die(USAGE);
 
-    string submit_base_d = "/group/cs1050/submissions";
-    string course        = argv[1];
-    string assignment    = argv[2];
-    string username      = argv[3];
-    string source_d      = argv[4];
+    string submit_root = "/group/cs1050/submissions";
+    string course      = argv[1];
+    string assignment  = argv[2];
+    string username    = argv[3];
+    string source_d    = argv[4];
 
-    vector<string> components = { course, assignment, username };
+    verify_dir_exists(submit_root);
+    verify_paths(course, assignment, username);
+    verify_dir_exists(source_d);
 
-    verify_submit_dir(submit_base_d);
-    verify_paths(components);
+    // submit_root/course/assignment/username
+    string submit_d = join_paths(submit_root, course, assignment, username);
 
-    string submit_d = submit_base_d;
-    // submit_base_d
-    make_submit_component(submit_d);
-    // submit_base_d/course
-    submit_d += "/" + course;
-    make_submit_component(submit_d);
-    // submit_base_d/course/assignment
-    submit_d += "/" + assignment;
-    make_submit_component(submit_d);
-    // submit_base_d/course/assignment/username
-    submit_d += "/" + username;
     struct stat s;
     if (stat(submit_d.c_str(), &s) == 0)
         rmdir(submit_d);
-    make_submit_component(submit_d);
 
+    make_path(submit_root, course, assignment, username);
+
+    // Find doesn't work unless you cd into the starting point for some reason
     chdir(source_d.c_str());
 
     // Copy files
-    vector<string> cmd_argv = {
+    ExecArgs ea(
         "find", ".", "-type", "f", "-exec",
         "/usr/bin/install", "-C", "-g", "cs1050-ta",
         "-m", "660", "-t", submit_d, "{}",
         ";"
-    };
-    ExecArgs ea(cmd_argv);
-    return execv("/usr/bin/find", ea.get());
+    );
+    return execv("/usr/bin/find", ea.prepare());
 }
