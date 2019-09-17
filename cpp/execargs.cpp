@@ -39,7 +39,7 @@ char **ExecArgs::prepare() {
 }
 
 
-friend ostream& ExecArgs::operator<<(ostream& os, ExecArgs& ea) {
+ostream& operator<<(ostream& os, ExecArgs& ea) {
     if (ea._argc < 0 || ea._argv == nullptr)
         return os;
 
@@ -59,7 +59,7 @@ friend ostream& ExecArgs::operator<<(ostream& os, ExecArgs& ea) {
     if (ea._argc > 0)
         os << wrap(ea._argv[0]);
     for (int i=1; i<ea._argc-1; i++)
-        os << ' ' << wrap(ea._argv[i]);
+        os << string(" ") << wrap(ea._argv[i]);
 
     return os;
 }

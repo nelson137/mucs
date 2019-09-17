@@ -14,10 +14,10 @@ private:
     vector<string> _vec;
 
 public:
-    ExecArgs(const vector<string>&  v) : _vec(v);
-    ExecArgs(const vector<string>&& v) : _vec(v);
+    ExecArgs(const vector<string>&  v) : _vec(v) {};
+    ExecArgs(const vector<string>&& v) : _vec(v) {};
     template<typename... T>
-    ExecArgs(string arg0, T... args) : _vec({ arg0, args... });
+    ExecArgs(string arg0, T... args) : _vec({ arg0, args... }) {};
 
     ~ExecArgs();
 
