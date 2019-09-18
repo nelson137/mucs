@@ -21,11 +21,13 @@ from .util import *
 
 
 class SubmitWrapper:
-    def __init__(self, submission_d, course, assignment):
+    submit_exe = '/group/cs1050/bin/mucs-submit'
+
+    def __init__(self, course, lab, assignment):
         self.course = course
+        self.lab = lab
         self.assignment = assignment
         self.user = getpass.getuser()
-        self.submit_exe = '/group/cs1050/bin/mucs-submit'
 
     @staticmethod
     def make_tempdir():
@@ -52,6 +54,6 @@ class SubmitWrapper:
 
         # Copy sources into submit directory
         return subprocess.run(
-            [self.submit_exe, self.course, self.assignment, self.user,
-             tempdir],
+            [self.submit_exe, self.course, self.lab, self.assignment,
+             self.user, tempdir],
             stdout=DEVNULL, stderr=PIPE)

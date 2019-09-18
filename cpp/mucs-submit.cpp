@@ -186,22 +186,24 @@ int main(int argc, char **argv) {
 
     string submit_root = "/group/cs1050/submissions";
     string course      = argv[1];
-    string assignment  = argv[2];
-    string username    = argv[3];
-    string source_d    = argv[4];
+    string lab         = argv[2];
+    string assignment  = argv[3];
+    string username    = argv[4];
+    string source_d    = argv[5];
 
     verify_dir_exists(submit_root);
-    verify_paths(course, assignment, username);
+    verify_paths(course, lab, assignment, username);
     verify_dir_exists(source_d);
 
     // submit_root/course/assignment/username
-    string submit_d = join_paths(submit_root, course, assignment, username);
+    string submit_d = join_paths(
+        submit_root, course, lab, assignment, username);
 
     struct stat s;
     if (stat(submit_d.c_str(), &s) == 0)
         rmdir(submit_d);
 
-    make_path(submit_root, course, assignment, username);
+    make_path(submit_root, course, lab, assignment, username);
 
     // Find doesn't work unless you cd into the starting point for some reason
     chdir(source_d.c_str());

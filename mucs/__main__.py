@@ -112,23 +112,22 @@ def examples():
 def submit(ns, configs):
     cfg = configs.get_config(ns.course)
     username = getpass.getuser()
+    letter = cfg['roster'].get(username)
+
+    if letter is None:
+        raise MucsError('User not in course', ns.course, reason=username)
 
     if ns.assignment_type == 'hw':
-        current_assignment = cfg.get_current_hw()
-        if current_assignment is None:
+        assignment = cfg.get_current_hw()
+        if assignment is None:
             raise MucsError(
                 'No open homework assignments for course',
                 reason=ns.course)
 
     elif ns.assignment_type == 'lab':
-        current_assignment = cfg.get_current_lab()
-        if current_assignment is None:
+        assignment = cfg.get_current_lab()
+        if assignment is None:
             raise MucsError('No open labs for course', reason=ns.course)
-
-        if username not in cfg['roster']:
-            raise MucsError('User not in course', ns.course, reason=username)
-
-        letter = cfg['roster'][username]
         sesh = cfg['labs'][letter]
         if not sesh._is_active():
             weekday, start, end = sesh._get_pretty()
@@ -147,7 +146,7 @@ def submit(ns, configs):
             print('Submission Review:')
             print_table([
                 ('Course:', W_BOLD(ns.course)),
-                ('Assignment:', W_BOLD(current_assignment)),
+                ('Assignment:', W_BOLD(assignment)),
                 ('User:', W_BOLD(username)),
                 ('Files:', W_BOLD(' '.join(ns.sources)))
             ], indent='  ')
@@ -157,7 +156,7 @@ def submit(ns, configs):
             if user_in.lower() != 'y':
                 die(0, '\nSubmission cancelled')
 
-    sw = SubmitWrapper(SUBMISSION_D, ns.course, current_assignment)
+    sw = SubmitWrapper(ns.course, letter, assignment)
     ret = sw.submit(ns.sources)
 
     if ret.returncode == 0:
