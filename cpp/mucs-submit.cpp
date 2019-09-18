@@ -181,7 +181,7 @@ void verify_dir_exists(string dirpath) {
 
 
 int main(int argc, char **argv) {
-    if (argc != 5)
+    if (argc != 6)
         die(USAGE);
 
     string submit_root = "/group/cs1050/submissions";
