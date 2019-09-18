@@ -1,5 +1,5 @@
 /**
- * Usage: mucs-submit SUBMIT_DIR COURSE ASSIGNMENT USERNAME SOURCE_DIR
+ * Usage: mucs-submit COURSE LAB ASSIGNMENT USERNAME SOURCE_DIR
  *
  * Description
  *        mucs-submit is the part of mucs that does the heavy lifting when
@@ -10,8 +10,8 @@
  *        group.
  *
  * Positional Arguments
- *        SUBMIT_DIR    Base directory for mucs submissions
  *        COURSE        Course id
+ *        LAB           Lab session letter
  *        ASSIGNMENT    Name of current assignment
  *        USERNAME      Name of user for which to submit
  *        SOURCE_DIR    Path to directory containing source files to submit
@@ -35,7 +35,7 @@
 using namespace std;
 
 
-#define USAGE              "Usage: mucs-submit SUBMIT_DIR ASSIGNMENT " \
+#define USAGE              "Usage: mucs-submit COURSE LAB ASSIGNMENT " \
                                "USERNAME SOURCE_DIR"
 #define ERR_DIR_NOT_FOUND  "Directory not found: "
 #define ERR_FORK           "Could not fork"
