@@ -224,7 +224,7 @@ class Configs(dict):
             with open(fn, 'r') as f:
                 data = json.load(f)
         except json.JSONDecodeError:
-            raise MucsError('Invalid json: ' + fn)
+            raise MucsError('Invalid json', reason=fn)
 
         cfg = CourseConfig(fn, data)
         self[cfg['course_number']] = cfg
