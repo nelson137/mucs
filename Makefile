@@ -1,13 +1,18 @@
 DEST ?= /group/cs1050
 DEST_BIN := $(DEST)/bin
 
-CPP_SRCS := $(wildcard ./cpp/*.cpp)
+CPP_SRCS := $(wildcard ./src/*.cpp)
 CPP_DEST := $(DEST)/bin/mucs-submit
+CPP_TEST_SRCS := $(wildcard ./test/*.cpp)
 SCRIPTS := ./bin/mucs
 TA_SCRIPTS := ./bin/mucs-gen-roster
 
 INSTALL := install -g cs1050-ta
-GPP := g++ -std=c++11 -Wall -Werror
+GPP := g++ -std=c++11 -Wall -Werror -I./include
+
+.PHONY: test
+test:
+	$(GPP) $(CPP_TEST_SRCS) -o runtests
 
 install:
 	[ -d "$(DEST)" ] || false
