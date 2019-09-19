@@ -15,6 +15,21 @@ from .util import *
 # }}}
 
 
+class Overrides(list):
+    key = 'overrides'
+
+    def __init__(self, config):
+        self.parse_obj = config.filename + ('["%s"]' % self.key) + '["%s"]'
+
+        if self.key in config:
+            if isinstance(config[self.key], list):
+                self.extend(config[self.key])
+            else:
+                raise MucsError(
+                    'Config expected type list for key "%s"' % self.key,
+                    reason=config.filename)
+
+
 class Homeworks(dict):
     key = 'homeworks'
 
@@ -183,6 +198,7 @@ class CourseConfig(dict):
 
         self['course_number'] = data['course_number']
         self['admin_hash'] = data['admin_hash']
+        self['overrides'] = Overrides(self)
         self['homeworks'] = Homeworks(self)
         self['labs'] = LabSessions(self)
         self['current_lab'] = data.get('current_lab')
@@ -195,10 +211,28 @@ class CourseConfig(dict):
             if NOW < duedate:
                 return name
 
-        return None
+        raise MucsError(
+            'No open homework assignments for course',
+            reason=self['course_number'])
 
     def get_current_lab(self):
+        letter = self['roster'].get(USER)
+        if letter is None:
+            raise MucsError(
+                'User not in course', self['course_number'], reason=USER)
+
+        sesh = self['labs'][letter]
+        if not sesh._is_active():
+            weekday, start, end = sesh._get_pretty()
+            raise MucsError(
+                'Lab %s is not in session' % letter,
+                reason='%s from %s to %s' % (weekday, start, end))
+
         current_lab = self['current_lab']
+        if current_lab is None:
+            raise MucsError(
+                'No open labs for course', reason=self['course_number'])
+
         return current_lab
 
 

@@ -2,7 +2,6 @@
 
 # Imports {{{
 
-import getpass
 import subprocess
 from argparse import ArgumentParser
 from subprocess import DEVNULL, PIPE
@@ -111,30 +110,13 @@ def examples():
 
 def submit(ns, configs):
     cfg = configs.get_config(ns.course)
-    username = getpass.getuser()
-    letter = cfg['roster'].get(username)
 
-    if letter is None:
-        raise MucsError('User not in course', ns.course, reason=username)
-
-    if ns.assignment_type == 'hw':
+    if USER in cfg.overrides:
+        assignment = 'overrides'
+    else if assignment_type == 'hw':
         assignment = cfg.get_current_hw()
-        if assignment is None:
-            raise MucsError(
-                'No open homework assignments for course',
-                reason=ns.course)
-
-    elif ns.assignment_type == 'lab':
+    else if assignment_type == 'lab':
         assignment = cfg.get_current_lab()
-        if assignment is None:
-            raise MucsError('No open labs for course', reason=ns.course)
-        sesh = cfg['labs'][letter]
-        if not sesh._is_active():
-            weekday, start, end = sesh._get_pretty()
-            raise MucsError(
-                'Lab %s is not in session' % letter,
-                reason='%s from %s to %s' % (weekday, start, end))
-
     else:
         pass  # Not possible, caught by parser
 

@@ -3,6 +3,7 @@
 # Imports {{{
 
 import datetime
+import getpass
 from enum import IntFlag, auto
 from pathlib import PosixPath
 
@@ -28,6 +29,7 @@ TIME_FMT = '%H:%M:%S'
 TIME_PRETTY_FMT = '%I:%M:%S %p'
 
 NOW = datetime.datetime.now()
+USER = getpass.getuser()
 
 
 def W_BOLD(*msgs):
