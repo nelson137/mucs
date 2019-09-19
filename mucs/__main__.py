@@ -111,11 +111,11 @@ def examples():
 def submit(ns, configs):
     cfg = configs.get_config(ns.course)
 
-    if USER in cfg.overrides:
+    if USER in cfg['overrides']:
         assignment = 'overrides'
-    else if assignment_type == 'hw':
+    elif ns.assignment_type == 'hw':
         assignment = cfg.get_current_hw()
-    else if assignment_type == 'lab':
+    elif ns.assignment_type == 'lab':
         assignment = cfg.get_current_lab()
     else:
         pass  # Not possible, caught by parser
@@ -129,7 +129,7 @@ def submit(ns, configs):
             print_table([
                 ('Course:', W_BOLD(ns.course)),
                 ('Assignment:', W_BOLD(assignment)),
-                ('User:', W_BOLD(username)),
+                ('User:', W_BOLD(USER)),
                 ('Files:', W_BOLD(' '.join(ns.sources)))
             ], indent='  ')
             print(W_GREEN(spacer))
@@ -138,7 +138,7 @@ def submit(ns, configs):
             if user_in.lower() != 'y':
                 die(0, '\nSubmission cancelled')
 
-    sw = SubmitWrapper(ns.course, letter, assignment)
+    sw = SubmitWrapper(ns.course, cfg['roster'][USER], assignment)
     ret = sw.submit(ns.sources)
 
     if ret.returncode == 0:
