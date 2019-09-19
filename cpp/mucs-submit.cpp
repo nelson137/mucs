@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
     verify_paths(course, lab, assignment, username);
     verify_dir_exists(source_d);
 
-    // submit_root/course/assignment/username
+    // submit_root/course/lab/assignment/username
     string submit_d = join_paths(
         submit_root, course, lab, assignment, username);
 
