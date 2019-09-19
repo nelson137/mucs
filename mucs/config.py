@@ -65,10 +65,9 @@ class LabSesh(namedtuple('LabSesh', 'weekday start end')):
         return (weekday, start, end)
 
     def _is_active(self):
-        now = datetime.datetime.now()
-        if now.weekday() != self.weekday:
+        if NOW.weekday() != self.weekday:
             return False
-        return self.start <= now.time() <= self.end
+        return self.start <= NOW.time() <= self.end
 
 
 class LabSessions(dict):
@@ -190,11 +189,10 @@ class CourseConfig(dict):
         self['roster'] = Roster(self, self['labs'].keys())
 
     def get_current_hw(self):
-        now = datetime.datetime.now()
         homeworks = sorted(self['homeworks'].items(), key=lambda hw: hw[1])
 
         for name, duedate in homeworks:
-            if now < duedate:
+            if NOW < duedate:
                 return name
 
         return None
