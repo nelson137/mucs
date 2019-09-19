@@ -4,26 +4,7 @@ sanitize homework name input for directory names
 "... expected type object for key" -> "... expected object for key"
 success/error message for admin update-password
 don't load all config files -- only the one needed
-    make config filenames the course id
+    have a main config file that associates course_id's with config file paths
 remove seconds from lab session times
 use makefiles dir, use default if none is specified in configs
 check submission files exist before confirmation prompt
-new submission dir structre
-    /group/cs1050/submissions/
-      1050/
-        A/
-          lab1/
-            pawprint1/
-              m-lab1.c
-              ...
-            pawprint2/
-            ...
-          lab2/
-          ...
-          hw1/
-          hw2/
-          ...
-        B/
-        D/
-        ...
-      2050/
