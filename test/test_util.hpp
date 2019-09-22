@@ -1,3 +1,7 @@
+#ifndef TEST_UTIL_HPP
+#define TEST_UTIL_HPP
+
+
 #include <string>
 
 using namespace std;
@@ -50,3 +54,6 @@ char rand_char(chars_t chars = chars_alphanum);
  * Return a random string of length size from the given chars_t object.
  */
 string rand_string(int size = 10, chars_t chars = chars_alphanum);
+
+
+#endif

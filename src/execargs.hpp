@@ -1,3 +1,7 @@
+#ifndef EXECARGS_HPP
+#define EXECARGS_HPP
+
+
 #include <string>
 #include <vector>
 
@@ -28,3 +32,6 @@ public:
     friend ostream& operator<<(ostream&, ExecArgs&);
 
 };
+
+
+#endif
