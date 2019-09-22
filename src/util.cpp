@@ -7,12 +7,33 @@ void die(string msg) {
 }
 
 
+bool path_exists(string path) {
+    return access(path.c_str(), F_OK) == 0;
+}
+
+
 bool path_is_valid(string& path) {
     if (path.find("..") != string::npos)
         return false;
     if (path.find("/") != string::npos)
         return false;
     return true;
+}
+
+
+bool path_is_dir(string path) {
+    static struct stat s;
+    if (stat(path.c_str(), &s) < 0)
+        return false;
+    return S_ISDIR(s.st_mode);
+}
+
+
+bool path_is_file(string path) {
+    static struct stat s;
+    if (stat(path.c_str(), &s) < 0)
+        return false;
+    return S_ISREG(s.st_mode);
 }
 
 

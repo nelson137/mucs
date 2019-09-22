@@ -1,3 +1,7 @@
+#ifndef UTIL_HPP
+#define UTIL_HPP
+
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,7 +12,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "errors.hpp"
+#include "exc.hpp"
 #include "execargs.hpp"
 
 using namespace std;
@@ -17,6 +21,13 @@ using namespace std;
 void die(string);
 
 bool path_is_valid(string&);
+
+/**
+ * Return specific information about path.
+ */
+bool path_exists(string path);
+bool path_is_dir(string path);
+bool path_is_file(string path);
 
 void rmdir(string&);
 
@@ -60,3 +71,6 @@ void verify_paths(string comp1, T... ts) {
             die(ERR_INVALID_PARAM + p);
     }
 }
+
+
+#endif
