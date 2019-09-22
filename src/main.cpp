@@ -1,30 +1,18 @@
-/**
- * Usage: mucs-submit SUBMIT_DIR COURSE ASSIGNMENT USERNAME SOURCE_DIR
- *
- * Description
- *        mucs-submit is the part of mucs that does the heavy lifting when
- *        subitting.  It is responsible for creating any necessary components
- *        of the submission directory tree as well as copying the source files
- *        into the tree.  For this program to work correctly its executable
- *        must have the setuid bit enabled and owned by a user in the cs1050-ta
- *        group.
- *
- * Positional Arguments
- *        SUBMIT_DIR    Base directory for mucs submissions
- *        COURSE        Course id
- *        ASSIGNMENT    Name of current assignment
- *        USERNAME      Name of user for which to submit
- *        SOURCE_DIR    Path to directory containing source files to submit
- *
- * Examples
- *        mucs-submit /group/cs1050/submissions 1050 hw1 jer676 /tmp/mucs.tmp
- */
-
-
 #include "main.hpp"
 
 
-int main(int argc, char **argv) {
+void submit_callback(const SubmitOptions& opts) {
+    cout << "Submit callback:" << endl;
+    cout << "course:     " << opts.course << endl;
+    cout << "assignment: " << opts.assignment_type << endl;
+    cout << "sources:   ";
+    for (auto s : opts.sources)
+        cout << ' ' << s;
+    cout << endl;
+}
+
+/*
+int main_old(int argc, char **argv) {
     if (argc != 5)
         die(USAGE);
 
@@ -58,4 +46,28 @@ int main(int argc, char **argv) {
         ";"
     );
     return execv("/usr/bin/find", ea.prepare());
+}
+*/
+
+int main(int argc, char **argv) {
+    CLI::App app;
+
+    app.require_subcommand();
+
+    auto submit_opts = make_shared<SubmitOptions>();
+    CLI::App *submit_subcmd = app
+        .add_subcommand("submit")
+        ->callback([submit_opts](){ submit_callback(*submit_opts); });
+    submit_subcmd
+        ->add_option("course", submit_opts->course)
+        ->required();
+    submit_subcmd
+        ->add_option("assignment_type", submit_opts->assignment_type)
+        ->required();
+    submit_subcmd
+        ->add_option("sources", submit_opts->sources)
+        ->required();
+
+    CLI11_PARSE(app, argc, argv);
+    return 0;
 }

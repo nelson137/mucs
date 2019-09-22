@@ -3,11 +3,21 @@
 
 
 #include <string>
+#include <vector>
+
+#include "CLI11.hpp"
 
 #include "errors.hpp"
 #include "util.hpp"
 
 using namespace std;
+
+
+struct SubmitOptions {
+    string course;
+    string assignment_type;
+    vector<string> sources;
+};
 
 
 #endif
