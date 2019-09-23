@@ -12,7 +12,6 @@ from pathlib import PosixPath
 
 RESET = '\33[0m'
 BOLD = '\33[1m'
-UNBOLD = '\33[21m'
 GREEN = '\33[32m'
 RED = '\33[91m'
 
@@ -33,7 +32,7 @@ USER = getpass.getuser()
 
 
 def W_BOLD(*msgs):
-    return BOLD + ' '.join(msgs) + UNBOLD
+    return BOLD + ' '.join(msgs) + RESET
 
 
 def W_GREEN(*msgs):
