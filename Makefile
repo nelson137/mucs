@@ -1,33 +1,50 @@
-DEST ?= /group/cs1050
-DEST_BIN := $(DEST)/bin
+define get_obj_names
+$(patsubst %.cpp,$(OBJ_D)/%.o,$(1))
+endef
 
-SRCS := $(wildcard ./src/*.cpp)
-CPP_DEST := $(DEST)/bin/mucs-submit
-TEST_SRCS := $(wildcard ./test/*.cpp)
-SCRIPTS := ./bin/mucs
-TA_SCRIPTS := ./bin/mucs-gen-roster
+TARGET      := mucs
+DEST        ?= /group/cs1050
+DEST_BIN    := $(DEST)/bin
+OBJ_D       := obj
+SRC_D       := src
+TEST_D      := test
 
-INSTALL := install -g cs1050-ta
-GPP := g++ -std=c++11 -Wall -Werror -I./include
+SRCS        := $(wildcard $(SRC_D)/*.cpp)
+OBJS        := $(call get_obj_names,$(SRCS))
 
-test:
-	$(GPP) $(filter-out %/main.cpp,$(SRCS)) $(TEST_SRCS) -o runtests
+TEST_SRCS   := $(filter-out $(SRC_D)/main.cpp,$(SRCS)) $(wildcard $(TEST_D)/*.cpp)
+TEST_OBJS   := $(call get_obj_names,$(TEST_SRCS))
 
-cpp:
-	$(GPP) $(SRCS) -o cpp
+SCRIPTS     := $(wildcard bin/mucs-*)
 
-install:
-	[ -d "$(DEST)" ] || false
+INSTALL     := install -g cs1050-ta
+GPP         := g++ -std=c++11 -Wall -Werror -I./include
+
+
+.PHONY: test install dirs
+
+test: $(TEST_OBJS)
+	$(GPP) $(TEST_OBJS) -o runtests
+
+install: $(OBJS) | all_dirs
+	@[ -d "$(DEST)" ] || { echo "Destination does not exist: $(DEST)"; false; }
 	# Create directory structure
 	cd "$(DEST)" && \
 		$(INSTALL) -d -m 775 bin mucs config.d && \
 		$(INSTALL) -d -m 770 submissions
 	# Install C++ files
-	$(GPP) $(SRCS) -o "$(CPP_DEST)"
-	chown nwewnh:cs1050-ta "$(CPP_DEST)"
-	chmod u+s "$(CPP_DEST)"
+	$(GPP) $(OBJS) -o "$(TARGET)"
+	chown nwewnh:cs1050-ta "$(TARGET)"
+	chmod u+s "$(TARGET)"
 	# Install scripts
-	$(INSTALL) -C -m 775 $(SCRIPTS) -t "$(DEST_BIN)"
-	$(INSTALL) -C -m 770 $(TA_SCRIPTS) -t "$(DEST_BIN)"
+	$(INSTALL) -C -m 770 $(SCRIPTS) -t "$(DEST_BIN)"
 
-.PHONY: test cpp
+$(OBJ_D)/%.o: %.cpp | build_dirs
+	$(GPP) -c $< -o $@
+
+build_dirs:
+	@mkdir -p "$(OBJ_D)/$(SRC_D)"
+	@mkdir -p "$(OBJ_D)/$(TEST_D)"
+
+all_dirs: | build_dirs
+	@mkdir -p "$(DEST_BIN)"
