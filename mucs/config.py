@@ -216,11 +216,7 @@ class CourseConfig(dict):
             reason=self['course_number'])
 
     def get_current_lab(self):
-        letter = self['roster'].get(USER)
-        if letter is None:
-            raise MucsError(
-                'User not in course', self['course_number'], reason=USER)
-
+        letter = self['roster'][USER]
         sesh = self['labs'][letter]
         if not sesh._is_active():
             weekday, start, end = sesh._get_pretty()

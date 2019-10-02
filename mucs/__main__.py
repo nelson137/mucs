@@ -111,6 +111,10 @@ def examples():
 def submit(ns, configs):
     cfg = configs.get_config(ns.course)
 
+    if USER not in cfg['roster']:
+        raise MucsError(
+            'User not in course', cfg['course_number'], reason=USER)
+
     if USER in cfg['overrides']:
         assignment = 'overrides'
     elif ns.assignment_type == 'hw':
