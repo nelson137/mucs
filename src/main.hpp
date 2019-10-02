@@ -7,7 +7,6 @@
 
 #include "CLI11.hpp"
 
-#include "errors.hpp"
 #include "util.hpp"
 
 using namespace std;
