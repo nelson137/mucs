@@ -1,9 +1,27 @@
 #include "util.hpp"
 
 
+struct termios tp, orig_tp;
+
+
 void die(string msg) {
     cerr << msg << endl;
     exit(1);
+}
+
+
+string get_username() {
+    struct passwd *p = getpwuid(getuid());
+    return p == nullptr ? "" : string(p->pw_name);
+}
+
+
+bool input_available() {
+    struct timeval tv = { 0L, 0L };
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(STDIN_FILENO, &fds);
+    return select(STDIN_FILENO+1, &fds, nullptr, nullptr, &tv);
 }
 
 
@@ -35,6 +53,15 @@ vector<string> list_dir(string path) {
 
     closedir(dir);
     return children;
+}
+
+
+static void no_echo_tty() {
+    tp = orig_tp;
+    tp.c_lflag &= ~(ECHO | ECHOCTL);
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &tp) < 0)
+        die("Error setting tty settings");
+    atexit(restore_tty);  // Just in case
 }
 
 
@@ -74,6 +101,12 @@ tuple<string, string> path_split_ext(string path) {
         return make_tuple(path, "");
     else
         return make_tuple(path.substr(0, i), path.substr(i));
+}
+
+
+static void restore_tty() {
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &orig_tp) < 0)
+        die("Error resetting tty settings");
 }
 
 

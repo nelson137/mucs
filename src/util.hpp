@@ -8,9 +8,13 @@
 #include <vector>
 
 #include <dirent.h>
+#include <pwd.h>
+#include <termios.h>
 #include <unistd.h>
 
+#include <sys/select.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -22,7 +26,13 @@ using namespace std;
 
 void die(string);
 
+string get_username();
+
+bool input_available();
+
 vector<string> list_dir(string path);
+
+static void no_echo_tty();
 
 bool path_is_valid(string&);
 
@@ -34,6 +44,8 @@ bool path_is_dir(string path);
 bool path_is_file(string path);
 
 tuple<string, string> path_split_ext(string path);
+
+static void restore_tty();
 
 void rmdir(string&);
 
