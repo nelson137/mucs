@@ -26,7 +26,7 @@ GPP         := gccfilter -c -n -a $(GPP_BASE)
 endif
 
 
-.PHONY: test install dirs
+.PHONY: test install build_dirs all_dirs
 
 test: $(TEST_OBJS)
 	$(GPP) $(TEST_OBJS) -o runtests
