@@ -17,8 +17,8 @@ TEST_OBJS   := $(call get_obj_names,$(TEST_SRCS))
 
 SCRIPTS     := $(wildcard bin/mucs-*)
 
-INSTALL     := install -g cs1050-ta
-GPP_BASE    := g++ -std=c++11 -Wall -Werror -I./include
+INSTALL     := /usr/bin/install -g cs1050-ta
+GPP_BASE    := /usr/bin/g++ -std=c++11 -Wall -Werror -I./include
 ifeq ("$(shell which gccfilter)","")
 GPP         := $(GPP_BASE)
 else
