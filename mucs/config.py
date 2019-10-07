@@ -180,13 +180,15 @@ class CourseConfig(dict):
         if 'admin_hash' not in data:
             raise MucsError('Configs must specify an admin_hash', reason=fn)
 
+        # Default values
+        self['current_lab'] = None
+
+        # Update self with everything in data
         super().__init__(data)
 
-        self['course_number'] = data['course_number']
-        self['admin_hash'] = data['admin_hash']
+        # Complex values
         self['homeworks'] = Homeworks(self)
         self['labs'] = LabSessions(self)
-        self['current_lab'] = data.get('current_lab')
         self['roster'] = Roster(self, self['labs'].keys())
 
     def get_current_hw(self):

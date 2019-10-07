@@ -35,7 +35,7 @@ public:
         }
     }
 
-    const char *what();
+    const char *what() const;
 
     operator string() const;
 
