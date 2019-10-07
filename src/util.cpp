@@ -7,6 +7,37 @@ void die(string msg) {
 }
 
 
+vector<string> list_dir(string path) {
+    DIR *dir = opendir(path.c_str());
+    if (dir == nullptr)
+        throw mucs_exception("Could not list config directory");
+
+    struct dirent *ent;
+    struct stat s;
+    vector<string> children;
+    string child, child_full;
+
+    while ((ent = readdir(dir)) != nullptr) {
+        child = string(ent->d_name);
+        if (child == "." || child == "..")
+            continue;
+        child_full = path + "/" + child;
+        if (stat(child_full.c_str(), &s) < 0)
+            throw mucs_exception("Could not stat file: " + child_full);
+        if (S_ISREG(s.st_mode)) {
+            children.push_back(child_full);
+        } else if (S_ISDIR(s.st_mode)) {
+            vector<string> grandchildren = list_dir(child_full);
+            children.insert(
+                children.end(), grandchildren.begin(), grandchildren.end());
+        }
+    }
+
+    closedir(dir);
+    return children;
+}
+
+
 bool path_exists(string path) {
     return access(path.c_str(), F_OK) == 0;
 }
@@ -34,6 +65,15 @@ bool path_is_file(string path) {
     if (stat(path.c_str(), &s) < 0)
         return false;
     return S_ISREG(s.st_mode);
+}
+
+
+tuple<string, string> path_split_ext(string path) {
+    auto i = path.find_last_of(".");
+    if (i == string::npos || i == 0)
+        return make_tuple(path, "");
+    else
+        return make_tuple(path.substr(0, i), path.substr(i));
 }
 
 

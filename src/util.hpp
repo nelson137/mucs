@@ -4,8 +4,10 @@
 
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
+#include <dirent.h>
 #include <unistd.h>
 
 #include <sys/stat.h>
@@ -20,6 +22,8 @@ using namespace std;
 
 void die(string);
 
+vector<string> list_dir(string path);
+
 bool path_is_valid(string&);
 
 /**
@@ -28,6 +32,8 @@ bool path_is_valid(string&);
 bool path_exists(string path);
 bool path_is_dir(string path);
 bool path_is_file(string path);
+
+tuple<string, string> path_split_ext(string path);
 
 void rmdir(string&);
 
