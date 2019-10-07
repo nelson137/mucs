@@ -18,7 +18,12 @@ TEST_OBJS   := $(call get_obj_names,$(TEST_SRCS))
 SCRIPTS     := $(wildcard bin/mucs-*)
 
 INSTALL     := install -g cs1050-ta
-GPP         := g++ -std=c++11 -Wall -Werror -I./include
+GPP_BASE    := g++ -std=c++11 -Wall -Werror -I./include
+ifeq ("$(shell which gccfilter)","")
+GPP         := $(GPP_BASE)
+else
+GPP         := gccfilter -c -n -a $(GPP_BASE)
+endif
 
 
 .PHONY: test install dirs
