@@ -2,7 +2,16 @@
 #define TEST_UTIL_HPP
 
 
+#include <cstdio>
+#include <fstream>
+#include <random>
 #include <string>
+
+#include <unistd.h>
+
+#include <sys/stat.h>
+
+#include "../src/exc.hpp"
 
 using namespace std;
 
@@ -35,6 +44,38 @@ static chars_t chars_hex_alpha("abcdef");
 // Using the default copy constructor
 static chars_t chars_alphanum(chars_nums | chars_upper | chars_lower);
 static chars_t chars_hex(chars_nums | chars_hex_alpha);
+
+
+class temp_file {
+
+public:
+    string name;
+
+    temp_file();
+    temp_file(string name);
+    ~temp_file() noexcept(false);
+
+    void write(string&  data);
+    void write(string&& data);
+
+};
+
+
+class temp_dir {
+
+public:
+    string name;
+
+    temp_dir();
+    ~temp_dir() noexcept(false);
+
+};
+
+
+/**
+ * Return a unique temporary filename
+ */
+string gen_temp_name(string dir = "/tmp");
 
 
 /**
