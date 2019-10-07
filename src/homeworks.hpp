@@ -18,7 +18,6 @@ class Homeworks : public json {
 private:
     string filename;
     string key = "homeworks";
-    json::value_type j_type = json::value_t::object;
 
 public:
     Homeworks(CourseConfig& config);

@@ -18,7 +18,6 @@ class Roster : public json {
 private:
     string filename;
     string key = "roster";
-    json::value_type j_type = json::value_t::object;
 
 public:
     Roster(CourseConfig& config);

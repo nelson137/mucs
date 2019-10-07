@@ -18,7 +18,6 @@ class LabSessions : public json {
 private:
     string filename;
     string key = "labs";
-    json::value_type j_type = json::value_t::object;
 
 public:
     LabSessions(CourseConfig& config);

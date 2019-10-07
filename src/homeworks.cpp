@@ -3,7 +3,6 @@
 
 Homeworks::Homeworks(CourseConfig& config) {
     this->filename = config.filename;
-    config.require_prop(this->key, this->j_type);
     this->parse(config[this->key]);
 }
 
