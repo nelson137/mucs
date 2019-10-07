@@ -8,3 +8,4 @@ don't load all config files -- only the one needed
 remove seconds from lab session times
 use makefiles dir, use default if none is specified in configs
 check submission files exist before confirmation prompt
+get rid of #define's in src/exc.hpp
