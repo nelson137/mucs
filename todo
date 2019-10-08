@@ -9,3 +9,5 @@ remove seconds from lab session times
 use makefiles dir, use default if none is specified in configs
 check submission files exist before confirmation prompt
 get rid of #define's in mucs/except.hpp
+use nlohmann::json's to_json, from_json extensions instead of ::parse method
+why is a variable name required here (f84aa2d test/test_homeworks.cpp:27:23)
