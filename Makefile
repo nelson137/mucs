@@ -26,7 +26,7 @@ GPP         := gccfilter -c -n -a $(GPP_BASE)
 endif
 
 
-.PHONY: test install build_dirs all_dirs
+.PHONY: test install clean build_dirs all_dirs
 
 test: $(TEST_OBJS)
 	$(GPP) $(TEST_OBJS) -o runtests
@@ -43,6 +43,9 @@ install: $(OBJS) | all_dirs
 	chmod u+s "$(TARGET)"
 	# Install scripts
 	$(INSTALL) -C -m 770 $(SCRIPTS) -t "$(DEST_BIN)"
+
+clean:
+	@rm -rf $(OBJ_D) runtests cpp
 
 $(OBJ_D)/%.o: %.cpp | build_dirs
 	$(GPP) -c $< -o $@
