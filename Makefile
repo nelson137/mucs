@@ -35,10 +35,10 @@ install: $(OBJS) | all_dirs
 	@[ -d "$(DEST)" ] || { echo "Destination does not exist: $(DEST)"; false; }
 	# Create directory structure
 	cd "$(DEST)" && \
-		$(INSTALL) -d -m 775 bin mucs config.d && \
+		$(INSTALL) -d -m 775 bin config.d && \
 		$(INSTALL) -d -m 770 submissions
 	# Install C++ files
-	$(GPP) $(OBJS) -o "$(TARGET)"
+	$(GPP) $(OBJS) -o "$(DEST_BIN)/$(TARGET)"
 	chown nwewnh:cs1050-ta "$(TARGET)"
 	chmod u+s "$(TARGET)"
 	# Install scripts
