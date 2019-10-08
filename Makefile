@@ -28,30 +28,34 @@ GPP         := gccfilter -c -n -a $(GPP_BASE)
 endif
 
 
-.PHONY: test libmucs install clean build_dirs all_dirs
+.PHONY: $(TARGET) cpp libmucs test install clean build_dirs all_dirs
 
-test: $(TEST_OBJS) | libmucs
-	$(GPP) $(TEST_OBJS) $(LIBS) -o runtests
+cpp: | libmucs $(TARGET)
 
 libmucs:
 	cd $(LIBMUCS) && $(MAKE)
 
-install: $(OBJS) | all_dirs libmucs
+test: $(TEST_OBJS) | libmucs
+	$(GPP) $(TEST_OBJS) $(LIBS) -o runtests
+
+install: $(OBJS) | all_dirs cpp
 	@[ -d "$(DEST)" ] || { echo "Destination does not exist: $(DEST)"; false; }
 	# Create directory structure
 	cd "$(DEST)" && \
 		$(INSTALL) -d -m 775 bin config.d && \
 		$(INSTALL) -d -m 770 submissions
 	# Install C++ files
-	$(GPP) $(OBJS) $(LIBS) -o "$(DEST_BIN)/$(TARGET)"
-	chown nwewnh:cs1050-ta "$(TARGET)"
-	chmod u+s "$(TARGET)"
+	$(INSTALL) -m 755 "$(TARGET)" "$(DEST_BIN)/$(TARGET)"
+	chmod u+s "$(DEST_BIN)/$(TARGET)"
 	# Install scripts
 	$(INSTALL) -C -m 770 $(SCRIPTS) -t "$(DEST_BIN)"
 
 clean:
-	rm -rf $(OBJ_D) runtests cpp
+	rm -rf $(OBJ_D) runtests $(TARGET)
 	cd $(LIBMUCS) && make clean
+
+$(TARGET): $(OBJS) | libmucs
+	$(GPP) $^ $(LIBS) -o $@
 
 $(OBJ_D)/%.o: %.cpp | build_dirs
 	$(GPP) -c $< $(LIBS) -o $@
