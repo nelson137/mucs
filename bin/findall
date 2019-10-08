@@ -1,0 +1,54 @@
+#!/bin/bash
+
+USAGE='Usage: findall [ target... ] GREP_PATTERN'
+
+BIN="$( cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd )"
+PROJ="$(dirname "$BIN")"
+
+EXCLUDES=( bin examples include )
+EXCLUDES=( $(for e in ${EXCLUDES[@]}; do echo "--exclude-dir $e"; done) )
+EXCLUDES="${EXCLUDES[@]}"
+
+die() {
+    echo "$@" >&2
+    exit 1
+}
+
+info() {
+    echo "$@"
+    exit 0
+}
+
+
+show_help=0
+pattern=
+targets=()
+
+# Loop over cli args
+while (( $# )); do
+    case "$1" in
+        -h|--help) show_help=1 ;;
+        *)         targets+=( "$1" ) ;;
+    esac
+    shift
+done
+
+# Show usage if -h given
+(( $show_help )) && info "$USAGE"
+
+# No arguments given
+(( ${#targets[@]} == 0 )) && die "$USAGE"
+
+# Pop the last positional and assign it to pattern
+last="${#targets[@]}-1"
+pattern="${targets[$last]}"
+unset "targets[$last]"
+
+# No targets given
+# Default to source and test directories for C++ and Python
+(( ${#targets[@]} == 0 )) && targets=( src test py py-test )
+
+# Execute `grep -R PATTERN` in each target directory
+for t in "${targets[@]}"; do
+    cd "$PROJ/$t" && /bin/grep -nEIR --color=auto $EXCLUDES "$pattern"
+done
