@@ -1,19 +1,45 @@
 #!/bin/bash
 
 BIN="$( cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd )"
-SRCS_D="$(dirname "$BIN")/mucs"
-QUIET=
+PROJ="$(dirname "$BIN")"  # Project root
+
+CPP_SRC_D="$PROJ/src"
+CPP_TEST_D="$PROJ/test"
+PY_SRC_D="$PROJ/py"
+PY_TEST_D="$PROJ/py-test"
+
+
+sum() {
+    if (( $# > 0 )); then
+        echo "$*" | sum
+    else
+        tr ' ' + | bc
+    fi
+}
 
 count() {
-    wc -l "$SRCS_D"/*.py
+    find "$1" -type f -exec \
+        wc -l {} \; |
+        awk '{print $1}' |
+        paste -sd ' ' |
+        sum
 }
 
-output_filter() {
-    [ $QUIET ] && awk 'END{print $1}' || cat
-}
 
-for arg in "$@"; do
-    [ "$arg" = '-q' ] && QUIET=1
-done
+n_cpp_src="$(count "$CPP_SRC_D")"
+n_cpp_test="$(count "$CPP_TEST_D")"
+n_cpp="$(sum $n_cpp_src $n_cpp_test)"
 
-count | output_filter
+n_py_src="$(count "$PY_SRC_D")"
+n_py_test="$(count "$PY_TEST_D")"
+n_py="$(sum "$n_py_src" "$n_py_test")"
+
+echo "     C++ Source: $n_cpp_src"
+echo "       C++ Test: $n_cpp_test"
+echo "      Total C++: $n_cpp"
+echo
+echo "  Python Source: $n_py_src"
+echo "    Python Test: $n_py_test"
+echo "   Total Python: $n_py"
+echo
+echo "          Total: $(sum $n_cpp $n_py)"
