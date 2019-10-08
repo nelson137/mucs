@@ -20,11 +20,13 @@ private:
     string key = "labs";
 
 public:
-    LabSessions(CourseConfig& config);
+    LabSessions();
+    LabSessions(ICourseConfig& config);
 
     string parse_path(const string&  child_key) const;
     string parse_path(const string&& child_key) const;
-    void parse(json& lab_sessions);
+
+    void parse(ICourseConfig& config);
 
 };
 

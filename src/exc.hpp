@@ -2,8 +2,11 @@
 #define EXC_HPP
 
 
+#include <ostream>
 #include <string>
 #include <vector>
+
+#include "catch.hpp"
 
 using namespace std;
 
@@ -35,9 +38,11 @@ public:
         }
     }
 
-    const char *what() const;
+    const char *what() const noexcept;
 
     operator string() const;
+
+    friend ostream& operator<<(ostream& os, const mucs_exception& me);
 
 };
 

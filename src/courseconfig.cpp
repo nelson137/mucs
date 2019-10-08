@@ -1,16 +1,37 @@
 #include "courseconfig.hpp"
 
 
-CourseConfig::CourseConfig(string& filename, json& data) : json(data) {
-    this->filename = filename;
+ICourseConfig::ICourseConfig() {
+    this->rand_filename();
+}
 
+
+ICourseConfig::ICourseConfig(initializer_list_t j) : json(j) {
+    this->rand_filename();
+}
+
+
+ICourseConfig::ICourseConfig(string filename, json data) : json(data) {
+    this->filename = filename;
+}
+
+
+void ICourseConfig::rand_filename() {
+    this->filename = "/tmp/mock_course_config." + rand_string();
+}
+
+
+CourseConfig::CourseConfig(
+    string filename,
+    json data
+) : ICourseConfig(filename, data) {
     this->require_prop("course_number", json::value_t::string);
     this->require_prop("admin_hash", json::value_t::string);
     this->require_prop("homeworks", json::value_t::object);
     this->require_prop("labs", json::value_t::object);
     this->require_prop("roster", json::value_t::object);
 
-    for (auto& el : data.items()) {
+    for (auto& el : this->items()) {
         if (el.key() == "homeworks")
             (*this)["homeworks"] = Homeworks(*this);
         else if (el.key() == "labs")
@@ -38,4 +59,16 @@ void CourseConfig::require_prop(string& key, json::value_type type) const {
 
 void CourseConfig::require_prop(string&& key, json::value_type type) const {
     this->require_prop(key, type);
+}
+
+
+MockCourseConfig::MockCourseConfig(initializer_list_t j) : ICourseConfig(j) {
+}
+
+
+void MockCourseConfig::require_prop(string& key, json::value_type type) const {
+}
+
+
+void MockCourseConfig::require_prop(string&& key, json::value_type type) const {
 }

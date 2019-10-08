@@ -1,14 +1,17 @@
 #include "labsessions.hpp"
 
 
-LabSessions::LabSessions(CourseConfig& config) {
-    this->filename = config.filename;
-    this->parse(config[this->key]);
+LabSessions::LabSessions() {
+}
+
+
+LabSessions::LabSessions(ICourseConfig& config) {
+    this->parse(config);
 }
 
 
 string LabSessions::parse_path(const string& child_key) const {
-    return this->filename + '[' + this->key + "][" + child_key + ']';
+    return this->filename + "[\"" + this->key + "\"][\"" + child_key + "\"]";
 }
 
 
@@ -17,7 +20,10 @@ string LabSessions::parse_path(const string&& child_key) const {
 }
 
 
-void LabSessions::parse(json& lab_sessions) {
+void LabSessions::parse(ICourseConfig& config) {
+    this->filename = config.filename;
+
+    json lab_sessions = config[this->key];
     string lab_id;
 
     for (auto& lab : lab_sessions.items()) {

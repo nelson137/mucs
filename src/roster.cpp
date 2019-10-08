@@ -1,14 +1,17 @@
 #include "roster.hpp"
 
 
-Roster::Roster(CourseConfig& config) {
-    this->filename = config.filename;
-    this->parse(config[this->key]);
+Roster::Roster() {
+}
+
+
+Roster::Roster(ICourseConfig& config) {
+    this->parse(config);
 }
 
 
 string Roster::parse_path(const string& child_key) const {
-    return this->filename + '[' + this->key + "][" + child_key + ']';
+    return this->filename + "[\"" + this->key + "\"][\"" + child_key + "\"]";
 }
 
 
@@ -17,7 +20,10 @@ string Roster::parse_path(const string&& child_key) const {
 }
 
 
-void Roster::parse(json& roster) {
+void Roster::parse(ICourseConfig& config) {
+    this->filename = config.filename;
+
+    json roster = config[this->key];
     string user, lab_id;
 
     for (auto& entry : roster.items()) {

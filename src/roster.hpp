@@ -20,11 +20,13 @@ private:
     string key = "roster";
 
 public:
-    Roster(CourseConfig& config);
+    Roster();
+    Roster(ICourseConfig& config);
 
     string parse_path(const string&  child_key) const;
     string parse_path(const string&& child_key) const;
-    void parse(json& roster);
+
+    void parse(ICourseConfig& config);
 
 };
 

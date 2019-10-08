@@ -20,11 +20,13 @@ private:
     string key = "homeworks";
 
 public:
-    Homeworks(CourseConfig& config);
+    Homeworks();
+    Homeworks(ICourseConfig& config);
 
     string parse_path(const string&  child_key) const;
     string parse_path(const string&& child_key) const;
-    void parse(json& homeworks);
+
+    void parse(ICourseConfig& config);
 
 };
 
