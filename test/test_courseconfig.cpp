@@ -15,29 +15,26 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     string rs = rand_string();
 
     SECTION("has no course_number", "[courseconfig][course_number]") {
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(missing_prop("course_number", "string"))
+            missing_prop("course_number", "string")
         );
     }
 
     SECTION("has a course_number with incorrect type",
             "[courseconfig][course_number]") {
         data["course_number"] = ri;
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(incorrect_type("course_number", "string"))
+            incorrect_type("course_number", "string")
         );
     }
 
     SECTION("has no admin_hash", "[courseconfig][admin_hash]") {
         data["course_number"] = rs;
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(missing_prop("admin_hash", "string"))
+            missing_prop("admin_hash", "string")
         );
     }
 
@@ -45,20 +42,18 @@ TEST_CASE("courseconfig", "[courseconfig]") {
             "[courseconfig][admin_hash]") {
         data["course_number"] = rs;
         data["admin_hash"] = ri;
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(incorrect_type("admin_hash", "string"))
+            incorrect_type("admin_hash", "string")
         );
     }
 
     SECTION("has no homeworks", "[courseconfig][homeworks]") {
         data["course_number"] = rs;
         data["admin_hash"] = rs;
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(missing_prop("homeworks", "object"))
+            missing_prop("homeworks", "object")
         );
     }
 
@@ -67,10 +62,9 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["course_number"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = ri;
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(incorrect_type("homeworks", "object"))
+            incorrect_type("homeworks", "object")
         );
     }
 
@@ -78,10 +72,9 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["course_number"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(missing_prop("labs", "object"))
+            missing_prop("labs", "object")
         );
     }
 
@@ -90,10 +83,9 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
         data["labs"] = ri;
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(incorrect_type("labs", "object"))
+            incorrect_type("labs", "object")
         );
     }
 
@@ -102,10 +94,9 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
         data["labs"] = json({});
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(missing_prop("roster", "object"))
+            missing_prop("roster", "object")
         );
     }
 
@@ -115,10 +106,9 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["homeworks"] = json({});
         data["labs"] = json({});
         data["roster"] = ri;
-        REQUIRE_THROWS_MATCHES(
+        REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            mucs_exception,
-            Equals(incorrect_type("roster", "object"))
+            incorrect_type("roster", "object")
         );
     }
 
@@ -130,6 +120,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["roster"] = json({});
         try {
             CourseConfig(fn, data);
+            SUCCEED("Successfully created CourseConfig object");
         } catch (mucs_exception& me) {
             FAIL(me.what());
         }

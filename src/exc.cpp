@@ -7,7 +7,7 @@ const char *mucs_exception::what() const noexcept {
 
 
 mucs_exception::operator string() const {
-    return (this->message);
+    return this->message;
 }
 
 

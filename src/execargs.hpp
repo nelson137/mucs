@@ -2,6 +2,7 @@
 #define EXECARGS_HPP
 
 
+#include <ostream>
 #include <string>
 #include <vector>
 

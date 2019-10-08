@@ -8,12 +8,10 @@
 
 #include "test_util.hpp"
 
-// System under test
 #include "../src/configs.hpp"
 #include "../src/exc.hpp"
 
 using namespace std;
-using Catch::Matchers::Equals;
 
 
 #endif

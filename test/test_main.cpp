@@ -1,6 +1,6 @@
 #include "test_main.hpp"
 
 
-int main(int argc, char *argv[]) {
-    return Catch::Session().run(argc, argv);
+TEST_CASE("mucs has tests", "[mucs]") {
+    SUCCEED("mucs has tests");
 }
