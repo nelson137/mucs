@@ -1,5 +1,5 @@
-#ifndef EXC_HPP
-#define EXC_HPP
+#ifndef MUCS_EXCEPT_HPP
+#define MUCS_EXCEPT_HPP
 
 
 #include <ostream>

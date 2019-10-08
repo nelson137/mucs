@@ -8,12 +8,13 @@
 #include "json.hpp"
 
 class ICourseConfig;
-#include "exc.hpp"
 #include "homeworks.hpp"
 #include "labsessions.hpp"
 #include "roster.hpp"
 
-#include "../test/test_util.hpp"
+#include "mucs/except.hpp"
+#include "mucs/random.hpp"
+#include "mucs/util.hpp"
 
 using namespace std;
 using json = nlohmann::json;

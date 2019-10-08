@@ -14,7 +14,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "exc.hpp"
+#include "mucs/except.hpp"
+
 #include "execargs.hpp"
 
 using namespace std;

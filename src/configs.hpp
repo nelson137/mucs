@@ -7,8 +7,9 @@
 
 #include "json.hpp"
 
+#include "mucs/except.hpp"
+
 #include "courseconfig.hpp"
-#include "exc.hpp"
 #include "util.hpp"
 
 using namespace std;

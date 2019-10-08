@@ -7,8 +7,6 @@
 
 #include "CLI11.hpp"
 
-#include "util.hpp"
-
 using namespace std;
 
 

@@ -6,10 +6,11 @@
 
 #include "catch.hpp"
 
+#include "mucs/except.hpp"
+
 #include "test_util.hpp"
 
 #include "../src/configs.hpp"
-#include "../src/exc.hpp"
 
 using namespace std;
 

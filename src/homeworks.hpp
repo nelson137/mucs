@@ -6,8 +6,9 @@
 
 #include "json.hpp"
 
+#include "mucs/except.hpp"
+
 #include "courseconfig.hpp"
-#include "exc.hpp"
 
 using namespace std;
 using json = nlohmann::json;

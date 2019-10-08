@@ -18,7 +18,9 @@ TEST_OBJS   := $(call get_obj_names,$(TEST_SRCS))
 SCRIPTS     := $(wildcard bin/mucs-*)
 
 INSTALL     := /usr/bin/install -g cs1050-ta
-GPP_BASE    := /usr/bin/g++ -std=c++11 -Wall -Werror -I./include
+LIBMUCS     := libmucs
+LIBS        := -I$(LIBMUCS)/include -L$(LIBMUCS)/build -lmucs
+GPP_BASE    := /usr/bin/g++ -std=c++11 -Wall -Werror -Iinclude
 ifeq ("$(shell which gccfilter)","")
 GPP         := $(GPP_BASE)
 else
@@ -26,19 +28,22 @@ GPP         := gccfilter -c -n -a $(GPP_BASE)
 endif
 
 
-.PHONY: test install clean build_dirs all_dirs
+.PHONY: test libmucs install clean build_dirs all_dirs
 
-test: $(TEST_OBJS)
-	$(GPP) $(TEST_OBJS) -o runtests
+test: $(TEST_OBJS) | libmucs
+	$(GPP) $(TEST_OBJS) $(LIBS) -o runtests
 
-install: $(OBJS) | all_dirs
+libmucs:
+	cd $(LIBMUCS) && $(MAKE)
+
+install: $(OBJS) | all_dirs libmucs
 	@[ -d "$(DEST)" ] || { echo "Destination does not exist: $(DEST)"; false; }
 	# Create directory structure
 	cd "$(DEST)" && \
 		$(INSTALL) -d -m 775 bin config.d && \
 		$(INSTALL) -d -m 770 submissions
 	# Install C++ files
-	$(GPP) $(OBJS) -o "$(DEST_BIN)/$(TARGET)"
+	$(GPP) $(OBJS) $(LIBS) -o "$(DEST_BIN)/$(TARGET)"
 	chown nwewnh:cs1050-ta "$(TARGET)"
 	chmod u+s "$(TARGET)"
 	# Install scripts
@@ -46,9 +51,10 @@ install: $(OBJS) | all_dirs
 
 clean:
 	@rm -rf $(OBJ_D) runtests cpp
+	@cd $(LIBMUCS) && make clean
 
 $(OBJ_D)/%.o: %.cpp | build_dirs
-	$(GPP) -c $< -o $@
+	$(GPP) -c $< $(LIBS) -o $@
 
 build_dirs:
 	@mkdir -p "$(OBJ_D)/$(SRC_D)"
