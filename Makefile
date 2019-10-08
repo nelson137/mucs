@@ -50,8 +50,8 @@ install: $(OBJS) | all_dirs libmucs
 	$(INSTALL) -C -m 770 $(SCRIPTS) -t "$(DEST_BIN)"
 
 clean:
-	@rm -rf $(OBJ_D) runtests cpp
-	@cd $(LIBMUCS) && make clean
+	rm -rf $(OBJ_D) runtests cpp
+	cd $(LIBMUCS) && make clean
 
 $(OBJ_D)/%.o: %.cpp | build_dirs
 	$(GPP) -c $< $(LIBS) -o $@
