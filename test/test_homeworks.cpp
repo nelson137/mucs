@@ -2,6 +2,7 @@
 
 
 TEST_CASE("entry", "[homeworks]") {
+
     int ri = rand_int(9);
     MockCourseConfig mock_config = {
         {"course_number", ri},
@@ -24,10 +25,11 @@ TEST_CASE("entry", "[homeworks]") {
         string key = "hw1";
         mock_config["homeworks"] = { {key, ""} };
         try {
-            Homeworks h(mock_config);
+            Homeworks(mock_config);
             SUCCEED("Successfully created Homeworks object");
         } catch (mucs_exception& me) {
             FAIL(me.what());
         }
     }
+
 }

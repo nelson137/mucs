@@ -1,6 +1,10 @@
 #include "homeworks.hpp"
 
 
+Homeworks::Homeworks() {
+}
+
+
 Homeworks::Homeworks(ICourseConfig& config) {
     this->parse(config);
 }

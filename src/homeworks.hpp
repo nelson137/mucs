@@ -21,6 +21,7 @@ private:
     string key = "homeworks";
 
 public:
+    Homeworks();
     Homeworks(ICourseConfig& config);
 
     string parse_path(const string& child_key) const;
