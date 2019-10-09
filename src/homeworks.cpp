@@ -11,11 +11,6 @@ string Homeworks::parse_path(const string& child_key) const {
 }
 
 
-string Homeworks::parse_path(const string&& child_key) const {
-    return this->parse_path(child_key);
-}
-
-
 void Homeworks::parse(ICourseConfig& config) {
     this->filename = config.filename;
 

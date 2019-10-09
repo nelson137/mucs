@@ -24,8 +24,7 @@ public:
     Roster();
     Roster(ICourseConfig& config);
 
-    string parse_path(const string&  child_key) const;
-    string parse_path(const string&& child_key) const;
+    string parse_path(const string& child_key) const;
 
     void parse(ICourseConfig& config);
 

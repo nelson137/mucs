@@ -15,11 +15,6 @@ string LabSessions::parse_path(const string& child_key) const {
 }
 
 
-string LabSessions::parse_path(const string&& child_key) const {
-    return this->parse_path(child_key);
-}
-
-
 void LabSessions::parse(ICourseConfig& config) {
     this->filename = config.filename;
 
