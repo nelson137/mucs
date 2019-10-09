@@ -1,7 +1,7 @@
 #include "test_homeworks.hpp"
 
 
-TEST_CASE("entry", "[homeworks]") {
+TEST_CASE("homework entry", "[homeworks]") {
 
     int ri = rand_int(9);
     MockCourseConfig mock_config = {
@@ -11,7 +11,7 @@ TEST_CASE("entry", "[homeworks]") {
         {"roster", {}}
     };
 
-    SECTION("has invalid type", "[homeworks][entry]") {
+    SECTION("type is invalid", "[homeworks][entry]") {
         string key = "hw1";
         mock_config["homeworks"] = { {key, ri} };
         REQUIRE_THROWS_WITH(
@@ -21,7 +21,7 @@ TEST_CASE("entry", "[homeworks]") {
         );
     }
 
-    SECTION("has valid type", "[homeworks][entry]") {
+    SECTION("type is valid", "[homeworks][entry]") {
         string key = "hw1";
         mock_config["homeworks"] = { {key, ""} };
         try {
