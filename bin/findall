@@ -2,7 +2,7 @@
 
 USAGE='Usage: findall [ target... ] GREP_PATTERN'
 
-BIN="$( cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd )"
+BIN="$( dirname "${BASH_SOURCE[0]}" )"
 PROJ="$(dirname "$BIN")"
 
 EXCLUDES=( bin examples include )
@@ -46,9 +46,10 @@ unset "targets[$last]"
 
 # No targets given
 # Default to source and test directories for C++ and Python
-(( ${#targets[@]} == 0 )) && targets=( src test py py-test )
+(( ${#targets[@]} == 0 )) &&
+    targets=( src test py py-test libmucs/include/mucs libmucs/src)
 
 # Execute `grep -R PATTERN` in each target directory
 for t in "${targets[@]}"; do
-    cd "$PROJ/$t" && /bin/grep -nEIR --color=auto $EXCLUDES "$pattern"
+    /bin/grep -nEIR --color=auto $EXCLUDES "$pattern" "$PROJ/$t"
 done
