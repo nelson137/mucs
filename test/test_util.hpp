@@ -11,7 +11,6 @@
 
 #include <sys/stat.h>
 
-#include "mucs/util.hpp"
 #include "mucs/except.hpp"
 
 using namespace std;
@@ -20,14 +19,20 @@ using namespace std;
 class temp_file {
 
 public:
+    int fd;
     string name;
 
     temp_file();
-    temp_file(string name);
+    temp_file(const string& dir);
+    temp_file(const string& dir, const string& name);
     ~temp_file() noexcept(false);
 
     void write(string&  data);
     void write(string&& data);
+
+    operator string();
+
+    friend ostream& operator<<(ostream& os, const temp_file& tf);
 
 };
 
@@ -38,7 +43,13 @@ public:
     string name;
 
     temp_dir();
+    temp_dir(const string& dir);
+    temp_dir(const string& dir, const string& name);
     ~temp_dir() noexcept(false);
+
+    operator string();
+
+    friend ostream& operator<<(ostream& os, const temp_dir& td);
 
 };
 

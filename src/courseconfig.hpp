@@ -14,7 +14,6 @@ class ICourseConfig;
 
 #include "mucs/except.hpp"
 #include "mucs/random.hpp"
-#include "mucs/util.hpp"
 
 using namespace std;
 using json = nlohmann::json;

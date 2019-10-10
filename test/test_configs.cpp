@@ -30,7 +30,7 @@ TEST_CASE("config directory", "[configs]") {
     }
 
     SECTION("has 1 file") {
-        temp_file tf{td.name + "/config.json"};
+        temp_file tf{td.name, "config.json"};
 
         SECTION("with invalid json") {
             REQUIRE_THROWS_WITH(
