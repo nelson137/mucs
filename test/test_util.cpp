@@ -40,7 +40,9 @@ temp_file::~temp_file() noexcept(false) {
 
 
 void temp_file::write(string& data) {
-    ofstream(this->name) << data;
+    ofstream fs(this->name);
+    fs << data;
+    fs.close();
 }
 
 
