@@ -28,8 +28,6 @@ GPP         := gccfilter -c -n -a $(GPP_BASE)
 endif
 
 
--include $(OBJS:.o=.d)
-
 .PHONY: $(TARGET) cpp libmucs test install clean build_dirs all_dirs
 
 cpp: | libmucs $(TARGET)
@@ -68,3 +66,5 @@ build_dirs:
 
 all_dirs: | build_dirs
 	@mkdir -p "$(DEST_BIN)"
+
+-include $(OBJS:.o=.d)

@@ -14,10 +14,8 @@ GPP      := gccfilter -c -n -a $(GPP_BASE)
 endif
 
 
--include $(OBJS:.o=.d)
-
-$(BUILD)/$(TARGET): $(OBJS)
-	ar -r $@ $^
+main: $(OBJS)
+	ar -r $(BUILD)/$(TARGET) $^
 
 clean:
 	rm -rf $(BUILD)
@@ -27,3 +25,5 @@ $(BUILD)/%.o: $(SRC_D)/%.cpp | build_dir
 
 build_dir:
 	@mkdir -p $(BUILD)
+
+-include $(OBJS:.o=.d)
