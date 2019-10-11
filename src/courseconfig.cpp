@@ -1,30 +1,13 @@
 #include "courseconfig.hpp"
 
 
-ICourseConfig::ICourseConfig() {
-    this->rand_filename();
+ICourseConfig::ICourseConfig(json data) : json(data) {
 }
 
 
-ICourseConfig::ICourseConfig(initializer_list_t j) : json(j) {
-    this->rand_filename();
-}
-
-
-ICourseConfig::ICourseConfig(string filename, json data) : json(data) {
+CourseConfig::CourseConfig(string filename, json data) : ICourseConfig(data) {
     this->filename = filename;
-}
 
-
-void ICourseConfig::rand_filename() {
-    this->filename = "/tmp/mock_course_config." + rand_string();
-}
-
-
-CourseConfig::CourseConfig(
-    string filename,
-    json data
-) : ICourseConfig(filename, data) {
     this->require_prop("course_number", json::value_t::string);
     this->require_prop("admin_hash", json::value_t::string);
     this->require_prop("homeworks", json::value_t::object);
@@ -63,6 +46,7 @@ void CourseConfig::require_prop(string&& key, json::value_type type) const {
 
 
 MockCourseConfig::MockCourseConfig(initializer_list_t j) : ICourseConfig(j) {
+    this->filename = "/tmp/mock_course_config." + rand_string();
 }
 
 

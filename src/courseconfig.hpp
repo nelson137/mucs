@@ -24,14 +24,11 @@ class ICourseConfig : public json {
 public:
     string filename;
 
-    ICourseConfig();
-    ICourseConfig(string filename, json data);
-    ICourseConfig(initializer_list_t j);
-
-    void rand_filename();
+    ICourseConfig(json data);
 
     virtual void require_prop(string&  key, json::value_type type) const = 0;
     virtual void require_prop(string&& key, json::value_type type) const = 0;
+
 };
 
 
