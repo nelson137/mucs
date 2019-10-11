@@ -182,6 +182,10 @@ class Roster(dict):
                         reason=self.parse_obj % pawprint)
                 self[pawprint].append(lab_letter)
 
+    def pretty_grid(self):
+        for pawprint, lab_list in self.items():
+            yield (pawprint, ','.join(lab_list))
+
 
 class CourseConfig(dict):
     def __init__(self, fn, data):
@@ -218,13 +222,22 @@ class CourseConfig(dict):
             reason=self['course_number'])
 
     def get_current_lab(self):
-        letter = self['roster'][USER]
-        sesh = self['labs'][letter]
-        if not sesh._is_active():
-            weekday, start, end = sesh._get_pretty()
-            raise MucsError(
-                'Lab %s is not in session' % letter,
-                reason='%s from %s to %s' % (weekday, start, end))
+        lab_letters = self['roster'][USER]
+
+        if len(lab_letters) == 1:
+            letter = lab_letters[0]
+            sesh = self['labs'][letter]
+            if not sesh._is_active():
+                weekday, start, end = sesh._get_pretty()
+                raise MucsError(
+                    'Lab %s is not in session' % letter,
+                    reason='%s from %s to %s' % (weekday, start, end))
+        else:  # len(roster) > 1
+            def sesh_is_active(l): return self['labs'][l]._is_active()
+            active_labs = (sesh_is_active(letter) for letter in lab_letters)
+            if not any(active_labs):
+                raise MucsError(
+                    'None of your labs are in session', reason=','.join(lab_letters))
 
         current_lab = self['current_lab']
         if current_lab is None:

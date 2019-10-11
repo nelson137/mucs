@@ -45,10 +45,14 @@ def admin_dump(ns, config):
         ns.dump_flags = DumpFlags.all_flags()
 
     if ns.dump_flags & DumpFlags.current:
+        try:
+            current_hw = config.get_current_hw()
+        except MucsError:
+            current_hw = None
         with Printer():
             print(W_BOLD('Current Assignments:'))
             print_table([
-                ('hw:', config.get_current_hw()),
+                ('hw:', current_hw),
                 ('lab:', config.get_current_lab())
             ])
 
@@ -66,7 +70,7 @@ def admin_dump(ns, config):
     if ns.dump_flags & DumpFlags.roster:
         with Printer():
             print(W_BOLD('Roster:'))
-            print_table(sorted(config['roster'].items()))
+            print_table(sorted(config['roster'].pretty_grid()))
 
 
 def admin_update_password(ns, config):
@@ -142,7 +146,7 @@ def submit(ns, configs):
             if user_in.lower() != 'y':
                 die(0, '\nSubmission cancelled')
 
-    sw = SubmitWrapper(ns.course, cfg['roster'][USER], assignment)
+    sw = SubmitWrapper(ns.course, cfg['roster'][USER][0], assignment)
     ret = sw.submit(ns.sources)
 
     if ret.returncode == 0:
