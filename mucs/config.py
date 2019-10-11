@@ -171,6 +171,11 @@ class Roster(dict):
                     'Roster entries must be of type string',
                     reason=self.parse_obj % pawprint)
 
+            if not lab_list:
+                raise MucsError(
+                    'Roster entries cannot be empty',
+                    reason=self.parse_obj % pawprint)
+
             pawprint = pawprint.lower()
             self[pawprint] = list()
 
