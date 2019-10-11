@@ -165,20 +165,22 @@ class Roster(dict):
         self.parse(config[self.key])
 
     def parse(self, roster):
-        for pawprint, letter in roster.items():
-            if not isinstance(letter, str):
+        for pawprint, lab_list in roster.items():
+            if not isinstance(lab_list, str):
                 raise MucsError(
                     'Roster entries must be of type string',
                     reason=self.parse_obj % pawprint)
 
-            letter = letter.upper()
+            pawprint = pawprint.lower()
+            self[pawprint] = list()
 
-            if letter not in self.session_letters:
-                raise MucsError(
-                    'Lab session letter not recognized',
-                    reason=self.parse_obj % pawprint)
-
-            self[pawprint.lower()] = letter.upper()
+            for lab_letter in lab_list.split(','):
+                lab_letter = lab_letter.upper()
+                if lab_letter not in self.session_letters:
+                    raise MucsError(
+                        "Lab session letter '%s' not recognized" % lab_letter,
+                        reason=self.parse_obj % pawprint)
+                self[pawprint].append(lab_letter)
 
 
 class CourseConfig(dict):
