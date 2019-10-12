@@ -27,9 +27,9 @@ void LabSessions::parse(ICourseConfig& config) {
                 "Lab entries must be of type string: " +
                 this->parse_path(lab.key()));
 
-        // Normalize lab ids (lowercase)
+        // Normalize lab ids (uppercase)
         lab_id = lab.key();
-        transform(lab_id.begin(), lab_id.end(), lab_id.begin(), ::tolower);
+        transform(lab_id.begin(), lab_id.end(), lab_id.begin(), ::toupper);
 
         (*this)[lab_id] = lab.value();
     }
