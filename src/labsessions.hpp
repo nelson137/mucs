@@ -21,6 +21,8 @@ private:
     string key = "labs";
 
 public:
+    vector<string> all_letters;
+
     LabSessions();
     LabSessions(ICourseConfig& config);
 

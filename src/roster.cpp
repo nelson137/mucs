@@ -5,7 +5,8 @@ Roster::Roster() {
 }
 
 
-Roster::Roster(ICourseConfig& config) {
+Roster::Roster(ICourseConfig& config, vector<string> letters)
+: lab_letters(letters) {
     this->parse(config);
 }
 
@@ -32,6 +33,13 @@ void Roster::parse(ICourseConfig& config) {
         transform(user.begin(), user.end(), user.begin(), ::tolower);
         lab_id = entry.value().get<string>();
         transform(lab_id.begin(), lab_id.end(), lab_id.begin(), ::toupper);
+
+        auto begin = this->lab_letters.begin();
+        auto end = this->lab_letters.end();
+        if (::find(begin, end, lab_id) == end)
+            throw mucs_exception(
+                "Lab session letter not '" + lab_id + "' recognized: " +
+                this->parse_path(user));
 
         (*this)[user] = lab_id;
     }

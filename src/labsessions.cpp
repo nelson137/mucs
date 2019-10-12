@@ -32,5 +32,6 @@ void LabSessions::parse(ICourseConfig& config) {
         transform(lab_id.begin(), lab_id.end(), lab_id.begin(), ::toupper);
 
         (*this)[lab_id] = lab.value();
+        this->all_letters.push_back(lab_id);
     }
 }

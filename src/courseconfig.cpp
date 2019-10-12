@@ -14,14 +14,10 @@ CourseConfig::CourseConfig(string filename, json data) : ICourseConfig(data) {
     this->require_prop("labs", json::value_t::object);
     this->require_prop("roster", json::value_t::object);
 
-    for (auto& el : this->items()) {
-        if (el.key() == "homeworks")
-            (*this)["homeworks"] = Homeworks(*this);
-        else if (el.key() == "labs")
-            (*this)["labs"] = LabSessions(*this);
-        else if (el.key() == "roster")
-            (*this)["roster"] = Roster(*this);
-    }
+    LabSessions lab_sessions;
+    (*this)["homeworks"] = Homeworks(*this);
+    (*this)["labs"] = lab_sessions = LabSessions(*this);
+    (*this)["roster"] = Roster(*this, lab_sessions.all_letters);
 }
 
 

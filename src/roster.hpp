@@ -2,7 +2,9 @@
 #define ROSTER_HPP
 
 
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include "json.hpp"
 
@@ -19,10 +21,11 @@ class Roster : public json {
 private:
     string filename;
     string key = "roster";
+    vector<string> lab_letters;
 
 public:
     Roster();
-    Roster(ICourseConfig& config);
+    Roster(ICourseConfig& config, vector<string> letters);
 
     string parse_path(const string& child_key) const;
 
