@@ -14,11 +14,14 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "json.hpp"
+
 #include "mucs/except.hpp"
 
 #include "execargs.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 
 void die(string);
@@ -37,6 +40,8 @@ bool path_is_file(string path);
 tuple<string, string> path_split_ext(string path);
 
 void rmdir(string&);
+
+json::array_t json_string_split(const string& s, const string& delim = ",");
 
 void verify_dir_exists(string&);
 

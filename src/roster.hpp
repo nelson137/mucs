@@ -11,6 +11,7 @@
 #include "mucs/except.hpp"
 
 #include "courseconfig.hpp"
+#include "util.hpp"
 
 using namespace std;
 using json = nlohmann::json;
@@ -30,6 +31,8 @@ public:
     string parse_path(const string& child_key) const;
 
     void parse(ICourseConfig& config);
+
+    bool is_valid_lab_id(const string& id);
 
 };
 

@@ -96,6 +96,22 @@ void rmdir(string& path) {
 }
 
 
+json::array_t json_string_split(const string& s, const string& delim) {
+    json::array_t tokens;
+    size_t pos = 0;
+    size_t last = 0;
+    size_t delim_size = delim.size();
+
+    while ((pos = s.find(delim, last)) != string::npos) {
+        tokens.push_back(s.substr(last, pos-last));
+        last = pos + delim_size;
+    }
+    tokens.push_back(s.substr(last));
+
+    return tokens;
+}
+
+
 void verify_dir_exists(string& dirpath) {
     struct stat s;
     if (stat(dirpath.c_str(), &s) == 0) {
