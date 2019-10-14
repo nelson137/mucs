@@ -75,6 +75,12 @@ void make_path(string base, T... comps) {
 }
 
 
+template<typename T>
+bool vector_contains(const vector<T>& vec, const T& val) {
+    return ::find(vec.begin(), vec.end(), val) != vec.end();
+}
+
+
 template<typename... T>
 void verify_paths(string comp1, T... ts) {
     vector<string> paths = { comp1, ts... };

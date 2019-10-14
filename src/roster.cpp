@@ -39,18 +39,11 @@ void Roster::parse(ICourseConfig& config) {
             id = id_orig = j_id.get<string>();
             // Normalize lab ids (uppercase)
             transform(id.begin(), id.end(), id.begin(), ::toupper);
-            if (not this->is_valid_lab_id(id))
+            if (not vector_contains(this->lab_ids, id))
                 throw mucs_exception(
                     "Lab id '" + id_orig + "' not recognized: " +
                     this->parse_path(user_orig));
             (*this)[user].push_back(id);
         }
     }
-}
-
-
-bool Roster::is_valid_lab_id(const string& id) {
-    auto ll_begin = this->lab_ids.begin();
-    auto ll_end = this->lab_ids.end();
-    return ::find(ll_begin, ll_end, id) != ll_end;
 }

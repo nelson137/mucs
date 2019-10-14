@@ -32,8 +32,6 @@ public:
 
     void parse(ICourseConfig& config);
 
-    bool is_valid_lab_id(const string& id);
-
 };
 
 
