@@ -242,7 +242,8 @@ class CourseConfig(dict):
             active_labs = (sesh_is_active(letter) for letter in lab_letters)
             if not any(active_labs):
                 raise MucsError(
-                    'None of your labs are in session', reason=','.join(lab_letters))
+                    'None of your labs are in session',
+                    reason=','.join(lab_letters))
 
         current_lab = self['current_lab']
         if current_lab is None:
