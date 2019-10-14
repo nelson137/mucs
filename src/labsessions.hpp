@@ -21,7 +21,7 @@ private:
     string key = "labs";
 
 public:
-    vector<string> all_letters;
+    vector<string> all_ids;
 
     LabSessions();
     LabSessions(ICourseConfig& config);

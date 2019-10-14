@@ -17,7 +17,7 @@ CourseConfig::CourseConfig(string filename, json data) : ICourseConfig(data) {
     LabSessions lab_sessions;
     (*this)["homeworks"] = Homeworks(*this);
     (*this)["labs"] = lab_sessions = LabSessions(*this);
-    (*this)["roster"] = Roster(*this, lab_sessions.all_letters);
+    (*this)["roster"] = Roster(*this, lab_sessions.all_ids);
 }
 
 

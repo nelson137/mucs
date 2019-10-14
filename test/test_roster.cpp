@@ -13,28 +13,28 @@ TEST_CASE("roster entry", "[roster]") {
         {"homeworks", {}},
         {"labs", { {good_id, ""} }},
     };
-    vector<string> lab_letters = { good_id };
+    vector<string> lab_ids = { good_id };
 
     SECTION("type is invalid", "[roster][entry]") {
         mock_config["roster"] = { {user, rand_int(9)} };
         REQUIRE_THROWS_WITH(
-            Roster(mock_config, lab_letters),
+            Roster(mock_config, lab_ids),
             "Roster entries must be of type string: " +
                 mock_config.filename + "[\"roster\"][\"" + user + "\"]"
         );
     }
 
     auto error_id_unrecognized = [&mock_config,&user](string id) {
-        return "Lab session letter '" + id + "' not recognized: " +
+        return "Lab id '" + id + "' not recognized: " +
             mock_config.filename + "[\"roster\"][\"" + user + "\"]";
     };
 
-    SECTION("has one lab letter", "[roster][entry]") {
+    SECTION("has one lab id", "[roster][entry]") {
         SECTION("that is unrecognized", "[roster][entry]") {
             string bad_id = good_id + "_";
             mock_config["roster"] = { {user, bad_id} };
             REQUIRE_THROWS_WITH(
-                Roster(mock_config, lab_letters),
+                Roster(mock_config, lab_ids),
                 error_id_unrecognized(bad_id)
             );
         }
@@ -42,7 +42,7 @@ TEST_CASE("roster entry", "[roster]") {
         SECTION("that is recognized", "[roster][entry]") {
             mock_config["roster"] = { {user, good_id} };
             try {
-                Roster(mock_config, lab_letters);
+                Roster(mock_config, lab_ids);
                 SUCCEED("Successfully created Roster object");
             } catch (mucs_exception& me) {
                 FAIL(me.what());
@@ -50,13 +50,13 @@ TEST_CASE("roster entry", "[roster]") {
         }
     }
 
-    SECTION("has multiple lab letters", "[roster][entry]") {
+    SECTION("has multiple lab ids", "[roster][entry]") {
         SECTION("one unrecognized", "[roster][entry]") {
             string bad_id = good_id + "_";
             string all_ids = good_id + "," + bad_id;
             mock_config["roster"] = { {user, all_ids} };
             REQUIRE_THROWS_WITH(
-                Roster(mock_config, lab_letters),
+                Roster(mock_config, lab_ids),
                 error_id_unrecognized(bad_id)
             );
         }
@@ -65,7 +65,7 @@ TEST_CASE("roster entry", "[roster]") {
             string all_ids = good_id + "," + good_id;
             mock_config["roster"] = { {user, all_ids} };
             try {
-                Roster(mock_config, lab_letters);
+                Roster(mock_config, lab_ids);
                 SUCCEED("successfully created Roster object");
             } catch (mucs_exception& me) {
                 FAIL(me.what());

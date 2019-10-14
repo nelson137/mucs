@@ -22,11 +22,11 @@ class Roster : public json {
 private:
     string filename;
     string key = "roster";
-    vector<string> lab_letters;
+    vector<string> lab_ids;
 
 public:
     Roster();
-    Roster(ICourseConfig& config, vector<string> letters);
+    Roster(ICourseConfig& config, vector<string> ids);
 
     string parse_path(const string& child_key) const;
 

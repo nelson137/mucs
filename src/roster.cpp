@@ -5,8 +5,7 @@ Roster::Roster() {
 }
 
 
-Roster::Roster(ICourseConfig& config, vector<string> letters)
-: lab_letters(letters) {
+Roster::Roster(ICourseConfig& config, vector<string> ids) : lab_ids(ids) {
     this->parse(config);
 }
 
@@ -42,7 +41,7 @@ void Roster::parse(ICourseConfig& config) {
             transform(id.begin(), id.end(), id.begin(), ::toupper);
             if (not this->is_valid_lab_id(id))
                 throw mucs_exception(
-                    "Lab session letter '" + id_orig + "' not recognized: " +
+                    "Lab id '" + id_orig + "' not recognized: " +
                     this->parse_path(user_orig));
             (*this)[user].push_back(id);
         }
@@ -51,7 +50,7 @@ void Roster::parse(ICourseConfig& config) {
 
 
 bool Roster::is_valid_lab_id(const string& id) {
-    auto ll_begin = this->lab_letters.begin();
-    auto ll_end = this->lab_letters.end();
+    auto ll_begin = this->lab_ids.begin();
+    auto ll_end = this->lab_ids.end();
     return ::find(ll_begin, ll_end, id) != ll_end;
 }
