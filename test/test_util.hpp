@@ -27,12 +27,11 @@ public:
     temp_file(const string& dir, const string& name);
     ~temp_file() noexcept(false);
 
-    void write(string&  data);
-    void write(string&& data);
+    void write(const string& data);
 
     operator string();
 
-    friend ostream& operator<<(ostream& os, const temp_file& tf);
+    friend temp_file& operator<<(temp_file& tf, const string& data);
 
 };
 

@@ -39,15 +39,10 @@ temp_file::~temp_file() noexcept(false) {
 }
 
 
-void temp_file::write(string& data) {
+void temp_file::write(const string& data) {
     ofstream fs(this->name);
     fs << data;
     fs.close();
-}
-
-
-void temp_file::write(string&& data) {
-    return this->write(data);
 }
 
 
@@ -56,9 +51,9 @@ temp_file::operator string() {
 }
 
 
-ostream& operator<<(ostream& os, const temp_file& tf) {
-    os << tf.name;
-    return os;
+temp_file& operator<<(temp_file& tf, const string& data) {
+    tf.write(data);
+    return tf;
 }
 
 

@@ -20,6 +20,7 @@ TEST_CASE("config directory exists but isn't directory", "[configs]") {
 
 
 TEST_CASE("config directory", "[configs]") {
+
     temp_dir td{};
 
     SECTION("has no files") {
@@ -30,7 +31,7 @@ TEST_CASE("config directory", "[configs]") {
     }
 
     SECTION("has 1 file") {
-        temp_file tf{td.name, "config.json"};
+        temp_file tf(td.name, "config.json");
 
         SECTION("with invalid json") {
             REQUIRE_THROWS_WITH(
@@ -40,21 +41,15 @@ TEST_CASE("config directory", "[configs]") {
         }
 
         SECTION("with valid json") {
-            tf.write(
-                "{"
-                    "\"course_number\":\"1050\","
-                    "\"admin_hash\":\"!\","
-                    "\"homeworks\":{"
-                        "\"hw1\":\"\""
-                    "},"
-                    "\"labs\":{"
-                        "\"x\":\"\""
-                    "},"
-                    "\"roster\":{"
-                        "\"nelson\":\"x\""
-                    "}"
-                "}\n"
-            );
+            json config = {
+                {"course_number", "1050"},
+                {"admin_hash", "!"},
+                {"homeworks", json::object()},
+                {"labs", json::object()},
+                {"roster", json::object()}
+            };
+            tf << config.dump();
+
             try{
                 Configs(td.name);
                 SUCCEED("Sucessfully created Configs object");
@@ -63,4 +58,5 @@ TEST_CASE("config directory", "[configs]") {
             }
         }
     }
+
 }

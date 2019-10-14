@@ -2,6 +2,7 @@
 
 
 TEST_CASE("courseconfig", "[courseconfig]") {
+
     string fn = rand_string();
     json data;
 
@@ -125,4 +126,5 @@ TEST_CASE("courseconfig", "[courseconfig]") {
             FAIL(me.what());
         }
     }
+
 }
