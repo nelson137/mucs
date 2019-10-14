@@ -36,7 +36,9 @@ libmucs:
 	cd $(LIBMUCS) && $(MAKE)
 
 test: $(TEST_OBJS) | libmucs
-	$(GPP) $(TEST_OBJS) $(LIBS) -o runtests
+	@echo -n "$^ -> "
+	@$(GPP) $^ $(LIBS) -o runtests
+	@echo "runtests"
 
 install: $(OBJS) | all_dirs cpp
 	@[ -d "$(DEST)" ] || { echo "Destination does not exist: $(DEST)"; false; }
@@ -55,10 +57,14 @@ clean:
 	cd $(LIBMUCS) && make clean
 
 $(TARGET): $(OBJS) | libmucs
-	$(GPP) $^ $(LIBS) -o $@
+	@echo -n "$^ -> "
+	@$(GPP) $^ $(LIBS) -o $@
+	@echo "$@"
 
 $(OBJ_D)/%.o: %.cpp | build_dirs
-	$(GPP) -c $< $(LIBS) -o $@
+	@echo -n "$^ -> "
+	@$(GPP) -c $< $(LIBS) -o $@
+	@echo "$@"
 
 build_dirs:
 	@mkdir -p "$(OBJ_D)/$(SRC_D)"

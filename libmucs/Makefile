@@ -14,14 +14,18 @@ GPP      := gccfilter -c -n -a $(GPP_BASE)
 endif
 
 
-main: $(OBJS)
-	ar -r $(BUILD)/$(TARGET) $^
+main: $(BUILD)/$(TARGET)
 
 clean:
 	rm -rf $(BUILD)
 
+$(BUILD)/$(TARGET): $(OBJS)
+	@ar rv $@ $^
+
 $(BUILD)/%.o: $(SRC_D)/%.cpp | build_dir
-	$(GPP) -c $< -o $@
+	@echo -n "$< -> "
+	@$(GPP) -c $< -o $@
+	@echo "$@"
 
 build_dir:
 	@mkdir -p $(BUILD)
