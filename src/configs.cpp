@@ -36,6 +36,6 @@ void Configs::read_config(string& path) {
     }
 
     CourseConfig cfg(path, data);
-    string course_number = cfg["course_number"].get<string>();
-    (*this)[course_number] = cfg;
+    string course_id = cfg["course_id"].get<string>();
+    (*this)[course_id] = cfg;
 }

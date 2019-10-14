@@ -2,7 +2,6 @@ branch: main
     roster: string value is comma-separated list of lab sections, not just 1
 
 branch: cpp-port
-    use terminology course_id instead of course_number
     don't require config to specify 'homeworks', 'labs', 'roster'
     "... expected type object for key" -> "... expected object for key"
     success/error message for admin update-password

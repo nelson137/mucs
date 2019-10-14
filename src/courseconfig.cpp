@@ -8,7 +8,7 @@ ICourseConfig::ICourseConfig(json data) : json(data) {
 CourseConfig::CourseConfig(string filename, json data) : ICourseConfig(data) {
     this->filename = filename;
 
-    this->require_prop("course_number", json::value_t::string);
+    this->require_prop("course_id", json::value_t::string);
     this->require_prop("admin_hash", json::value_t::string);
     this->require_prop("homeworks", json::value_t::object);
     this->require_prop("labs", json::value_t::object);

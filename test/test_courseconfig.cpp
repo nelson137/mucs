@@ -15,24 +15,24 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     int ri = rand_int(10);
     string rs = rand_string();
 
-    SECTION("has no course_number", "[courseconfig][course_number]") {
+    SECTION("has no course_id", "[courseconfig][course_id]") {
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            error_missing_prop("course_number", "string")
+            error_missing_prop("course_id", "string")
         );
     }
 
-    SECTION("has a course_number with incorrect type",
-            "[courseconfig][course_number]") {
-        data["course_number"] = ri;
+    SECTION("has a course_id with incorrect type",
+            "[courseconfig][course_id]") {
+        data["course_id"] = ri;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            error_incorrect_type("course_number", "string")
+            error_incorrect_type("course_id", "string")
         );
     }
 
     SECTION("has no admin_hash", "[courseconfig][admin_hash]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
             error_missing_prop("admin_hash", "string")
@@ -41,7 +41,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
 
     SECTION("has an admin_hash with incorrect type",
             "[courseconfig][admin_hash]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = ri;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
@@ -50,7 +50,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     }
 
     SECTION("has no homeworks", "[courseconfig][homeworks]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = rs;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
@@ -60,7 +60,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
 
     SECTION("has a homeworks with incorrect type",
             "[courseconfig][homeworks]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = ri;
         REQUIRE_THROWS_WITH(
@@ -70,7 +70,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     }
 
     SECTION("has no labs", "[courseconfig][labs]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
         REQUIRE_THROWS_WITH(
@@ -80,7 +80,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     }
 
     SECTION("has a labs with incorrect type", "[courseconfig][labs]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
         data["labs"] = ri;
@@ -91,7 +91,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     }
 
     SECTION("has no roster", "[courseconfig][roster]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
         data["labs"] = json({});
@@ -102,7 +102,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     }
 
     SECTION("has a roster with incorrect type", "[courseconfig][roster]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
         data["labs"] = json({});
@@ -114,7 +114,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     }
 
     SECTION("is valid", "[courseconfig]") {
-        data["course_number"] = rs;
+        data["course_id"] = rs;
         data["admin_hash"] = rs;
         data["homeworks"] = json({});
         data["labs"] = json({});

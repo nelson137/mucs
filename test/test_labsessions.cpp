@@ -5,7 +5,7 @@ TEST_CASE("labsession entry", "[labs]") {
 
     int ri = rand_int(9);
     MockCourseConfig mock_config = {
-        {"course_number", ri},
+        {"course_id", ri},
         {"admin_hash", "!"},
         {"homeworks", {}},
         {"roster", {}}

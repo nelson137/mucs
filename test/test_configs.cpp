@@ -42,7 +42,7 @@ TEST_CASE("config directory", "[configs]") {
 
         SECTION("with valid json") {
             json config = {
-                {"course_number", "1050"},
+                {"course_id", "1050"},
                 {"admin_hash", "!"},
                 {"homeworks", json::object()},
                 {"labs", json::object()},

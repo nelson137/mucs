@@ -8,7 +8,7 @@ TEST_CASE("roster entry", "[roster]") {
     string good_id_upper = good_id;
     transform(good_id.begin(), good_id.end(), good_id.begin(), ::toupper);
     MockCourseConfig mock_config = {
-        {"course_number", ""},
+        {"course_id", ""},
         {"admin_hash", "!"},
         {"homeworks", {}},
         {"labs", { {good_id, ""} }},
