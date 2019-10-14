@@ -24,7 +24,7 @@ TEST_CASE("roster entry", "[roster]") {
         );
     }
 
-    auto id_unrecognized = [&mock_config,&user](string id) {
+    auto error_id_unrecognized = [&mock_config,&user](string id) {
         return "Lab session letter '" + id + "' not recognized: " +
             mock_config.filename + "[\"roster\"][\"" + user + "\"]";
     };
@@ -35,7 +35,7 @@ TEST_CASE("roster entry", "[roster]") {
             mock_config["roster"] = { {user, bad_id} };
             REQUIRE_THROWS_WITH(
                 Roster(mock_config, lab_letters),
-                id_unrecognized(bad_id)
+                error_id_unrecognized(bad_id)
             );
         }
 
@@ -57,7 +57,7 @@ TEST_CASE("roster entry", "[roster]") {
             mock_config["roster"] = { {user, all_ids} };
             REQUIRE_THROWS_WITH(
                 Roster(mock_config, lab_letters),
-                id_unrecognized(bad_id)
+                error_id_unrecognized(bad_id)
             );
         }
 

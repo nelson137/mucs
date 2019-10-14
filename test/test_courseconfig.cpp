@@ -6,10 +6,10 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     string fn = rand_string();
     json data;
 
-    auto missing_prop = [&fn](string k, string t) {
+    auto error_missing_prop = [&fn](string k, string t) {
         return "Config must specify a '" + k + "' " + t + ": " + fn;
     };
-    auto incorrect_type = [&fn](string k, string t) {
+    auto error_incorrect_type = [&fn](string k, string t) {
         return "Config expected type '" + t + "' for key \"" + k + "\": " + fn;
     };
     int ri = rand_int(10);
@@ -18,7 +18,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
     SECTION("has no course_number", "[courseconfig][course_number]") {
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            missing_prop("course_number", "string")
+            error_missing_prop("course_number", "string")
         );
     }
 
@@ -27,7 +27,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["course_number"] = ri;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            incorrect_type("course_number", "string")
+            error_incorrect_type("course_number", "string")
         );
     }
 
@@ -35,7 +35,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["course_number"] = rs;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            missing_prop("admin_hash", "string")
+            error_missing_prop("admin_hash", "string")
         );
     }
 
@@ -45,7 +45,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["admin_hash"] = ri;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            incorrect_type("admin_hash", "string")
+            error_incorrect_type("admin_hash", "string")
         );
     }
 
@@ -54,7 +54,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["admin_hash"] = rs;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            missing_prop("homeworks", "object")
+            error_missing_prop("homeworks", "object")
         );
     }
 
@@ -65,7 +65,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["homeworks"] = ri;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            incorrect_type("homeworks", "object")
+            error_incorrect_type("homeworks", "object")
         );
     }
 
@@ -75,7 +75,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["homeworks"] = json({});
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            missing_prop("labs", "object")
+            error_missing_prop("labs", "object")
         );
     }
 
@@ -86,7 +86,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["labs"] = ri;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            incorrect_type("labs", "object")
+            error_incorrect_type("labs", "object")
         );
     }
 
@@ -97,7 +97,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["labs"] = json({});
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            missing_prop("roster", "object")
+            error_missing_prop("roster", "object")
         );
     }
 
@@ -109,7 +109,7 @@ TEST_CASE("courseconfig", "[courseconfig]") {
         data["roster"] = ri;
         REQUIRE_THROWS_WITH(
             CourseConfig(fn, data),
-            incorrect_type("roster", "object")
+            error_incorrect_type("roster", "object")
         );
     }
 
