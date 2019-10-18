@@ -1,3 +1,4 @@
-obj/
+mucs
 runtests
-libmucs/build
+build/
+libmucs/build/
