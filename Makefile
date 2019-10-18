@@ -1,76 +1,79 @@
-define get_obj_names
-$(patsubst %.cpp,$(OBJ_D)/%.o,$(1))
-endef
+TARGET       := mucs
+TEST_TARGET  := runtests
+DEST         ?= /group/cs1050
+DEST_BIN     := $(DEST)/bin
 
-TARGET      := mucs
-DEST        ?= /group/cs1050
-DEST_BIN    := $(DEST)/bin
-OBJ_D       := obj
-SRC_D       := src
-TEST_D      := test
+SRC_D        := src
+INCLUDE_D    := include
+BUILD_D      := build
+LIB_D        := libmucs
+TEST_D       := test
 
-SRCS        := $(wildcard $(SRC_D)/*.cpp)
-OBJS        := $(call get_obj_names,$(SRCS))
+SRCS         := $(wildcard $(SRC_D)/*.cpp)
+OBJS         := $(SRCS:%.cpp=$(BUILD_D)/%.o)
+OBJS_NO_MAIN := $(filter-out %/main.o,$(OBJS))
 
-TEST_SRCS   := $(filter-out $(SRC_D)/main.cpp,$(SRCS)) $(wildcard $(TEST_D)/*.cpp)
-TEST_OBJS   := $(call get_obj_names,$(TEST_SRCS))
+TEST_SRCS    := $(wildcard $(TEST_D)/*.cpp)
+TEST_OBJS    := $(TEST_SRCS:%.cpp=$(BUILD_D)/%.o)
 
-SCRIPTS     := $(wildcard bin/mucs-*)
+SCRIPTS      := $(wildcard bin/mucs-*)
 
-INSTALL     := /usr/bin/install -g cs1050-ta
-LIBMUCS     := libmucs
-LIBS        := -I$(LIBMUCS)/include -L$(LIBMUCS)/build -lmucs
-GPP_BASE    := /usr/bin/g++ -std=c++11 -Wall -Werror -Iinclude
+INSTALL      := /usr/bin/install -g cs1050-ta
+LIBS         := -I$(LIB_D)/include -L$(LIB_D)/build -lmucs
+
+GPP_BASE     := /usr/bin/g++ -std=c++11 -Wall -Werror -I$(INCLUDE_D)
 ifeq ("$(shell which gccfilter)","")
-GPP         := $(GPP_BASE)
+GPP          := $(GPP_BASE)
 else
-GPP         := gccfilter -c -n -a $(GPP_BASE)
+GPP          := gccfilter -c -n -a $(GPP_BASE)
 endif
 
+.PHONY: main test all libmucs install clean build_dirs all_dirs
 
-.PHONY: $(TARGET) cpp libmucs test install clean build_dirs all_dirs
 
-cpp: | libmucs $(TARGET)
+main: $(TARGET)
+
+test: $(TEST_TARGET)
+
+all: main test
 
 libmucs:
-	cd $(LIBMUCS) && $(MAKE)
-
-test: $(TEST_OBJS) | libmucs
-	@echo -n "$^ -> "
-	@$(GPP) $^ $(LIBS) -o runtests
-	@echo "runtests"
-
-install: $(OBJS) | all_dirs cpp
-	@[ -d "$(DEST)" ] || { echo "Destination does not exist: $(DEST)"; false; }
-	# Create directory structure
-	cd "$(DEST)" && \
-		$(INSTALL) -d -m 775 bin config.d && \
-		$(INSTALL) -d -m 770 submissions
-	# Install C++ files
-	$(INSTALL) -m 755 "$(TARGET)" "$(DEST_BIN)/$(TARGET)"
-	chmod u+s "$(DEST_BIN)/$(TARGET)"
-	# Install scripts
-	$(INSTALL) -C -m 770 $(SCRIPTS) -t "$(DEST_BIN)"
-
-clean:
-	rm -rf $(OBJ_D) runtests $(TARGET)
-	cd $(LIBMUCS) && make clean
+	@cd $(LIB_D) && $(MAKE)
 
 $(TARGET): $(OBJS) | libmucs
 	@echo -n "$^ -> "
 	@$(GPP) $^ $(LIBS) -o $@
-	@echo "$@"
+	@echo $@
 
-$(OBJ_D)/%.o: %.cpp | build_dirs
+$(TEST_TARGET): $(OBJS_NO_MAIN) $(TEST_OBJS) | libmucs
+	@echo -n "$^ -> "
+	@$(GPP) $^ $(LIBS) -o $@
+	@echo $@
+
+$(BUILD_D)/%.o: %.cpp | build_dirs
 	@echo -n "$< -> "
 	@$(GPP) -c -MMD $< $(LIBS) -o $@
-	@echo "$@"
+	@echo $@
+
+install: $(OBJS) | all_dirs $(TARGET)
+	[ -d "$(DEST)" ]
+	cd $(DEST) && \
+		$(INSTALL) -d -m 775 bin config.d && \
+		$(INSTALL) -d -m 770 submissions
+	$(INSTALL) -m 755 $(TARGET) $(DEST_BIN)/$(TARGET)
+	chmod u+s $(DEST_BIN)/$(TARGET)
+	$(INSTALL) -C -m 770 $(SCRIPTS) -t $(DEST_BIN)
+
+clean:
+	rm -rf $(TARGET) $(TEST_TARGET) $(BUILD_D)
+	@cd $(LIB_D) && $(MAKE) clean
 
 build_dirs:
-	@mkdir -p "$(OBJ_D)/$(SRC_D)"
-	@mkdir -p "$(OBJ_D)/$(TEST_D)"
+	@mkdir -p $(BUILD_D)/$(SRC_D)
+	@mkdir -p $(BUILD_D)/$(TEST_D)
 
 all_dirs: | build_dirs
-	@mkdir -p "$(DEST_BIN)"
+	@mkdir -p $(DEST_BIN)
 
--include $(OBJS:.o=.d)
+
+-include $(OBJS:%.o=%.d)

@@ -1,33 +1,37 @@
-TARGET   := libmucs.a
-INCLUDE  := include
-SRC_D    := src
-BUILD    := build
+TARGET     = $(BUILD_D)/libmucs.a
 
-SRCS     := $(wildcard $(SRC_D)/*.cpp)
-OBJS     := $(patsubst src/%.cpp,$(BUILD)/%.o,$(SRCS))
+SRC_D     := src
+INCLUDE_D := include
+BUILD_D   := build
 
-GPP_BASE := /usr/bin/g++ -std=c++11 -Wall -Werror -I$(INCLUDE)
+SRCS      := $(wildcard $(SRC_D)/*.cpp)
+OBJS      := $(SRCS:$(SRC_D)/%.cpp=$(BUILD_D)/%.o)
+
+GPP_BASE  := /usr/bin/g++ -std=c++11 -Wall -Werror -I$(INCLUDE_D)
 ifeq ("$(shell which gccfilter)","")
-GPP      := $(GPP_BASE)
+GPP       := $(GPP_BASE)
 else
-GPP      := gccfilter -c -n -a $(GPP_BASE)
+GPP       := gccfilter -c -n -a $(GPP_BASE)
 endif
 
+.PHONY: main clean build_dir
 
-main: $(BUILD)/$(TARGET)
 
-clean:
-	rm -rf $(BUILD)
+main: $(TARGET)
 
-$(BUILD)/$(TARGET): $(OBJS)
+$(TARGET): $(OBJS)
 	@ar rv $@ $^
 
-$(BUILD)/%.o: $(SRC_D)/%.cpp | build_dir
+$(BUILD_D)/%.o: $(SRC_D)/%.cpp | build_dir
 	@echo -n "$< -> "
 	@$(GPP) -c -MMD $< -o $@
-	@echo "$@"
+	@echo $@
+
+clean:
+	rm -rf $(BUILD_D)
 
 build_dir:
-	@mkdir -p $(BUILD)
+	@mkdir -p $(BUILD_D)
 
--include $(OBJS:.o=.d)
+
+-include $(OBJS:%.o=%.d)
