@@ -15,8 +15,3 @@ ostream& operator<<(ostream& os, const mucs_exception& me) {
     os << me.message;
     return os;
 }
-
-
-CATCH_TRANSLATE_EXCEPTION(mucs_exception& me) {
-    return me.what();
-}
