@@ -20,7 +20,7 @@ SCRIPTS     := $(wildcard bin/mucs-*)
 INSTALL     := /usr/bin/install -g cs1050-ta
 LIBMUCS     := libmucs
 LIBS        := -I$(LIBMUCS)/include -L$(LIBMUCS)/build -lmucs
-GPP_BASE    := /usr/bin/g++ -std=c++11 -Wall -Werror -MMD -Iinclude
+GPP_BASE    := /usr/bin/g++ -std=c++11 -Wall -Werror -Iinclude
 ifeq ("$(shell which gccfilter)","")
 GPP         := $(GPP_BASE)
 else
@@ -62,8 +62,8 @@ $(TARGET): $(OBJS) | libmucs
 	@echo "$@"
 
 $(OBJ_D)/%.o: %.cpp | build_dirs
-	@echo -n "$^ -> "
-	@$(GPP) -c $< $(LIBS) -o $@
+	@echo -n "$< -> "
+	@$(GPP) -c -MMD $< $(LIBS) -o $@
 	@echo "$@"
 
 build_dirs:

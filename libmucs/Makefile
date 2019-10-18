@@ -6,7 +6,7 @@ BUILD    := build
 SRCS     := $(wildcard $(SRC_D)/*.cpp)
 OBJS     := $(patsubst src/%.cpp,$(BUILD)/%.o,$(SRCS))
 
-GPP_BASE := /usr/bin/g++ -std=c++11 -Wall -Werror -MMD -I$(INCLUDE)
+GPP_BASE := /usr/bin/g++ -std=c++11 -Wall -Werror -I$(INCLUDE)
 ifeq ("$(shell which gccfilter)","")
 GPP      := $(GPP_BASE)
 else
@@ -24,7 +24,7 @@ $(BUILD)/$(TARGET): $(OBJS)
 
 $(BUILD)/%.o: $(SRC_D)/%.cpp | build_dir
 	@echo -n "$< -> "
-	@$(GPP) -c $< -o $@
+	@$(GPP) -c -MMD $< -o $@
 	@echo "$@"
 
 build_dir:
