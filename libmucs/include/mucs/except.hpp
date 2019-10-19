@@ -21,7 +21,7 @@ using namespace std;
 #define ERR_NOT_A_DIR      "Path exists but is not directory: "
 
 
-class mucs_exception {
+class mucs_exception : public exception {
 
 private:
     string message;
@@ -38,11 +38,18 @@ public:
         }
     }
 
-    const char *what() const noexcept;
+    const char *what() const noexcept {
+        return this->message.c_str();
+    }
 
-    operator string() const;
+    operator string() const {
+        return this->message;
+    }
 
-    friend ostream& operator<<(ostream& os, const mucs_exception& me);
+    friend ostream& operator<<(ostream& os, const mucs_exception& me) {
+        os << me.message;
+        return os;
+    }
 
 };
 
