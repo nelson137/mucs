@@ -20,9 +20,9 @@ private:
 
 public:
     ExecArgs(const vector<string>&  v) : _vec(v) {};
-    ExecArgs(const vector<string>&& v) : _vec(v) {};
     template<typename... T>
-    ExecArgs(string arg0, T... args) : _vec({ arg0, args... }) {};
+    ExecArgs(const string& arg0, T... args) : _vec({ arg0, args... }) {
+    }
 
     ~ExecArgs();
 
@@ -30,7 +30,7 @@ public:
 
     char **prepare();
 
-    friend ostream& operator<<(ostream&, ExecArgs&);
+    friend ostream& operator<<(ostream& os, const ExecArgs& ea);
 
 };
 

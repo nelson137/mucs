@@ -7,7 +7,7 @@ void die(string msg) {
 }
 
 
-vector<string> list_dir(string path) {
+vector<string> list_dir(const string& path) {
     DIR *dir = opendir(path.c_str());
     if (dir == nullptr)
         throw mucs_exception("Could not list config directory");
@@ -38,12 +38,12 @@ vector<string> list_dir(string path) {
 }
 
 
-bool path_exists(string path) {
+bool path_exists(const string& path) {
     return access(path.c_str(), F_OK) == 0;
 }
 
 
-bool path_is_valid(string& path) {
+bool path_is_valid(const string& path) {
     if (path.find("..") != string::npos)
         return false;
     if (path.find("/") != string::npos)
@@ -52,7 +52,7 @@ bool path_is_valid(string& path) {
 }
 
 
-bool path_is_dir(string path) {
+bool path_is_dir(const string& path) {
     static struct stat s;
     if (stat(path.c_str(), &s) < 0)
         return false;
@@ -60,7 +60,7 @@ bool path_is_dir(string path) {
 }
 
 
-bool path_is_file(string path) {
+bool path_is_file(const string& path) {
     static struct stat s;
     if (stat(path.c_str(), &s) < 0)
         return false;
@@ -68,7 +68,7 @@ bool path_is_file(string path) {
 }
 
 
-tuple<string, string> path_split_ext(string path) {
+tuple<string, string> path_split_ext(const string& path) {
     auto i = path.find_last_of(".");
     if (i == string::npos || i == 0)
         return make_tuple(path, "");
@@ -77,7 +77,7 @@ tuple<string, string> path_split_ext(string path) {
 }
 
 
-void rmdir(string& path) {
+void rmdir(const string& path) {
     ExecArgs ea("rm", "-rf", path);
     int ret;
 
@@ -112,7 +112,7 @@ json::array_t json_string_split(const string& s, const string& delim) {
 }
 
 
-void verify_dir_exists(string& dirpath) {
+void verify_dir_exists(const string& dirpath) {
     struct stat s;
     if (stat(dirpath.c_str(), &s) == 0) {
         if (S_ISDIR(s.st_mode) == 0)

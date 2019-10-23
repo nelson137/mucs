@@ -24,11 +24,12 @@ public:
     vector<string> all_ids;
 
     LabSessions();
-    LabSessions(ICourseConfig& config);
+
+    LabSessions(const ICourseConfig& config);
 
     string parse_path(const string& child_key) const;
 
-    void parse(ICourseConfig& config);
+    void parse(const ICourseConfig& config);
 
 };
 

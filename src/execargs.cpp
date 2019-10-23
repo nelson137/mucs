@@ -39,7 +39,7 @@ char **ExecArgs::prepare() {
 }
 
 
-ostream& operator<<(ostream& os, ExecArgs& ea) {
+ostream& operator<<(ostream& os, const ExecArgs& ea) {
     if (ea._argc < 0 || ea._argv == nullptr)
         return os;
 

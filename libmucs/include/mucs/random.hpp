@@ -15,7 +15,7 @@ private:
     string _choices;
 
 public:
-    chars_t(string cs) : _choices(cs) {}
+    chars_t(const string& cs);
 
     string get() const;
 
@@ -42,20 +42,20 @@ static chars_t chars_hex(chars_nums | chars_hex_alpha);
 /**
  * Return a random integer on the interval [start=0,end).
  */
-int rand_int(int start, int end);
-int rand_int(int end);
+int rand_int(const int start, const int end);
+int rand_int(const int end);
 
 
 /**
  * Return a random character from chars.
  */
-char rand_char(chars_t chars = chars_alphanum);
+char rand_char(const chars_t& chars = chars_alphanum);
 
 
 /**
  * Return a random string of length size from chars.
  */
-string rand_string(int size = 10, chars_t chars = chars_alphanum);
+string rand_string(const int size = 10, const chars_t& chars = chars_alphanum);
 
 
 #endif

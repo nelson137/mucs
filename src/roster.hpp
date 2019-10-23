@@ -26,11 +26,12 @@ private:
 
 public:
     Roster();
-    Roster(ICourseConfig& config, vector<string> ids);
+
+    Roster(const ICourseConfig& config, const vector<string>& ids);
 
     string parse_path(const string& child_key) const;
 
-    void parse(ICourseConfig& config);
+    void parse(const ICourseConfig& config);
 
 };
 

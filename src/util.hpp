@@ -24,30 +24,30 @@ using namespace std;
 using json = nlohmann::json;
 
 
-void die(string);
+void die(string msg);
 
-vector<string> list_dir(string path);
+vector<string> list_dir(const string& path);
 
-bool path_is_valid(string&);
+bool path_is_valid(const string& path);
 
 /**
  * Return specific information about path.
  */
-bool path_exists(string path);
-bool path_is_dir(string path);
-bool path_is_file(string path);
+bool path_exists(const string& path);
+bool path_is_dir(const string& path);
+bool path_is_file(const string& path);
 
-tuple<string, string> path_split_ext(string path);
+tuple<string, string> path_split_ext(const string& path);
 
-void rmdir(string&);
+void rmdir(const string& path);
 
 json::array_t json_string_split(const string& s, const string& delim = ",");
 
-void verify_dir_exists(string&);
+void verify_dir_exists(const string& dirpath);
 
 
 template<typename... T>
-string join_paths(string a, string b, T... rest) {
+string join_paths(const string& a, const string& b, T... rest) {
     vector<string> components = { b, rest... };
     string p = a;
     for (auto c : components)
@@ -57,7 +57,7 @@ string join_paths(string a, string b, T... rest) {
 
 
 template<typename... T>
-void make_path(string base, T... comps) {
+void make_path(const string& base, T... comps) {
     struct stat s;
     string path = base;
     vector<string> components = { comps... };
@@ -82,7 +82,7 @@ bool vector_contains(const vector<T>& vec, const T& val) {
 
 
 template<typename... T>
-void verify_paths(string comp1, T... ts) {
+void verify_paths(const string& comp1, T... ts) {
     vector<string> paths = { comp1, ts... };
     for (auto p : paths) {
         if (not path_is_valid(p))

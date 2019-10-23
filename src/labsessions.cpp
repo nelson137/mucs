@@ -5,7 +5,7 @@ LabSessions::LabSessions() {
 }
 
 
-LabSessions::LabSessions(ICourseConfig& config) {
+LabSessions::LabSessions(const ICourseConfig& config) {
     this->parse(config);
 }
 
@@ -15,7 +15,7 @@ string LabSessions::parse_path(const string& child_key) const {
 }
 
 
-void LabSessions::parse(ICourseConfig& config) {
+void LabSessions::parse(const ICourseConfig& config) {
     this->filename = config.filename;
 
     json lab_sessions = config[this->key];

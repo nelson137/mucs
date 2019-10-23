@@ -5,7 +5,7 @@ Homeworks::Homeworks() {
 }
 
 
-Homeworks::Homeworks(ICourseConfig& config) {
+Homeworks::Homeworks(const ICourseConfig& config) {
     this->parse(config);
 }
 
@@ -15,7 +15,7 @@ string Homeworks::parse_path(const string& child_key) const {
 }
 
 
-void Homeworks::parse(ICourseConfig& config) {
+void Homeworks::parse(const ICourseConfig& config) {
     this->filename = config.filename;
 
     json homeworks = config[this->key];

@@ -24,10 +24,12 @@ class ICourseConfig : public json {
 public:
     string filename;
 
-    ICourseConfig(json data);
+    ICourseConfig(const json& data);
 
-    virtual void require_prop(string&  key, json::value_type type) const = 0;
-    virtual void require_prop(string&& key, json::value_type type) const = 0;
+    virtual void require_prop(
+        const string& key,
+        const json::value_type& type
+    ) const = 0;
 
 };
 
@@ -35,10 +37,9 @@ public:
 class CourseConfig : public ICourseConfig {
 
 public:
-    CourseConfig(string filename, json data);
+    CourseConfig(const string& filename, const json& data);
 
-    void require_prop(string&  key, json::value_type type) const;
-    void require_prop(string&& key, json::value_type type) const;
+    void require_prop(const string& key, const json::value_type& type) const;
 
 };
 
@@ -46,10 +47,9 @@ public:
 class MockCourseConfig : public ICourseConfig {
 
 public:
-    MockCourseConfig(initializer_list_t j);
+    MockCourseConfig(const initializer_list_t& j);
 
-    void require_prop(string&  key, json::value_type type) const;
-    void require_prop(string&& key, json::value_type type) const;
+    void require_prop(const string& key, const json::value_type& type) const;
 
 };
 

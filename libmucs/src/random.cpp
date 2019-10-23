@@ -1,6 +1,10 @@
 #include "mucs/random.hpp"
 
 
+chars_t::chars_t(const string& cs) : _choices(cs) {
+}
+
+
 string chars_t::get() const {
     return this->_choices;
 }
@@ -12,7 +16,7 @@ size_t chars_t::size() const {
 
 
 char chars_t::operator[](const int index) const {
-    return this->_choices.operator[](index);
+    return this->_choices.at(index);
 }
 
 
@@ -27,24 +31,24 @@ ostream& operator<<(ostream& os, const chars_t& cc) {
 }
 
 
-int rand_int(int start, int end) {
+int rand_int(const int start, const int end) {
     random_device rng;
     uniform_int_distribution<int> dist(start, end);
     return dist(rng);
 }
 
 
-int rand_int(int end) {
+int rand_int(const int end) {
     return rand_int(0, end);
 }
 
 
-char rand_char(chars_t chars) {
+char rand_char(const chars_t& chars) {
     return chars[rand_int(chars.size()-1)];
 }
 
 
-string rand_string(int size, chars_t chars) {
+string rand_string(const int size, const chars_t& chars) {
     char s[size+1] = {0};
     for (int i=0; i<size; i++)
         s[i] = rand_char(chars);

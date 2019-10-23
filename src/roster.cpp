@@ -5,7 +5,10 @@ Roster::Roster() {
 }
 
 
-Roster::Roster(ICourseConfig& config, vector<string> ids) : lab_ids(ids) {
+Roster::Roster(
+    const ICourseConfig& config,
+    const vector<string>& ids
+) : lab_ids(ids) {
     this->parse(config);
 }
 
@@ -15,7 +18,7 @@ string Roster::parse_path(const string& child_key) const {
 }
 
 
-void Roster::parse(ICourseConfig& config) {
+void Roster::parse(const ICourseConfig& config) {
     this->filename = config.filename;
 
     json roster = config[this->key];

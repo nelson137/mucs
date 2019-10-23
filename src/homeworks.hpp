@@ -22,11 +22,12 @@ private:
 
 public:
     Homeworks();
-    Homeworks(ICourseConfig& config);
+
+    Homeworks(const ICourseConfig& config);
 
     string parse_path(const string& child_key) const;
 
-    void parse(ICourseConfig& config);
+    void parse(const ICourseConfig& config);
 
 };
 

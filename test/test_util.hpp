@@ -23,8 +23,11 @@ public:
     string name;
 
     temp_file();
+
     temp_file(const string& dir);
+
     temp_file(const string& dir, const string& name);
+
     ~temp_file() noexcept(false);
 
     void write(const string& data);
@@ -42,8 +45,11 @@ public:
     string name;
 
     temp_dir();
+
     temp_dir(const string& dir);
+
     temp_dir(const string& dir, const string& name);
+
     ~temp_dir() noexcept(false);
 
     operator string();
