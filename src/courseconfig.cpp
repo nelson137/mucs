@@ -118,7 +118,7 @@ CourseConfig::CourseConfig(const string& filename) {
         throw mucs_exception(
             "Config path must be a regular file: " + filename);
 
-    json data = { {"filename", filename} };
+    auto data = json::object();
     ifstream fs(filename);
 
     try {
@@ -129,6 +129,7 @@ CourseConfig::CourseConfig(const string& filename) {
         throw mucs_exception("Invalid json: " + filename);
     }
 
+    data["filename"] = filename;
     this->parse(data);
 }
 
