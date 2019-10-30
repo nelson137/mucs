@@ -1,48 +1,53 @@
 #include "test_roster.hpp"
 
 
-TEST_CASE("roster entry", "[roster]") {
+TEST_CASE("roster", "[courseconfig][roster]") {
 
+    string fn = rand_string();
     string user = rand_string(6);
     string good_id = rand_string(2);
     string good_id_upper = good_id;
     transform(good_id.begin(), good_id.end(), good_id.begin(), ::toupper);
-    MockCourseConfig mock_config = {
+
+    json data = {
+        {"filename", fn},
         {"course_id", ""},
         {"admin_hash", "!"},
-        {"homeworks", {}},
+        {"homeworks", json::object()},
         {"labs", { {good_id, ""} }},
     };
-    vector<string> lab_ids = { good_id };
 
-    SECTION("type is invalid", "[roster][entry]") {
-        mock_config["roster"] = { {user, rand_int(9)} };
+    SECTION("doesn't exist", "[courseconfig][roster]") {
         REQUIRE_THROWS_WITH(
-            Roster(mock_config, lab_ids),
-            "Roster entries must be of type string: " +
-                mock_config.filename + "[\"roster\"][\"" + user + "\"]"
+            data.get<CourseConfig>(),
+            error_missing_prop(fn, "roster", "object")
         );
     }
 
-    auto error_id_unrecognized = [&mock_config,&user](string id) {
-        return "Lab id '" + id + "' not recognized: " +
-            mock_config.filename + "[\"roster\"][\"" + user + "\"]";
-    };
+    SECTION("has incorrect type", "[courseconfig][roster]") {
+        data["roster"] = rand_int(9);
+        REQUIRE_THROWS_WITH(
+            data.get<CourseConfig>(),
+            error_incorrect_type(fn, "roster", "object")
+        );
+    }
 
-    SECTION("has one lab id", "[roster][entry]") {
-        SECTION("that is unrecognized", "[roster][entry]") {
+    data["roster"] = json::object();
+
+    SECTION("has one lab id", "[courseconfig][roster][entry]") {
+        SECTION("that is unrecognized", "[courseconfig][roster][entry]") {
             string bad_id = good_id + "_";
-            mock_config["roster"] = { {user, bad_id} };
+            data["roster"][user] = bad_id;
             REQUIRE_THROWS_WITH(
-                Roster(mock_config, lab_ids),
-                error_id_unrecognized(bad_id)
+                data.get<CourseConfig>(),
+                error_id_unrecognized(fn, user, bad_id)
             );
         }
 
-        SECTION("that is recognized", "[roster][entry]") {
-            mock_config["roster"] = { {user, good_id} };
+        SECTION("that is recognized", "[courseconfig][roster][entry]") {
+            data["roster"][user] = good_id;
             try {
-                Roster(mock_config, lab_ids);
+                data.get<CourseConfig>();
                 SUCCEED("Successfully created Roster object");
             } catch (mucs_exception& me) {
                 FAIL(me.what());
@@ -50,22 +55,22 @@ TEST_CASE("roster entry", "[roster]") {
         }
     }
 
-    SECTION("has multiple lab ids", "[roster][entry]") {
-        SECTION("one unrecognized", "[roster][entry]") {
+    SECTION("has multiple lab ids", "[courseconfig][roster][entry]") {
+        SECTION("one unrecognized", "[courseconfig][roster][entry]") {
             string bad_id = good_id + "_";
             string all_ids = good_id + "," + bad_id;
-            mock_config["roster"] = { {user, all_ids} };
+            data["roster"][user] = all_ids;
             REQUIRE_THROWS_WITH(
-                Roster(mock_config, lab_ids),
-                error_id_unrecognized(bad_id)
+                data.get<CourseConfig>(),
+                error_id_unrecognized(fn, user, bad_id)
             );
         }
 
-        SECTION("all recognized", "[roster][entry]") {
+        SECTION("all recognized", "[courseconfig][roster][entry]") {
             string all_ids = good_id + "," + good_id;
-            mock_config["roster"] = { {user, all_ids} };
+            data["roster"][user] = all_ids;
             try {
-                Roster(mock_config, lab_ids);
+                data.get<CourseConfig>();
                 SUCCEED("successfully created Roster object");
             } catch (mucs_exception& me) {
                 FAIL(me.what());

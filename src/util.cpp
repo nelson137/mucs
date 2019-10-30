@@ -96,8 +96,8 @@ void rmdir(const string& path) {
 }
 
 
-json::array_t json_string_split(const string& s, const string& delim) {
-    json::array_t tokens;
+vector<string> string_split(const string& s, const string& delim) {
+    vector<string> tokens;
     size_t pos = 0;
     size_t last = 0;
     size_t delim_size = delim.size();

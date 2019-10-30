@@ -3,33 +3,36 @@
 
 
 #include <fstream>
+#include <initializer_list>
+#include <map>
 #include <string>
 
 #include "json.hpp"
 
-class ICourseConfig;
-#include "homeworks.hpp"
-#include "labsessions.hpp"
-#include "roster.hpp"
-
 #include "mucs/except.hpp"
 #include "mucs/random.hpp"
+
+#include "util.hpp"
+
+#define CONFIG_DIR "/group/cs1050/config.d"
 
 using namespace std;
 using json = nlohmann::json;
 
 
-class ICourseConfig : public json {
+class ICourseConfig {
 
 public:
     string filename;
+    string course_id;
+    string admin_hash;
+    map<string,string> homeworks;
+    map<string,string> lab_sessions;
+    map<string,vector<string>> roster;
 
-    ICourseConfig(const json& data);
+    ICourseConfig();
 
-    virtual void require_prop(
-        const string& key,
-        const json::value_type& type
-    ) const = 0;
+    void parse(const json& j);
 
 };
 
@@ -37,9 +40,9 @@ public:
 class CourseConfig : public ICourseConfig {
 
 public:
-    CourseConfig(const string& filename, const json& data);
+    CourseConfig();
 
-    void require_prop(const string& key, const json::value_type& type) const;
+    CourseConfig(const string& filename);
 
 };
 
@@ -47,11 +50,14 @@ public:
 class MockCourseConfig : public ICourseConfig {
 
 public:
-    MockCourseConfig(const initializer_list_t& j);
-
-    void require_prop(const string& key, const json::value_type& type) const;
+    MockCourseConfig(const json& j);
 
 };
+
+
+void from_json(const json& j, CourseConfig& cc);
+
+void to_json(json& j, const CourseConfig& cc);
 
 
 #endif

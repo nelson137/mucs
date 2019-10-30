@@ -1,31 +1,49 @@
 #include "test_homeworks.hpp"
 
 
-TEST_CASE("homework entry", "[homeworks]") {
+TEST_CASE("homeworks", "[homeworks]") {
 
-    int ri = rand_int(9);
-    MockCourseConfig mock_config = {
-        {"course_id", ri},
+    string fn = rand_string();
+    json data = {
+        {"filename", fn},
+        {"course_id", ""},
         {"admin_hash", "!"},
-        {"labs", {}},
-        {"roster", {}}
+        {"labs", json::object()},
+        {"roster", json::object()}
     };
 
-    SECTION("type is invalid", "[homeworks][entry]") {
-        string key = "hw1";
-        mock_config["homeworks"] = { {key, ri} };
+    SECTION("doesn't exist", "[courseconfig][homeworks]") {
         REQUIRE_THROWS_WITH(
-            Homeworks(mock_config),
-            "Homework entries must be of type string: " +
-                mock_config.filename + "[\"homeworks\"][\"" + key + "\"]"
+            data.get<CourseConfig>(),
+            error_missing_prop(fn, "homeworks", "object")
         );
     }
 
-    SECTION("type is valid", "[homeworks][entry]") {
-        string key = "hw1";
-        mock_config["homeworks"] = { {key, ""} };
+    SECTION("has incorrect type", "[courseconfig][homeworks]") {
+        data["homeworks"] = rand_int(9);
+        REQUIRE_THROWS_WITH(
+            data.get<CourseConfig>(),
+            error_incorrect_type(fn, "homeworks", "object")
+        );
+    }
+
+    data["homeworks"] = json::object();
+
+    SECTION("entry has incorrect type", "[courseconfig][homeworks][entry]") {
+        string key = "hw" + to_string(rand_int(9));
+        data["homeworks"][key] = rand_int(9);
+        REQUIRE_THROWS_WITH(
+            data.get<CourseConfig>(),
+            "Homework entries must be of type string: " + fn +
+                "[\"homeworks\"][\"" + key + "\"]"
+        );
+    }
+
+    SECTION("is valid", "[courseconfig][homeworks][entry]") {
+        string key = "hw" + to_string(rand_int(9));
+        data["homeworks"][key] = rand_string();
         try {
-            Homeworks(mock_config);
+            data.get<CourseConfig>();
             SUCCEED("Successfully created Homeworks object");
         } catch (mucs_exception& me) {
             FAIL(me.what());

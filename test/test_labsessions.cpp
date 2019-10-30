@@ -1,31 +1,57 @@
 #include "test_labsessions.hpp"
 
 
-TEST_CASE("labsession entry", "[labs]") {
+TEST_CASE("labs", "[courseconfig][labs]") {
 
-    int ri = rand_int(9);
-    MockCourseConfig mock_config = {
-        {"course_id", ri},
+    string fn = rand_string();
+    json data = {
+        {"filename", fn},
+        {"course_id", ""},
         {"admin_hash", "!"},
-        {"homeworks", {}},
-        {"roster", {}}
+        {"homeworks", json::object()},
+        {"roster", json::object()}
     };
 
-    SECTION("type is invalid", "[labs][entry]") {
-        string key = "A";
-        mock_config["labs"] = { {key, ri} };
+    SECTION("doesn't exist", "[courseconfig][labs]") {
         REQUIRE_THROWS_WITH(
-            LabSessions(mock_config),
-            "Lab entries must be of type string: " +
-                mock_config.filename + "[\"labs\"][\"" + key + "\"]"
+            data.get<CourseConfig>(),
+            error_missing_prop(fn, "labs", "object")
         );
     }
 
-    SECTION("type is valid", "[labs][entry]") {
-        string key = "A";
-        mock_config["labs"] = { {key, ""} };
+    SECTION("has incorrect type", "[courseconfig][labs]") {
+        data["labs"] = rand_int(9);
+        REQUIRE_THROWS_WITH(
+            data.get<CourseConfig>(),
+            error_incorrect_type(fn, "labs", "object")
+        );
+    }
+
+    data["labs"] = json::object();
+
+    SECTION("entry has incorrect type", "[courseconfig][labs]") {
+        data["labs"] = rand_int(9);
+        REQUIRE_THROWS_WITH(
+            data.get<CourseConfig>(),
+            error_incorrect_type(fn, "labs", "object")
+        );
+    }
+
+    SECTION("type is invalid", "[courseconfig][labs][entry]") {
+        string key = rand_string(1, chars_upper);
+        data["labs"][key] = rand_int(9);
+        REQUIRE_THROWS_WITH(
+            data.get<CourseConfig>(),
+            "Lab entries must be of type string: " + fn + "[\"labs\"][\"" +
+                key + "\"]"
+        );
+    }
+
+    SECTION("type is valid", "[courseconfig][labs][entry]") {
+        string key = rand_string(1, chars_upper);
+        data["labs"][key] = "";
         try {
-            LabSessions(mock_config);
+            data.get<CourseConfig>();
             SUCCEED("Successfully created LabSessions object");
         } catch (mucs_exception& me) {
             FAIL(me.what());

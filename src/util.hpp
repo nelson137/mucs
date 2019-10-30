@@ -41,7 +41,7 @@ tuple<string, string> path_split_ext(const string& path);
 
 void rmdir(const string& path);
 
-json::array_t json_string_split(const string& s, const string& delim = ",");
+vector<string> string_split(const string& s, const string& delim = ",");
 
 void verify_dir_exists(const string& dirpath);
 

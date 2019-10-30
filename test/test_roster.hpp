@@ -8,11 +8,12 @@
 #include "catch.hpp"
 
 #include "mucs/except.hpp"
+#include "mucs/random.hpp"
 
 #include "test_util.hpp"
+#include "test_courseconfig.hpp"
 
 #include "../src/courseconfig.hpp"
-#include "../src/roster.hpp"
 
 using namespace std;
 

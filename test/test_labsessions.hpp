@@ -9,9 +9,9 @@
 #include "mucs/except.hpp"
 
 #include "test_util.hpp"
+#include "test_courseconfig.hpp"
 
 #include "../src/courseconfig.hpp"
-#include "../src/labsessions.hpp"
 
 using namespace std;
 
