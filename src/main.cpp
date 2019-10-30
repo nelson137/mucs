@@ -41,21 +41,21 @@ int main_old(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     CLI::App app;
+    SubmitOptions submit_opts{};
 
     app.require_subcommand();
 
-    auto submit_opts = make_shared<SubmitOptions>();
     CLI::App *submit_subcmd = app
         .add_subcommand("submit")
-        ->callback([submit_opts](){ submit_callback(*submit_opts); });
+        ->callback([&](){ submit_callback(submit_opts); });
     submit_subcmd
-        ->add_option("course", submit_opts->course)
+        ->add_option("course", submit_opts.course)
         ->required();
     submit_subcmd
-        ->add_option("assignment_type", submit_opts->assignment_type)
+        ->add_option("assignment_type", submit_opts.assignment_type)
         ->required();
     submit_subcmd
-        ->add_option("sources", submit_opts->sources)
+        ->add_option("sources", submit_opts.sources)
         ->required();
 
     CLI11_PARSE(app, argc, argv);
