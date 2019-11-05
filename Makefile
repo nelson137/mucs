@@ -21,7 +21,8 @@ SCRIPTS      := $(wildcard bin/mucs-*)
 INSTALL      := /usr/bin/install -g cs1050-ta
 LIBS         := -I$(LIB_D)/include -L$(LIB_D)/build -lmucs
 
-GPP_BASE     := /usr/bin/g++ -std=c++11 -Wall -Werror -I$(INCLUDE_D)
+GPP_FLAGS    := -std=c++11 -Wall -Werror -Wno-noexcept-type -I$(INCLUDE_D)
+GPP_BASE     := /usr/bin/g++ $(GPP_FLAGS)
 ifeq ("$(shell which gccfilter)","")
 GPP          := $(GPP_BASE)
 else

@@ -7,6 +7,23 @@ void die(string msg) {
 }
 
 
+string format_time(time_t t) {
+    tm *buf = localtime(&t);
+    ostringstream ret;
+    ret << put_time(buf, "%I:%M:%S%p");
+    return ret.str();
+}
+
+
+string format_weekday(int weekday) {
+    tm t;
+    t.tm_wday = weekday;
+    ostringstream ret;
+    ret << put_time(&t, "%A");
+    return ret.str();
+}
+
+
 vector<string> list_dir(const string& path) {
     DIR *dir = opendir(path.c_str());
     if (dir == nullptr)
@@ -35,6 +52,33 @@ vector<string> list_dir(const string& path) {
 
     closedir(dir);
     return children;
+}
+
+
+time_t parse_time(const string& t_str) {
+    time_t epoch = 0;
+    tm t;
+    localtime_r(&epoch, &t);
+
+    istringstream s(t_str);
+    s >> get_time(&t, "%T");
+    if (s.fail())
+        return -1;
+
+    // Adjust for timezone ("00:00:00" broken down should be 24hr-gmtoff)
+    return mktime(&t) + 24*60*60 + t.tm_gmtoff;
+}
+
+
+int parse_weekday(string w_str) {
+    if (w_str.size()) {
+        w_str[0] = toupper(w_str[0]);
+        transform(w_str.begin()+1, w_str.end(), w_str.begin()+1, ::tolower);
+    }
+    tm t;
+    memset(&t, -1, sizeof(t));
+    istringstream(w_str) >> get_time(&t, "%a");
+    return t.tm_wday;
 }
 
 

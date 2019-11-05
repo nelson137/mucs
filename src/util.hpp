@@ -2,7 +2,10 @@
 #define UTIL_HPP
 
 
+#include <ctime>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -26,7 +29,15 @@ using json = nlohmann::json;
 
 void die(string msg);
 
+string format_time(time_t t);
+
+string format_weekday(int weekday);
+
 vector<string> list_dir(const string& path);
+
+time_t parse_time(const string& t_str);
+
+int parse_weekday(string w_str);
 
 bool path_is_valid(const string& path);
 
@@ -75,9 +86,15 @@ void make_path(const string& base, T... comps) {
 }
 
 
-template<typename T>
-bool vector_contains(const vector<T>& vec, const T& val) {
-    return ::find(vec.begin(), vec.end(), val) != vec.end();
+template<typename Container, typename T>
+bool stl_contains(const Container& c, const T& val) {
+    return ::find(c.begin(), c.end(), val) != c.end();
+}
+
+
+template<typename Container, typename UnaryOp>
+inline void stl_transform(Container& c, UnaryOp& op) {
+    transform(c.begin(), c.end(), c.begin(), op);
 }
 
 
