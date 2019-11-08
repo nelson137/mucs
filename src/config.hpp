@@ -17,9 +17,8 @@
 #include "mucs/except.hpp"
 #include "mucs/random.hpp"
 
+#include "path.hpp"
 #include "util.hpp"
-
-#define CONFIG_DIR "/group/cs1050/config.d"
 
 using namespace std;
 using json = nlohmann::json;
@@ -134,6 +133,7 @@ struct ICourseConfig {
     string admin_hash;
     Homeworks homeworks;
     LabSessions lab_sessions;
+    string current_lab;
     Roster roster;
 
     ICourseConfig();
@@ -148,14 +148,17 @@ struct ICourseConfig {
 
     void parse(const json& j);
 
+    string get_current_lab(const string& user);
+
+    string get_current_hw() const;
+
 };
 
 
 struct CourseConfig : public ICourseConfig {
 
     CourseConfig();
-
-    CourseConfig(const string& filename);
+    CourseConfig(const Path& p);
 
 };
 

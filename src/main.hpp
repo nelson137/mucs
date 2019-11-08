@@ -7,6 +7,7 @@
 
 #include "CLI11.hpp"
 
+#include "consts.hpp"
 #include "submit.hpp"
 
 using namespace std;

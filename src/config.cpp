@@ -97,12 +97,10 @@ void LabSesh::parse(const json& j) {
 
 
 bool LabSesh::is_active() const {
-    // auto now = current_time();
-    // if (now.weekday() != this->weekday)
-        // return false;
-    // return DateTime::compare_time(this->start, now) <= 0 &&
-        // DateTime::compare_time(now, this->end) < 0;
-    return false;
+    if (current_weekday() != this->weekday)
+        return false;
+    time_t now = current_time();
+    return this->start <= now && now < this->end;
 }
 
 
@@ -257,6 +255,9 @@ void ICourseConfig::parse(const json& j) {
     this->require_prop(j, "homeworks", json::value_t::object);
     j["homeworks"].get_to(this->homeworks);
 
+    this->require_prop(j, "current_lab", json::value_t::string);
+    j["current_lab"].get_to(this->current_lab);
+
     this->lab_sessions = LabSessions(this);
     this->require_prop(j, "labs", json::value_t::object);
     j["labs"].get_to(this->lab_sessions);
@@ -267,29 +268,75 @@ void ICourseConfig::parse(const json& j) {
 }
 
 
+string ICourseConfig::get_current_lab(const string& user) {
+    if (not this->roster.count(user))
+        throw mucs_exception("User not in course: " + user);
+
+    vector<string> user_labs = this->roster[user];
+
+    if (user_labs.size() == 1) {
+        string id = user_labs[0];
+        auto ls = this->lab_sessions[id];
+        if (not ls.is_active()){
+            string weekday, start, end;
+            tie(weekday, start, end) = ls.get_pretty();
+            throw mucs_exception(
+                "Lab " + id + " is not in session: " +
+                weekday + " from " + start + " to " + end);
+        }
+    } else {
+        auto is_active = [&](const string& id) {
+            return this->lab_sessions[id].is_active();
+        };
+        if (none_of(user_labs.begin(), user_labs.end(), is_active))
+            throw mucs_exception(
+                "None of your labs are in session:", stl_join(user_labs));
+    }
+
+    return this->current_lab;
+}
+
+
+string ICourseConfig::get_current_hw() const {
+    /** Python implementation
+     * now = datetime.datetime.now()
+     * homeworks = sorted(self['homeworks'].items(), key=lambda hw: hw[1])
+     *
+     * for name, duedate in homeworks:
+     *     if now < duedate:
+     *         return name
+     *
+     * return None
+     */
+    return "current hw";
+}
+
+
 inline CourseConfig::CourseConfig() {
 }
 
 
-CourseConfig::CourseConfig(const string& filename) {
-    if (not path_exists(filename))
-        throw mucs_exception("Config file does not exist: " + filename);
-    if (not path_is_file(filename))
+CourseConfig::CourseConfig(const Path& p) {
+    if (not p.exists())
+        throw mucs_exception("Config file does not exist: " + p.str());
+    if (not p.is_file())
         throw mucs_exception(
-            "Config path must be a regular file: " + filename);
+            "Config path must be a regular file: " + p.str());
 
     auto data = json::object();
-    ifstream fs(filename);
+    ifstream fs(p.str());
 
     try {
         fs >> data;
         fs.close();
     } catch (const json::parse_error& pe) {
         fs.close();
-        throw mucs_exception("Invalid json: " + filename);
+        throw mucs_exception(
+            "Invalid json: " + p.str() + "\n" +
+            string(pe.what()));
     }
 
-    data["filename"] = filename;
+    data["filename"] = p.str();
     this->parse(data);
 }
 

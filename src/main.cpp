@@ -1,59 +1,28 @@
 #include "main.hpp"
 
 
-/*
-int main_old(int argc, char **argv) {
-    if (argc != 5)
-        die(USAGE);
-
-    string submit_root = "/group/cs1050/submissions";
-    string course      = argv[1];
-    string assignment  = argv[2];
-    string username    = argv[3];
-    string source_d    = argv[4];
-
-    verify_dir_exists(submit_root);
-    verify_paths(course, assignment, username);
-    verify_dir_exists(source_d);
-
-    // submit_root/course/assignment/username
-    string submit_d = join_paths(submit_root, course, assignment, username);
-
-    struct stat s;
-    if (stat(submit_d.c_str(), &s) == 0)
-        rmdir(submit_d);
-
-    make_path(submit_root, course, assignment, username);
-
-    // Find doesn't work unless you cd into the starting point for some reason
-    chdir(source_d.c_str());
-
-    // Copy files
-    ExecArgs ea(
-        "find", ".", "-type", "f", "-exec",
-        "/usr/bin/install", "-C", "-g", "cs1050-ta",
-        "-m", "660", "-t", submit_d, "{}",
-        ";"
-    );
-    return execv("/usr/bin/find", ea.prepare());
-}
-*/
-
 int main(int argc, char **argv) {
+    SubmitOptions submit_opts = {};
+
+    vector<string> configs = Path(CONFIG_DIR).ls();
+
     CLI::App app;
-    SubmitOptions submit_opts{};
 
     app.require_subcommand();
 
     CLI::App *submit_subcmd = app
         .add_subcommand("submit")
-        ->callback([&](){ submit_callback(submit_opts); });
+        ->callback([&]() {
+            submit_command(submit_opts);
+        });
     submit_subcmd
         ->add_option("course", submit_opts.course)
-        ->required();
+        ->required()
+        ->check(CLI::IsMember(configs));
     submit_subcmd
         ->add_option("assignment_type", submit_opts.assignment_type)
-        ->required();
+        ->required()
+        ->check(CLI::IsMember({ "hw", "lab" }));
     submit_subcmd
         ->add_option("sources", submit_opts.sources)
         ->required();

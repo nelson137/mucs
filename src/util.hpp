@@ -10,9 +10,10 @@
 #include <tuple>
 #include <vector>
 
-#include <dirent.h>
+#include <pwd.h>
 #include <unistd.h>
 
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -21,11 +22,16 @@
 
 #include "mucs/except.hpp"
 
-#include "execargs.hpp"
+#include "consts.hpp"
+#include "exec.hpp"
 
 using namespace std;
 using json = nlohmann::json;
 
+
+time_t current_time();
+
+int current_weekday();
 
 void die(string msg);
 
@@ -33,56 +39,46 @@ string format_time(time_t t);
 
 string format_weekday(int weekday);
 
-vector<string> list_dir(const string& path);
+int get_term_width();
+
+string get_user();
 
 time_t parse_time(const string& t_str);
 
 int parse_weekday(string w_str);
 
-bool path_is_valid(const string& path);
-
-/**
- * Return specific information about path.
- */
-bool path_exists(const string& path);
-bool path_is_dir(const string& path);
-bool path_is_file(const string& path);
-
 tuple<string, string> path_split_ext(const string& path);
 
-void rmdir(const string& path);
+string prompt_user(const string& prompt = "");
 
 vector<string> string_split(const string& s, const string& delim = ",");
 
 void verify_dir_exists(const string& dirpath);
 
 
-template<typename... T>
-string join_paths(const string& a, const string& b, T... rest) {
-    vector<string> components = { b, rest... };
-    string p = a;
-    for (auto c : components)
-        p += "/" + c;
-    return p;
+template<typename... String>
+string join_paths(string a, string b = "", String... rest) {
+    if (not a.size()) return b;
+    if (not b.size()) return a;
+
+    if (a.back() == '/' && b.front() == '/')
+        a.erase(a.end() - 1);
+    else if (a.back() != '/' && b.front() != '/')
+        a += "/";
+
+    return a + join_paths(b, rest...);
 }
 
 
-template<typename... T>
-void make_path(const string& base, T... comps) {
-    struct stat s;
-    string path = base;
-    vector<string> components = { comps... };
+template<int n = 2, char c = '0'>
+inline ostream& prefix_char(ostream& os) {
+    return os << setw(n) << setfill(c);
+}
 
-    for (auto c : components) {
-        path = join_paths(path, c);
-        if(stat(path.c_str(), &s) == 0) {   // If path exists
-            if (S_ISDIR(s.st_mode) == 0)    //   If not a directory
-                die(ERR_NOT_A_DIR + path);  //     Error
-        } else {                            // If path doesn't exist
-            if (mkdir(path.c_str(), 0770))  //   Attempt to make directory
-                die(ERR_MKDIR + path);      //     Error if failed
-        }
-    }
+
+template<int n = 2>
+inline ostream& prefix_zeros(ostream& os) {
+    return os << prefix_char<n,'0'>;
 }
 
 
@@ -92,20 +88,44 @@ bool stl_contains(const Container& c, const T& val) {
 }
 
 
+template<typename Container>
+void stl_extend(Container& a, const Container& b) {
+    a.insert(a.end(), b.begin(), b.end());
+}
+
+
+template<typename Container>
+string stl_join(const Container& c, const string& delim = ",") {
+    ostringstream ss;
+    if (c.size())
+        ss << c[0];
+    for (auto i=c.begin()+1; i!=c.end(); i++)
+        ss << delim << *i;
+    return ss.str();
+}
+
+
 template<typename Container, typename UnaryOp>
-inline void stl_transform(Container& c, UnaryOp& op) {
+inline void stl_transform(Container& c, UnaryOp op) {
     transform(c.begin(), c.end(), c.begin(), op);
 }
 
 
-template<typename... T>
-void verify_paths(const string& comp1, T... ts) {
-    vector<string> paths = { comp1, ts... };
-    for (auto p : paths) {
-        if (not path_is_valid(p))
-            die(ERR_INVALID_PARAM + p);
-    }
+template<template<typename> typename Container, typename T, typename UnaryOp>
+inline void stl_transform(Container<T>& c, UnaryOp op) {
+    transform(c.begin(), c.end(), c.begin(), op);
 }
+
+
+string string_wrap(
+    string s,
+    const string& prefix = FG_RESET,
+    const string& suffix = FG_RESET
+);
+
+string w_bold (string s);
+string w_green(string s);
+string w_red  (string s);
 
 
 #endif

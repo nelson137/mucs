@@ -90,7 +90,7 @@ temp_dir::temp_dir(const string& dir, const string& name) {
 
 
 temp_dir::~temp_dir() noexcept(false) {
-    if (rmdir(this->name.c_str()) < 0)
+    if (Path(this->name).rm() < 0)
         throw mucs_exception("Unable to remove directory: " + this->name);
 }
 

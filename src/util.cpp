@@ -1,6 +1,20 @@
 #include "util.hpp"
 
 
+time_t current_time() {
+    time_t now = time(nullptr);
+    tm *t = localtime(&now);
+    return t->tm_hour*60*60 + t->tm_min*60 + t->tm_sec;
+}
+
+
+int current_weekday() {
+    time_t now = time(nullptr);
+    tm *t = localtime(&now);
+    return t->tm_wday;
+}
+
+
 void die(string msg) {
     cerr << msg << endl;
     exit(1);
@@ -8,10 +22,15 @@ void die(string msg) {
 
 
 string format_time(time_t t) {
-    tm *buf = localtime(&t);
-    ostringstream ret;
-    ret << put_time(buf, "%I:%M:%S%p");
-    return ret.str();
+    int h = t/60/60, m = t/60%60, s = t%60;
+    ostringstream ss;
+    ss << prefix_zeros << h % 12
+       << ':'
+       << prefix_zeros << m
+       << ':'
+       << prefix_zeros << s
+       << (h > 11 ? "pm" : "am");
+    return ss.str();
 }
 
 
@@ -24,34 +43,15 @@ string format_weekday(int weekday) {
 }
 
 
-vector<string> list_dir(const string& path) {
-    DIR *dir = opendir(path.c_str());
-    if (dir == nullptr)
-        throw mucs_exception("Could not list config directory");
+int get_term_width() {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    return w.ws_col * TERM_WIDTH_COEFF;
+}
 
-    struct dirent *ent;
-    struct stat s;
-    vector<string> children;
-    string child, child_full;
 
-    while ((ent = readdir(dir)) != nullptr) {
-        child = string(ent->d_name);
-        if (child == "." || child == "..")
-            continue;
-        child_full = path + "/" + child;
-        if (stat(child_full.c_str(), &s) < 0)
-            throw mucs_exception("Could not stat file: " + child_full);
-        if (S_ISREG(s.st_mode)) {
-            children.push_back(child_full);
-        } else if (S_ISDIR(s.st_mode)) {
-            vector<string> grandchildren = list_dir(child_full);
-            children.insert(
-                children.end(), grandchildren.begin(), grandchildren.end());
-        }
-    }
-
-    closedir(dir);
-    return children;
+string get_user() {
+    return getpwuid(getuid())->pw_name;
 }
 
 
@@ -82,36 +82,6 @@ int parse_weekday(string w_str) {
 }
 
 
-bool path_exists(const string& path) {
-    return access(path.c_str(), F_OK) == 0;
-}
-
-
-bool path_is_valid(const string& path) {
-    if (path.find("..") != string::npos)
-        return false;
-    if (path.find("/") != string::npos)
-        return false;
-    return true;
-}
-
-
-bool path_is_dir(const string& path) {
-    static struct stat s;
-    if (stat(path.c_str(), &s) < 0)
-        return false;
-    return S_ISDIR(s.st_mode);
-}
-
-
-bool path_is_file(const string& path) {
-    static struct stat s;
-    if (stat(path.c_str(), &s) < 0)
-        return false;
-    return S_ISREG(s.st_mode);
-}
-
-
 tuple<string, string> path_split_ext(const string& path) {
     auto i = path.find_last_of(".");
     if (i == string::npos || i == 0)
@@ -121,22 +91,12 @@ tuple<string, string> path_split_ext(const string& path) {
 }
 
 
-void rmdir(const string& path) {
-    ExecArgs ea("rm", "-rf", path);
-    int ret;
-
-    pid_t pid = fork();
-    if (pid < 0) {
-        // Error forking
-        die(ERR_FORK);
-    } else if (pid == 0) {
-        // Child
-        execv("/bin/rm", ea.prepare());
-        _exit(1);
-    } else {
-        // Parent
-        wait(&ret);
-    }
+string prompt_user(const string& prompt) {
+    if (prompt.size())
+        cout << prompt;
+    string response;
+    cin >> response;
+    return response;
 }
 
 
@@ -154,6 +114,17 @@ vector<string> string_split(const string& s, const string& delim) {
 
     return tokens;
 }
+
+
+string string_wrap(string s, const string& prefix, const string& suffix) {
+    s.insert(0, prefix);
+    s += suffix;
+    return s;
+}
+
+string w_bold (string s) { return string_wrap(s, FG_BOLD);  }
+string w_green(string s) { return string_wrap(s, FG_GREEN); }
+string w_red  (string s) { return string_wrap(s, FG_RED);   }
 
 
 void verify_dir_exists(const string& dirpath) {
