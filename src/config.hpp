@@ -6,8 +6,11 @@
 #include <ctime>
 #include <fstream>
 #include <initializer_list>
+#include <iomanip>
 #include <map>
 #include <regex>
+#include <set>
+#include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -21,6 +24,7 @@
 #include "util.hpp"
 
 using namespace std;
+using namespace chrono;
 using json = nlohmann::json;
 
 
@@ -31,26 +35,33 @@ struct Hw {
 
     ICourseConfig *config;
     string name;
-    time_t duedate;
+    system_clock::time_point duedate;
+
+    struct compare {
+        bool operator()(
+            const pair<string,Hw>& a,
+            const pair<string,Hw>& b
+        ) const;
+    };
 
     Hw();
 
-    Hw(ICourseConfig *cc);
+    Hw(ICourseConfig *cc, const string& n);
 
-    void parse(const json& j);
+    static Hw from_iter(ICourseConfig *cc, const json::const_iterator& it);
 
 };
 
 
-struct Homeworks : public map<string, Hw> {
+struct Homeworks : public set<pair<string,Hw>,Hw::compare> {
 
     ICourseConfig *config;
 
-    Homeworks();
+    Homeworks(map<string,Hw> m = {});
+
+    Homeworks(initializer_list<pair<string,Hw>> il);
 
     Homeworks(ICourseConfig *cc);
-
-    void parse(const json& j);
 
 };
 
@@ -76,7 +87,10 @@ struct LabSesh {
 
     LabSesh(ICourseConfig *cc, const string& i);
 
-    void parse(const json& j);
+    static LabSesh from_iter(
+        ICourseConfig *cc,
+        const json::const_iterator& it
+    );
 
     bool is_active() const;
 
@@ -93,8 +107,6 @@ struct LabSessions : public map<string, LabSesh> {
     LabSessions();
 
     LabSessions(ICourseConfig *cc);
-
-    void parse(const json& j);
 
 };
 
@@ -115,8 +127,6 @@ struct Roster : public map<string, vector<string>> {
     Roster();
 
     Roster(ICourseConfig *cc);
-
-    void parse(const json& j);
 
 };
 

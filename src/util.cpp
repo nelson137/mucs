@@ -24,12 +24,11 @@ void die(string msg) {
 string format_time(time_t t) {
     int h = t/60/60, m = t/60%60, s = t%60;
     ostringstream ss;
-    ss << prefix_zeros << h % 12
+    ss << prefix_zeros << h
        << ':'
        << prefix_zeros << m
        << ':'
-       << prefix_zeros << s
-       << (h > 11 ? "pm" : "am");
+       << prefix_zeros << s;
     return ss.str();
 }
 
@@ -52,6 +51,20 @@ int get_term_width() {
 
 string get_user() {
     return getpwuid(getuid())->pw_name;
+}
+
+
+system_clock::time_point parse_datetime(const string& dt_str) {
+    time_t epoch = 0;
+    tm t;
+    localtime_r(&epoch, &t);
+
+    istringstream s(dt_str);
+    s >> get_time(&t, "%Y-%m-%d %T");
+    if (s.fail())
+        throw mucs_exception("Invalid datetime: " + dt_str);
+
+    return system_clock::from_time_t(mktime(&t));
 }
 
 

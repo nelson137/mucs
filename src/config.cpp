@@ -5,16 +5,35 @@ inline Hw::Hw() {
 }
 
 
-inline Hw::Hw(ICourseConfig *cc) : config(cc) {
+inline Hw::Hw(ICourseConfig *cc, const string& n) : config(cc), name(n) {
+    // Normalize name (lowercase)
+    stl_transform(this->name, ::tolower);
 }
 
 
-void Hw::parse(const json& j) {
+Hw Hw::from_iter(ICourseConfig *cc, const json::const_iterator& it) {
+    Hw hw(cc, it.key());
+    it.value().get_to(hw);
+    return hw;
 }
 
 
-inline Homeworks::Homeworks() {
+inline bool Hw::compare::operator()(
+    const pair<string,Hw>& a,
+    const pair<string,Hw>& b
+) const {
+    return a.second.duedate < b.second.duedate;
 }
+
+
+inline Homeworks::Homeworks(map<string,Hw> m)
+    : set(m.begin(), m.end())
+{}
+
+
+inline Homeworks::Homeworks(initializer_list<pair<string,Hw>> il)
+    : set(il.begin(), il.end())
+{}
 
 
 inline Homeworks::Homeworks(ICourseConfig *cc) : Homeworks() {
@@ -22,40 +41,41 @@ inline Homeworks::Homeworks(ICourseConfig *cc) : Homeworks() {
 }
 
 
-void Homeworks::parse(const json& j) {
+inline void from_json(const json& j, Hw& hw) {
+    hw.duedate = parse_datetime(j.get<string>());
+}
+
+
+void from_json(const json& j, Homeworks& homeworks) {
     string id;
-    for (auto& hw : j.items()) {
-        if (hw.value().type() != json::value_t::string)
-            throw mucs_exception(this->config->error_msg(
+    for (auto it=j.begin(); it!=j.end(); it++) {
+        if (it.value().type() != json::value_t::string)
+            throw mucs_exception(homeworks.config->error_msg(
                 "Homework entries must be of type string",
                 "homeworks",
-                hw.key()));
+                it.key()));
 
-        // Normalize homework names (lowercase)
-        id = hw.key();
-        stl_transform(id, ::tolower);
-
-        this->operator[](id) = Hw(this->config);
-        hw.value().get_to(this->operator[](id));
+        auto hw = Hw::from_iter(homeworks.config, it);
+        homeworks.insert({ hw.name, hw });
     }
 }
 
 
-inline void from_json(const json& j, Hw& hw) {
-    hw.parse(j);
-}
-
-
-inline void from_json(const json& j, Homeworks& homeworks) {
-    homeworks.parse(j);
-}
-
-
 void to_json(json& j, const Hw& hw) {
+    time_t tt = duration_cast<seconds>(hw.duedate.time_since_epoch()).count();
+    tm t;
+    localtime_r(&tt, &t);
+
+    ostringstream os;
+    os << put_time(&t, "%Y-%m-%d %H:%M:%S");
+    j = json(os.str());
 }
 
 
 void to_json(json& j, const Homeworks& homeworks) {
+    j = json::object();
+    for (auto& hw : homeworks)
+        j[hw.first] = json(hw.second);
 }
 
 
@@ -67,32 +87,15 @@ inline LabSesh::LabSesh(
     ICourseConfig *cc,
     const string& i
 ) : config(cc), id(i) {
+    // Normalize id (uppercase)
+    stl_transform(this->id, ::toupper);
 }
 
 
-void LabSesh::parse(const json& j) {
-    if (j.type() != json::value_t::string)
-        throw mucs_exception(this->config->error_msg(
-            "Lab entries must be of type string",
-            "labs",
-            this->id));
-
-    // Normalize lab time (lowercase)
-    string lab_time = j.get<string>();
-    stl_transform(lab_time, ::tolower);
-
-    smatch cm;
-    regex lab_re(R"((\S+)\s*(\S+)\s*-\s*(\S+))");
-    if (not regex_match(lab_time, cm, lab_re))
-        throw mucs_exception(this->config->error_msg(
-            "Lab entries must be in the format " \
-                "\"<weekday> <start_time> - <end_time>\"",
-            "labs",
-            this->id));
-
-    this->weekday = parse_weekday(cm[1]);
-    this->start = parse_time(cm[2]);
-    this->end = parse_time(cm[3]);
+LabSesh LabSesh::from_iter(ICourseConfig *cc, const json::const_iterator& it) {
+    LabSesh ls(cc, it.key());
+    it.value().get_to(ls);
+    return ls;
 }
 
 
@@ -104,7 +107,7 @@ bool LabSesh::is_active() const {
 }
 
 
-tuple<string,string,string> LabSesh::get_pretty() const {
+inline tuple<string,string,string> LabSesh::get_pretty() const {
     return make_tuple(
         format_weekday(this->weekday),
         format_time(this->start),
@@ -122,27 +125,38 @@ inline LabSessions::LabSessions(ICourseConfig *cc) : LabSessions() {
 }
 
 
-void LabSessions::parse(const json& j) {
-    string id;
-    for (auto& lab : j.items()) {
-        // Normalize lab ids (uppercase)
-        id = lab.key();
-        stl_transform(id, ::toupper);
+void from_json(const json& j, LabSesh& ls) {
+    if (j.type() != json::value_t::string)
+        throw mucs_exception(ls.config->error_msg(
+            "Lab entries must be of type string",
+            "labs",
+            ls.id));
 
-        this->operator[](id) = LabSesh(this->config, id);
-        lab.value().get_to(this->operator[](id));
-        this->all_ids.push_back(id);
+    // Normalize lab specification (lowercase)
+    string lab_spec = j.get<string>();
+    stl_transform(lab_spec, ::tolower);
+
+    regex lab_spec_re(R"(\s*(\S+)\s+(\S+)\s*-\s*(\S+)\s*)");
+    smatch match;
+    if (not regex_match(lab_spec, match, lab_spec_re))
+        throw mucs_exception(ls.config->error_msg(
+            "Lab entries must be in the format " \
+                "\"<weekday> <start_time> - <end_time>\"",
+            "labs",
+            ls.id));
+
+    ls.weekday = parse_weekday(match[1]);
+    ls.start = parse_time(match[2]);
+    ls.end = parse_time(match[3]);
+}
+
+
+void from_json(const json& j, LabSessions& lab_sessions) {
+    for (auto it=j.begin(); it!=j.end(); it++) {
+        auto ls = LabSesh::from_iter(lab_sessions.config, it);
+        lab_sessions[ls.id] = ls;
+        lab_sessions.all_ids.push_back(ls.id);
     }
-}
-
-
-inline void from_json(const json& j, LabSesh& ls) {
-    ls.parse(j);
-}
-
-
-inline void from_json(const json& j, LabSessions& lab_sessions) {
-    lab_sessions.parse(j);
 }
 
 
@@ -155,6 +169,9 @@ void to_json(json& j, const LabSesh& ls) {
 
 
 void to_json(json& j, const LabSessions& lab_sessions) {
+    j = json::object();
+    for (auto& ls : lab_sessions)
+        j[ls.first] = json(ls.second);
 }
 
 
@@ -167,11 +184,11 @@ inline Roster::Roster(ICourseConfig *cc) : Roster() {
 }
 
 
-void Roster::parse(const json& j) {
+void from_json(const json& j, Roster& roster) {
     string user_orig, user, lab_ids, id;
     for (auto& entry : j.items()) {
         if (entry.value().type() != json::value_t::string)
-            throw mucs_exception(this->config->error_msg(
+            throw mucs_exception(roster.config->error_msg(
                 "Roster entries must be of type string",
                 "roster",
                 entry.key()));
@@ -186,19 +203,14 @@ void Roster::parse(const json& j) {
             id = id_orig;
             // Normalize lab ids (uppercase)
             stl_transform(id, ::toupper);
-            if (not stl_contains(this->config->lab_sessions.all_ids, id))
-                throw mucs_exception(this->config->error_msg(
+            if (not stl_contains(roster.config->lab_sessions.all_ids, id))
+                throw mucs_exception(roster.config->error_msg(
                     "Lab id '" + id_orig + "' not recognized",
                     "roster",
                     user_orig));
-            this->operator[](user).push_back(id);
+            roster[user].push_back(id);
         }
     }
-}
-
-
-inline void from_json(const json& j, Roster& roster) {
-    roster.parse(j);
 }
 
 

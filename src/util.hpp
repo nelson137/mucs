@@ -2,6 +2,7 @@
 #define UTIL_HPP
 
 
+#include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
@@ -26,6 +27,7 @@
 #include "exec.hpp"
 
 using namespace std;
+using namespace chrono;
 using json = nlohmann::json;
 
 
@@ -42,6 +44,8 @@ string format_weekday(int weekday);
 int get_term_width();
 
 string get_user();
+
+system_clock::time_point parse_datetime(const string& dt_str);
 
 time_t parse_time(const string& t_str);
 
