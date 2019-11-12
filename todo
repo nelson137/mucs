@@ -1,16 +1,25 @@
 branch: cpp-port
-    don't require config to specify 'homeworks', 'labs', 'roster'
+    test "homeworks/entry has incorrect type"
+        use 'standardized' incorrect type error message
+    copy files readonly
+        mode 440 instead of 660 in install call
+    use normalized keys in error messages instead of original ones
+    string LabSesh::format(string fmt = "{weekday} {start} - {end}") {
+        // replaces LabSesh::get_pretty()
+        // ls.format();
+        // ls.format("Lab {id} is not in session: {weekday} from {start} to {end}")
+        return fmt with replacements:
+            "{id}"      => this->id
+            "{weekday}" => this->weekday
+            "{start}"   => this->start
+            "{end}"     => this->end
+    }
     "... expected type object for key" -> "... expected object for key"
     success/error message for admin update-password
-    don't load all config files -- only the one needed
-        have a main config file that associates course_id's with config file paths
-        then that one config fn can be passed to Configs
-        there should then no longer be a need for temp_dir
     remove seconds from lab session times
     use makefiles dir, use default if none is specified in configs
     check submission files exist before confirmation prompt
     get rid of #define's in mucs/except.hpp
-    use nlohmann::json's to_json, from_json extensions instead of ::parse method
     why is a variable name required here (f84aa2d test/test_homeworks.cpp:27:23)
 
 misc:
