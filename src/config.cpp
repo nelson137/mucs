@@ -310,17 +310,13 @@ string ICourseConfig::get_current_lab(const string& user) {
 
 
 string ICourseConfig::get_current_hw() const {
-    /** Python implementation
-     * now = datetime.datetime.now()
-     * homeworks = sorted(self['homeworks'].items(), key=lambda hw: hw[1])
-     *
-     * for name, duedate in homeworks:
-     *     if now < duedate:
-     *         return name
-     *
-     * return None
-     */
-    return "current hw";
+    system_clock::time_point now = system_clock::now();
+    for (auto& e : this->homeworks)
+        if (now < e.second.duedate)
+            return e.first;
+
+    throw mucs_exception(
+        "No open homework assignments for course: " + this->course_id);
 }
 
 
