@@ -39,24 +39,4 @@ public:
 };
 
 
-class temp_dir {
-
-public:
-    string name;
-
-    temp_dir();
-
-    temp_dir(const string& dir);
-
-    temp_dir(const string& dir, const string& name);
-
-    ~temp_dir() noexcept(false);
-
-    operator string();
-
-    friend ostream& operator<<(ostream& os, const temp_dir& td);
-
-};
-
-
 #endif
