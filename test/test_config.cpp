@@ -42,6 +42,19 @@ TEST_CASE("config file exists and has invalid json", "[config]") {
 }
 
 
+TEST_CASE("config file exists and has valid json", "[config]") {
+    ostringstream data;
+    data << new_config_data();
+    temp_file tf{};
+    tf << data.str();
+    try {
+        Config(tf.name);
+    } catch (mucs_exception& me) {
+        FAIL(me.what());
+    }
+}
+
+
 TEST_CASE("config has no key course_id", "[config][course_id]") {
     auto data = new_config_data();
     data.erase("course_id");
@@ -92,4 +105,16 @@ TEST_CASE("config is valid", "[config]") {
     } catch (mucs_exception& me) {
         FAIL(me.what());
     }
+}
+
+
+TEST_CASE("serialize config", "[config][serialize]") {
+    auto data = new_config_data();
+    ostringstream expected, actual;
+    expected << data;
+    actual << json(data.get<Config>());
+    REQUIRE_THAT(
+        expected.str(),
+        Equals(actual.str(), Catch::CaseSensitive::No)
+    );
 }

@@ -59,3 +59,17 @@ TEST_CASE("labs is valid", "[config][labs][entry]") {
         FAIL(me.what());
     }
 }
+
+
+TEST_CASE("serialize labs", "[config][labs][serialize]") {
+    auto data = new_config_data();
+    data["labs"]["A"] = "monday 00:00:00 - 23:59:59";
+    auto config = data.get<Config>();
+    ostringstream expected, actual;
+    expected << data["labs"];
+    actual << json(config.lab_sessions);
+    REQUIRE_THAT(
+        expected.str(),
+        Equals(actual.str(), Catch::CaseSensitive::No)
+    );
+}

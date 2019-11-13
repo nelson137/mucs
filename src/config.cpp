@@ -142,6 +142,7 @@ void to_json(json& j, const IConfig& cc) {
         {"admin_hash", cc.admin_hash},
         {"homeworks", cc.homeworks},
         {"labs", cc.lab_sessions},
+        {"current_lab", cc.current_lab},
         {"roster", cc.roster},
     };
 }

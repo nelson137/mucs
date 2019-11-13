@@ -104,8 +104,8 @@ void from_json(const json& j, LabSessions& lab_sessions) {
 
 void to_json(json& j, const LabSesh& ls) {
     ostringstream repr;
-    repr << ls.w_pretty() << ' ' << ls.s_raw() << " - " << ls.s_raw();
-    j = { {ls.id, repr.str()} };
+    repr << ls.w_pretty() << ' ' << ls.s_raw() << " - " << ls.e_raw();
+    j = repr.str();
 }
 
 

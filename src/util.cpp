@@ -58,18 +58,12 @@ system_clock::time_point parse_datetime(const string& dt_str) {
 }
 
 
-time_t parse_time(const string& t_str) {
+time_t parse_time(const string& t_str, const string& fmt) {
     time_t epoch = 0;
     tm *t = localtime(&epoch);
-
     istringstream ss(t_str);
-    ss >> get_time(t, "%Y-%m-%d %T");
-
-    if (ss.fail())
-        return -1;
-
-    // Adjust for timezone ("00:00:00" broken down should be 24hr-gmtoff)
-    return mktime(t) + 24*60*60 + t->tm_gmtoff;
+    ss >> get_time(t, fmt.c_str());
+    return ss.fail() ? -1 : mktime(t);
 }
 
 

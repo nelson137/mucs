@@ -45,7 +45,7 @@ string get_user();
 
 system_clock::time_point parse_datetime(const string& dt_str);
 
-time_t parse_time(const string& t_str);
+time_t parse_time(const string& t_str, const string& fmt = "%T");
 
 int parse_weekday(string w_str);
 

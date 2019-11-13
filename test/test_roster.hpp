@@ -16,6 +16,7 @@
 #include "../src/config.hpp"
 
 using namespace std;
+using Catch::Matchers::Equals;
 
 
 #endif

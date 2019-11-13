@@ -93,17 +93,6 @@ vector<string> Path::ls() const {
             continue;
 
         children.push_back(name);
-
-        // // Recurse into sub-directories
-        // child = Path(join_paths(this->m_path, name));
-        // if (child.is_dir()) {
-            // vector<string> grandchildren = child.ls();
-            // stl_extend(children, grandchildren);
-            // children.insert(
-                // children.end(), grandchildren.begin(), grandchildren.end());
-        // } else if (child.is_file()) {
-            // children.push_back(child);
-        // }
     }
 
     closedir(dir);

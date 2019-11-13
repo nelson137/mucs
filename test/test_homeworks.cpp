@@ -47,6 +47,16 @@ TEST_CASE("homeworks entry has incorrect format",
 }
 
 
+TEST_CASE("deserialized homeworks entries are in sorted order",
+        "[config][homeworks]") {
+    auto data = new_config_data();
+    data["homeworks"]["hw1"] = "2019-01-01 00:00:00";
+    data["homeworks"]["hw2"] = "1970-01-01 00:00:00";
+    auto config = data.get<Config>();
+    REQUIRE(config.homeworks.begin()->first == "hw2");
+}
+
+
 TEST_CASE("homeworks is valid", "[config][homeworks][entry]") {
     auto data = new_config_data();
     string key = "hw" + to_string(rand_int(9));
@@ -57,4 +67,18 @@ TEST_CASE("homeworks is valid", "[config][homeworks][entry]") {
     } catch (mucs_exception& me) {
         FAIL(me.what());
     }
+}
+
+
+TEST_CASE("serialize homeworks", "[config][homeworks][serialize]") {
+    auto data = new_config_data();
+    data["homeworks"]["hw1"] = "1970-01-01 00:00:00";
+    auto config = data.get<Config>();
+    ostringstream expected, actual;
+    expected << data["homeworks"];
+    actual << json(config.homeworks);
+    REQUIRE_THAT(
+        expected.str(),
+        Equals(actual.str(), Catch::CaseSensitive::No)
+    );
 }

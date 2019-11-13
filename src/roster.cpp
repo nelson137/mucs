@@ -49,5 +49,5 @@ void from_json(const json& j, Roster& roster) {
 void to_json(json& j, const Roster& roster) {
     j = json::object();
     for (auto& entry : roster)
-        j[entry.first] = entry.second;
+        j[entry.first] = stl_join(entry.second);
 }

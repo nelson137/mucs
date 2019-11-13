@@ -21,6 +21,19 @@ TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
 }
 
 
+TEST_CASE("roster entry has incorrect type", "[config][roster][entry]") {
+    auto data = new_config_data();
+    string fn = data["filename"].get<string>();
+    string user = rand_string(6);
+    data["roster"][user] = rand_int(9);
+    REQUIRE_THROWS_WITH(
+        data.get<Config>(),
+        "Roster entries must be of type string: " +
+            fn + "[\"roster\"][\"" + user + "\"]"
+    );
+}
+
+
 TEST_CASE("roster entry has one lab id", "[config][roster][entry]") {
     auto data = new_config_data();
     string fn = data["filename"].get<string>();
@@ -77,5 +90,39 @@ TEST_CASE("roster entry has multiple lab ids", "[config][roster][entry]") {
         } catch (mucs_exception& me) {
             FAIL(me.what());
         }
+    }
+}
+
+
+TEST_CASE("serialize roster", "[config][roster][serialize]") {
+    auto data = new_config_data();
+    string fn = data["filename"].get<string>();
+
+    string id = rand_string(2, chars_lower);
+    data["labs"][id] = "mon 00:00:00 - 23:59:59";
+    string user = rand_string(6);
+
+    SECTION("with one id") {
+        data["roster"][user] = id;
+        auto config = data.get<Config>();
+        ostringstream expected, actual;
+        expected << data["roster"];
+        actual << json(config.roster);
+        REQUIRE_THAT(
+            expected.str(),
+            Equals(actual.str(), Catch::CaseSensitive::No)
+        );
+    }
+
+    SECTION("with multiple ids") {
+        data["roster"][user] = id + ',' + id;
+        auto config = data.get<Config>();
+        ostringstream expected, actual;
+        expected << data["roster"];
+        actual << json(config.roster);
+        REQUIRE_THAT(
+            expected.str(),
+            Equals(actual.str(), Catch::CaseSensitive::No)
+        );
     }
 }
