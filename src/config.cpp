@@ -5,15 +5,6 @@ IConfig::IConfig() {
 }
 
 
-string IConfig::error_msg(
-    const string& msg,
-    const string& a,
-    const string& b
-) {
-    return msg + ": " + this->filename + "[\"" + a + "\"][\"" + b + "\"]";
-}
-
-
 void IConfig::require_prop(
     const json& j,
     const string& k,
@@ -27,15 +18,14 @@ void IConfig::require_prop(
 
 
 void IConfig::parse(const json& j) {
-    this->require_prop(j, "filename",    json::value_t::string);
+    j["filename"].get_to(this->filename);
+
     this->require_prop(j, "course_id",   json::value_t::string);
     this->require_prop(j, "admin_hash",  json::value_t::string);
     this->require_prop(j, "homeworks",   json::value_t::object);
     this->require_prop(j, "current_lab", json::value_t::string);
     this->require_prop(j, "labs",        json::value_t::object);
     this->require_prop(j, "roster",      json::value_t::object);
-
-    j["filename"].get_to(this->filename);
 
     j["course_id"].get_to(this->course_id);
 
@@ -112,9 +102,7 @@ Config::Config(const Path& p) {
         fs.close();
     } catch (const json::parse_error& pe) {
         fs.close();
-        throw mucs_exception(
-            "Invalid json: " + p.str() + "\n" +
-            string(pe.what()));
+        throw mucs_exception("Invalid json: " + p.str());
     }
 
     data["filename"] = p.str();
@@ -123,10 +111,7 @@ Config::Config(const Path& p) {
 
 
 MockConfig::MockConfig(const json& j) {
-    this->filename = "/tmp/mock_course_config." + rand_string();
-
-    if (j.count("filename") > 0)
-        j["filename"].get_to(this->filename);
+    j["filename"].get_to(this->filename);
 
     if (j.count("course_id") > 0)
         j["course_id"].get_to(this->course_id);

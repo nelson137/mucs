@@ -1,5 +1,5 @@
-#ifndef TEST_COURSECONFIG_HPP
-#define TEST_COURSECONFIG_HPP
+#ifndef TEST_CONFIG_HPP
+#define TEST_CONFIG_HPP
 
 
 #include <string>
@@ -11,19 +11,13 @@
 
 #include "test_util.hpp"
 
-#include "../src/courseconfig.hpp"
+#include "../src/config.hpp"
 
 using namespace std;
 using json = nlohmann::json;
 
 
-string error_missing_prop(const string& fn, const string& k, const string& t);
-
-string error_incorrect_type(
-    const string& fn,
-    const string& k,
-    const string& t
-);
+string error_prop(const string& fn, const string& k, const string& t);
 
 string error_id_unrecognized(
     const string& fn,

@@ -11,9 +11,13 @@
 
 #include <sys/stat.h>
 
+#include "json.hpp"
+
 #include "mucs/except.hpp"
+#include "mucs/random.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 
 class temp_file {
@@ -37,6 +41,9 @@ public:
     friend temp_file& operator<<(temp_file& tf, const string& data);
 
 };
+
+
+json new_config_data();
 
 
 #endif

@@ -11,9 +11,9 @@
 #include "mucs/random.hpp"
 
 #include "test_util.hpp"
-#include "test_courseconfig.hpp"
+#include "test_config.hpp"
 
-#include "../src/courseconfig.hpp"
+#include "../src/config.hpp"
 
 using namespace std;
 

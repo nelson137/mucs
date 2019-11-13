@@ -55,3 +55,21 @@ temp_file& operator<<(temp_file& tf, const string& data) {
     tf.write(data);
     return tf;
 }
+
+
+/*************************************************
+ * temp_file
+ ************************************************/
+
+
+json new_config_data() {
+    return {
+        {"filename", rand_string(4)},
+        {"course_id", rand_string()},
+        {"admin_hash", "!"},
+        {"homeworks", json::object()},
+        {"labs", json::object()},
+        {"current_lab", ""},
+        {"roster", json::object()}
+    };
+}
