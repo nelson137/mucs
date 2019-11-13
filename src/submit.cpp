@@ -26,11 +26,11 @@ bool Submitter::submit(const vector<string>& sources) {
 
 
 void submit_command(SubmitOptions& opts) {
-    ICourseConfig config;
+    IConfig config;
 #ifdef MUCS_TEST
-    config = MockCourseConfig();
+    config = MockConfig();
 #else
-    config = CourseConfig(Path(CONFIG_DIR) / opts.course);
+    config = Config(Path(CONFIG_DIR) / opts.course);
 #endif
 
     string user = get_user();

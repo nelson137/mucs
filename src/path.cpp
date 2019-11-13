@@ -1,12 +1,12 @@
 #include "path.hpp"
 
 
-inline void Path::stat() {
+void Path::stat() {
     this->m_stat_ret = ::stat(this->m_path.c_str(), &this->m_stat);
 }
 
 
-inline Path::Path() {
+Path::Path() {
     memset(&this->m_stat, 0, sizeof(this->m_stat));
 }
 
@@ -50,12 +50,12 @@ ostream& operator<<(ostream& os, const Path& p) {
 }
 
 
-inline string Path::str() const {
+string Path::str() const {
     return this->m_path;
 }
 
 
-inline int Path::chdir() const {
+int Path::chdir() const {
     return ::chdir(this->m_path.c_str()) == 0;
 }
 
@@ -65,12 +65,12 @@ bool Path::exists() const {
 }
 
 
-inline bool Path::is_dir() const {
+bool Path::is_dir() const {
     return S_ISDIR(this->m_stat.st_mode);
 }
 
 
-inline bool Path::is_file() const {
+bool Path::is_file() const {
     return S_ISREG(this->m_stat.st_mode);
 }
 

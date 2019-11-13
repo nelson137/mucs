@@ -88,13 +88,13 @@ string join_paths(string a, string b = "", String... rest) {
 
 
 template<int n = 2, char c = '0'>
-inline ostream& prefix_char(ostream& os) {
+ostream& prefix_char(ostream& os) {
     return os << setw(n) << setfill(c);
 }
 
 
 template<int n = 2>
-inline ostream& prefix_zeros(ostream& os) {
+ostream& prefix_zeros(ostream& os) {
     return os << prefix_char<n,'0'>;
 }
 
@@ -123,13 +123,13 @@ string stl_join(const Container& c, const string& delim = ",") {
 
 
 template<typename Container, typename UnaryOp>
-inline void stl_transform(Container& c, UnaryOp op) {
+void stl_transform(Container& c, UnaryOp op) {
     transform(c.begin(), c.end(), c.begin(), op);
 }
 
 
 template<template<typename> typename Container, typename T, typename UnaryOp>
-inline void stl_transform(Container<T>& c, UnaryOp op) {
+void stl_transform(Container<T>& c, UnaryOp op) {
     transform(c.begin(), c.end(), c.begin(), op);
 }
 

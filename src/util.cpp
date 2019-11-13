@@ -62,7 +62,7 @@ time_t parse_time(const string& t_str) {
     time_t epoch = 0;
     tm *t = localtime(&epoch);
 
-    istringstream ss(dt_str);
+    istringstream ss(t_str);
     ss >> get_time(t, "%Y-%m-%d %T");
 
     if (ss.fail())
