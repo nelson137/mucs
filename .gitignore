@@ -1,4 +1,5 @@
 mucs
 runtests
 build/
+coverage/
 libmucs/build/
