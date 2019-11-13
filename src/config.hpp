@@ -29,12 +29,9 @@ using namespace chrono;
 using json = nlohmann::json;
 
 
-struct ICourseConfig;
-
-
 struct Hw {
 
-    ICourseConfig *config;
+    string filename;
     string name;
     system_clock::time_point duedate;
 
@@ -47,22 +44,22 @@ struct Hw {
 
     Hw();
 
-    Hw(ICourseConfig *cc, const string& n);
+    Hw(const string& fn, const string& n);
 
-    static Hw from_iter(ICourseConfig *cc, const json::const_iterator& it);
+    static Hw from_iter(const string& fn, const json::const_iterator& it);
 
 };
 
 
 struct Homeworks : public set<pair<string,Hw>,Hw::compare> {
 
-    ICourseConfig *config;
+    string filename;
 
     Homeworks(map<string,Hw> m = {});
 
     Homeworks(initializer_list<pair<string,Hw>> il);
 
-    Homeworks(ICourseConfig *cc);
+    Homeworks(const string& fn);
 
 };
 
@@ -78,7 +75,7 @@ void to_json(json& j, const Homeworks& homeworks);
 
 struct LabSesh {
 
-    ICourseConfig *config;
+    string filename;
     string id;
     int weekday;
     time_t start;
@@ -86,28 +83,32 @@ struct LabSesh {
 
     LabSesh();
 
-    LabSesh(ICourseConfig *cc, const string& i);
+    LabSesh(const string& fn, const string& i);
 
-    static LabSesh from_iter(
-        ICourseConfig *cc,
-        const json::const_iterator& it
-    );
+    static LabSesh from_iter(const string& fn, const json::const_iterator& it);
 
     bool is_active() const;
 
-    tuple<string,string,string> get_pretty() const;
+    string w_raw() const;
+    string w_pretty() const;
+
+    string s_raw() const;
+    string s_pretty() const;
+
+    string e_raw() const;
+    string e_pretty() const;
 
 };
 
 
 struct LabSessions : public map<string, LabSesh> {
 
-    ICourseConfig *config;
+    string filename;
     vector<string> all_ids;
 
     LabSessions();
 
-    LabSessions(ICourseConfig *cc);
+    LabSessions(const string& fn);
 
 };
 
@@ -123,11 +124,12 @@ void to_json(json& j, const LabSessions& lab_sessions);
 
 struct Roster : public map<string, vector<string>> {
 
-    ICourseConfig *config;
+    string filename;
+    vector<string> all_lab_ids;
 
     Roster();
 
-    Roster(ICourseConfig *cc);
+    Roster(const string& fn, const vector<string>& lab_ids);
 
 };
 

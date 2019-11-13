@@ -35,9 +35,7 @@ time_t current_time();
 
 int current_weekday();
 
-void die(string msg);
-
-string format_time(time_t t);
+string format_time(time_t tt, const string& fmt);
 
 string format_weekday(int weekday);
 
@@ -58,6 +56,21 @@ string prompt_user(const string& prompt = "");
 vector<string> string_split(const string& s, const string& delim = ",");
 
 void verify_dir_exists(const string& dirpath);
+
+
+template<typename... String>
+string error_config(
+    const string& msg,
+    const string& filename,
+    const String&... pack_keys
+) {
+    vector<string> keys = { pack_keys... };
+    ostringstream ret;
+    ret << msg << ": " << filename;
+    for (const auto& k : keys)
+        ret << "[\"" << k << "\"]";
+    return ret.str();
+}
 
 
 template<typename... String>

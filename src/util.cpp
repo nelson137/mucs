@@ -15,21 +15,11 @@ int current_weekday() {
 }
 
 
-void die(string msg) {
-    cerr << msg << endl;
-    exit(1);
-}
-
-
-string format_time(time_t t) {
-    int h = t/60/60, m = t/60%60, s = t%60;
-    ostringstream ss;
-    ss << prefix_zeros << h
-       << ':'
-       << prefix_zeros << m
-       << ':'
-       << prefix_zeros << s;
-    return ss.str();
+string format_time(time_t tt, const string& fmt) {
+    tm *t = localtime(&tt);
+    ostringstream ret;
+    ret << put_time(t, fmt.c_str());
+    return ret.str();
 }
 
 
@@ -56,30 +46,30 @@ string get_user() {
 
 system_clock::time_point parse_datetime(const string& dt_str) {
     time_t epoch = 0;
-    tm t;
-    localtime_r(&epoch, &t);
+    tm *t = localtime(&epoch);
 
-    istringstream s(dt_str);
-    s >> get_time(&t, "%Y-%m-%d %T");
-    if (s.fail())
+    istringstream ss(dt_str);
+    ss >> get_time(t, "%Y-%m-%d %T");
+
+    if (ss.fail())
         throw mucs_exception("Invalid datetime: " + dt_str);
 
-    return system_clock::from_time_t(mktime(&t));
+    return system_clock::from_time_t(mktime(t));
 }
 
 
 time_t parse_time(const string& t_str) {
     time_t epoch = 0;
-    tm t;
-    localtime_r(&epoch, &t);
+    tm *t = localtime(&epoch);
 
-    istringstream s(t_str);
-    s >> get_time(&t, "%T");
-    if (s.fail())
+    istringstream ss(dt_str);
+    ss >> get_time(t, "%Y-%m-%d %T");
+
+    if (ss.fail())
         return -1;
 
     // Adjust for timezone ("00:00:00" broken down should be 24hr-gmtoff)
-    return mktime(&t) + 24*60*60 + t.tm_gmtoff;
+    return mktime(t) + 24*60*60 + t->tm_gmtoff;
 }
 
 
@@ -144,8 +134,9 @@ void verify_dir_exists(const string& dirpath) {
     struct stat s;
     if (stat(dirpath.c_str(), &s) == 0) {
         if (S_ISDIR(s.st_mode) == 0)
-            die(ERR_NOT_A_DIR + dirpath);
+            throw mucs_exception(
+                "Path exists but is not a directory: " + dirpath);
     } else {
-        die(ERR_NOT_A_DIR + dirpath);
+        throw mucs_exception("No such file or directory: " + dirpath);
     }
 }
