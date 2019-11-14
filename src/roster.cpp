@@ -1,14 +1,7 @@
 #include "roster.hpp"
 
 
-Roster::Roster() : map<string,vector<string>>() {
-}
-
-
-Roster::Roster(
-    const string& fn,
-    const vector<string>& lab_ids
-) : Roster() {
+Roster::Roster(const string& fn, const vector<string>& lab_ids) {
     this->filename = fn;
     this->all_lab_ids = lab_ids;
 }

@@ -22,7 +22,7 @@ struct Roster : public map<string, vector<string>> {
     string filename;
     vector<string> all_lab_ids;
 
-    Roster();
+    using map<string,vector<string>>::map;
 
     Roster(const string& fn, const vector<string>& lab_ids);
 

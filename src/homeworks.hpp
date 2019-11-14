@@ -35,8 +35,6 @@ struct Hw {
         ) const;
     };
 
-    Hw();
-
     Hw(const string& fn, const string& n);
 
     static Hw from_iter(const string& fn, const json::const_iterator& it);
@@ -44,13 +42,11 @@ struct Hw {
 };
 
 
-struct Homeworks : public set<pair<string,Hw>,Hw::compare> {
+struct Homeworks : public set<pair<string,Hw>, Hw::compare> {
 
     string filename;
 
-    Homeworks(map<string,Hw> m = {});
-
-    Homeworks(initializer_list<pair<string,Hw>> il);
+    using set<pair<string,Hw>,Hw::compare>::set;
 
     Homeworks(const string& fn);
 

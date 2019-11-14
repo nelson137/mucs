@@ -12,6 +12,7 @@
 #include "test_config.hpp"
 
 #include "../src/config.hpp"
+#include "../src/labs.hpp"
 
 using namespace std;
 

@@ -22,12 +22,12 @@ TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
 
 
 TEST_CASE("homeworks entry has incorrect type", "[config][homeworks][entry]") {
-    auto data = new_config_data();
-    string fn = data["filename"].get<string>();
+    string fn = rand_string();
     string key = "hw" + to_string(rand_int(9));
-    data["homeworks"][key] = rand_int(9);
+    json data = { {key, rand_int(9)} };
+    Homeworks homeworks(fn);
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
+        data.get_to(homeworks),
         "Homework entries must be of type string: " + fn +
             "[\"homeworks\"][\"" + key + "\"]"
     );
@@ -36,12 +36,11 @@ TEST_CASE("homeworks entry has incorrect type", "[config][homeworks][entry]") {
 
 TEST_CASE("homeworks entry has incorrect format",
           "[config][homeworks][entry]") {
-    auto data = new_config_data();
     string key = "hw" + to_string(rand_int(9));
     string hw = rand_string();
-    data["homeworks"][key] = hw;
+    json data = { {key, hw} };
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
+        data.get<Homeworks>(),
         "Invalid datetime: " + hw
     );
 }
@@ -49,20 +48,20 @@ TEST_CASE("homeworks entry has incorrect format",
 
 TEST_CASE("deserialized homeworks entries are in sorted order",
         "[config][homeworks]") {
-    auto data = new_config_data();
-    data["homeworks"]["hw1"] = "2019-01-01 00:00:00";
-    data["homeworks"]["hw2"] = "1970-01-01 00:00:00";
-    auto config = data.get<Config>();
-    REQUIRE(config.homeworks.begin()->first == "hw2");
+    json data = {
+        {"hw1", "2019-01-01 00:00:00"},
+        {"hw2", "1970-01-01 00:00:00"}
+    };
+    auto homeworks = data.get<Homeworks>();
+    REQUIRE(homeworks.begin()->first == "hw2");
 }
 
 
 TEST_CASE("homeworks is valid", "[config][homeworks][entry]") {
-    auto data = new_config_data();
     string key = "hw" + to_string(rand_int(9));
-    data["homeworks"][key] = "1970-01-01 00:00:00";
+    json data = { {key, "1970-01-01 00:00:00"} };
     try {
-        data.get<Config>();
+        data.get<Homeworks>();
         SUCCEED("Successfully created Homeworks object");
     } catch (mucs_exception& me) {
         FAIL(me.what());
@@ -71,12 +70,10 @@ TEST_CASE("homeworks is valid", "[config][homeworks][entry]") {
 
 
 TEST_CASE("serialize homeworks", "[config][homeworks][serialize]") {
-    auto data = new_config_data();
-    data["homeworks"]["hw1"] = "1970-01-01 00:00:00";
-    auto config = data.get<Config>();
+    json data = { {"hw1", "1970-01-01 00:00:00"} };
     ostringstream expected, actual;
-    expected << data["homeworks"];
-    actual << json(config.homeworks);
+    expected << data;
+    actual << json(data.get<Homeworks>());
     REQUIRE_THAT(
         expected.str(),
         Equals(actual.str(), Catch::CaseSensitive::No)

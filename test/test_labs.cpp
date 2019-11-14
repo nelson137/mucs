@@ -22,12 +22,12 @@ TEST_CASE("value for key labs has incorrect type", "[config][labs]") {
 
 
 TEST_CASE("labs entry has incorrect type", "[config][labs][entry]") {
-    auto data = new_config_data();
-    string fn = data["filename"].get<string>();
+    string fn = rand_string();
     string key = rand_string(1, chars_upper);
-    data["labs"][key] = rand_int(9);
+    json data = { {key, rand_int(9)} };
+    LabSessions lab_sessions(fn);
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
+        data.get_to(lab_sessions),
         "Lab entries must be of type string: " +
             fn + "[\"labs\"][\"" + key + "\"]"
     );
@@ -35,12 +35,12 @@ TEST_CASE("labs entry has incorrect type", "[config][labs][entry]") {
 
 
 TEST_CASE("labs entry has incorrect format", "[config][labs][entry]") {
-    auto data = new_config_data();
-    string fn = data["filename"].get<string>();
+    string fn = rand_string();
     string key = rand_string(1, chars_upper);
-    data["labs"][key] = rand_string();
+    json data = { {key, rand_string()} };
+    LabSessions lab_sessions(fn);
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
+        data.get_to(lab_sessions),
         "Lab entries must be in the format " \
             "\"<weekday> <start_time> - <end_time>\": " + fn +
             "[\"labs\"][\"" + key + "\"]"
@@ -49,11 +49,11 @@ TEST_CASE("labs entry has incorrect format", "[config][labs][entry]") {
 
 
 TEST_CASE("labs is valid", "[config][labs][entry]") {
-    auto data = new_config_data();
     string key = rand_string(1, chars_upper);
-    data["labs"][key] = "mon 00:00:00 - 23:59:59";
+    json data = { {key, "mon 00:00:00 - 23:59:59"} };
+    LabSessions lab_sessions(rand_string());
     try {
-        data.get<Config>();
+        data.get_to(lab_sessions);
         SUCCEED("Successfully created LabSessions object");
     } catch (mucs_exception& me) {
         FAIL(me.what());
@@ -62,12 +62,13 @@ TEST_CASE("labs is valid", "[config][labs][entry]") {
 
 
 TEST_CASE("serialize labs", "[config][labs][serialize]") {
-    auto data = new_config_data();
-    data["labs"]["A"] = "monday 00:00:00 - 23:59:59";
-    auto config = data.get<Config>();
+    string key = rand_string(1, chars_upper);
+    json data = { {key, "monday 00:00:00 - 23:59:59"} };
+    LabSessions lab_sessions(rand_string());
+    data.get_to(lab_sessions);
     ostringstream expected, actual;
-    expected << data["labs"];
-    actual << json(config.lab_sessions);
+    expected << data;
+    actual << json(lab_sessions);
     REQUIRE_THAT(
         expected.str(),
         Equals(actual.str(), Catch::CaseSensitive::No)

@@ -59,11 +59,7 @@ string LabSesh::e_pretty() const {
 }
 
 
-LabSessions::LabSessions() : map<string,LabSesh>() {
-}
-
-
-LabSessions::LabSessions(const string& fn) : LabSessions() {
+LabSessions::LabSessions(const string& fn) {
     this->filename = fn;
 }
 

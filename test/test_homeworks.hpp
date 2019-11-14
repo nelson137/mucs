@@ -12,6 +12,7 @@
 #include "test_config.hpp"
 
 #include "../src/config.hpp"
+#include "../src/homeworks.hpp"
 
 using namespace std;
 using Catch::Matchers::Equals;

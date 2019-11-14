@@ -22,12 +22,12 @@ TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
 
 
 TEST_CASE("roster entry has incorrect type", "[config][roster][entry]") {
-    auto data = new_config_data();
-    string fn = data["filename"].get<string>();
+    string fn = rand_string();
     string user = rand_string(6);
-    data["roster"][user] = rand_int(9);
+    json data = { {user, rand_int(9)} };
+    Roster roster(fn, {});
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
+        data.get_to(roster),
         "Roster entries must be of type string: " +
             fn + "[\"roster\"][\"" + user + "\"]"
     );

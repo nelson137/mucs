@@ -1,10 +1,6 @@
 #include "homeworks.hpp"
 
 
-Hw::Hw() {
-}
-
-
 Hw::Hw(const string& fn, const string& n) : filename(fn), name(n) {
     // Normalize name (lowercase)
     stl_transform(this->name, ::tolower);
@@ -26,17 +22,7 @@ bool Hw::compare::operator()(
 }
 
 
-Homeworks::Homeworks(map<string,Hw> m)
-    : set(m.begin(), m.end())
-{}
-
-
-Homeworks::Homeworks(initializer_list<pair<string,Hw>> il)
-    : set(il.begin(), il.end())
-{}
-
-
-Homeworks::Homeworks(const string& fn) : Homeworks() {
+Homeworks::Homeworks(const string& fn) {
     this->filename = fn;
 }
 

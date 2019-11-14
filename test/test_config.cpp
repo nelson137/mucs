@@ -15,7 +15,7 @@ string error_id_unrecognized(
 }
 
 
-TEST_CASE("config file doesn't exist", "[config]") {
+TEST_CASE("config file doesn't exist", "[config][config-file]") {
     string fn = rand_string();
     REQUIRE_THROWS_WITH(
         Config(fn),
@@ -24,7 +24,7 @@ TEST_CASE("config file doesn't exist", "[config]") {
 }
 
 
-TEST_CASE("config path is a directory", "[config]") {
+TEST_CASE("config path is a directory", "[config][config-file]") {
     string fn = "/tmp";
     REQUIRE_THROWS_WITH(
         Config(fn),
@@ -33,7 +33,7 @@ TEST_CASE("config path is a directory", "[config]") {
 }
 
 
-TEST_CASE("config file exists and has invalid json", "[config]") {
+TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
     temp_file tf{};
     REQUIRE_THROWS_WITH(
         Config(tf.name),
@@ -42,7 +42,7 @@ TEST_CASE("config file exists and has invalid json", "[config]") {
 }
 
 
-TEST_CASE("config file exists and has valid json", "[config]") {
+TEST_CASE("config file exists and has valid json", "[config][config-file]") {
     ostringstream data;
     data << new_config_data();
     temp_file tf{};

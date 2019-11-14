@@ -52,7 +52,7 @@ struct LabSessions : public map<string, LabSesh> {
     string filename;
     vector<string> all_ids;
 
-    LabSessions();
+    using map<string,LabSesh>::map;
 
     LabSessions(const string& fn);
 
