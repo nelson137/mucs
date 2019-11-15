@@ -21,7 +21,7 @@ TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
 }
 
 
-TEST_CASE("roster entry has incorrect type", "[config][roster][entry]") {
+TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
     string fn = rand_string();
     string user = rand_string(6);
     json data = { {user, rand_int(9)} };
@@ -34,7 +34,7 @@ TEST_CASE("roster entry has incorrect type", "[config][roster][entry]") {
 }
 
 
-TEST_CASE("roster entry has one lab id", "[config][roster][entry]") {
+TEST_CASE("roster entry has one lab id", "[roster][entry]") {
     auto data = new_config_data();
     string fn = data["filename"].get<string>();
     string user = rand_string(6);
@@ -63,7 +63,7 @@ TEST_CASE("roster entry has one lab id", "[config][roster][entry]") {
 }
 
 
-TEST_CASE("roster entry has multiple lab ids", "[config][roster][entry]") {
+TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
     auto data = new_config_data();
     string fn = data["filename"].get<string>();
     string user = rand_string(6);
@@ -71,7 +71,7 @@ TEST_CASE("roster entry has multiple lab ids", "[config][roster][entry]") {
     string id = rand_string(2, chars_lower);
     data["labs"][id] = "mon 00:00:00 - 23:59:59";
 
-    SECTION("one recognized, other unrecognized", "[config][roster][entry]") {
+    SECTION("one recognized, other unrecognized") {
         string bad_id = id + '_';
         string all_ids = id + ',' + bad_id;
         data["roster"][user] = all_ids;
@@ -81,7 +81,7 @@ TEST_CASE("roster entry has multiple lab ids", "[config][roster][entry]") {
         );
     }
 
-    SECTION("all recognized", "[config][roster][entry]") {
+    SECTION("all recognized") {
         string all_ids = id + "," + id;
         data["roster"][user] = all_ids;
         try {
@@ -94,7 +94,7 @@ TEST_CASE("roster entry has multiple lab ids", "[config][roster][entry]") {
 }
 
 
-TEST_CASE("serialize roster", "[config][roster][serialize]") {
+TEST_CASE("serialize roster", "[roster][serialize]") {
     auto data = new_config_data();
     string fn = data["filename"].get<string>();
 

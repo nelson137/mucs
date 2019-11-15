@@ -21,7 +21,7 @@ TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
 }
 
 
-TEST_CASE("homeworks entry has incorrect type", "[config][homeworks][entry]") {
+TEST_CASE("homeworks entry has incorrect type", "[homeworks][entry]") {
     string fn = rand_string();
     string key = "hw" + to_string(rand_int(9));
     json data = { {key, rand_int(9)} };
@@ -34,8 +34,7 @@ TEST_CASE("homeworks entry has incorrect type", "[config][homeworks][entry]") {
 }
 
 
-TEST_CASE("homeworks entry has incorrect format",
-          "[config][homeworks][entry]") {
+TEST_CASE("homeworks entry has incorrect format", "[homeworks][entry]") {
     string key = "hw" + to_string(rand_int(9));
     string hw = rand_string();
     json data = { {key, hw} };
@@ -47,7 +46,7 @@ TEST_CASE("homeworks entry has incorrect format",
 
 
 TEST_CASE("deserialized homeworks entries are in sorted order",
-        "[config][homeworks]") {
+          "[homeworks]") {
     json data = {
         {"hw1", "2019-01-01 00:00:00"},
         {"hw2", "1970-01-01 00:00:00"}
@@ -57,7 +56,7 @@ TEST_CASE("deserialized homeworks entries are in sorted order",
 }
 
 
-TEST_CASE("homeworks is valid", "[config][homeworks][entry]") {
+TEST_CASE("homeworks is valid", "[homeworks][entry]") {
     string key = "hw" + to_string(rand_int(9));
     json data = { {key, "1970-01-01 00:00:00"} };
     try {
@@ -69,7 +68,7 @@ TEST_CASE("homeworks is valid", "[config][homeworks][entry]") {
 }
 
 
-TEST_CASE("serialize homeworks", "[config][homeworks][serialize]") {
+TEST_CASE("serialize homeworks", "[homeworks][serialize]") {
     json data = { {"hw1", "1970-01-01 00:00:00"} };
     ostringstream expected, actual;
     expected << data;

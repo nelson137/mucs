@@ -21,7 +21,7 @@ TEST_CASE("value for key labs has incorrect type", "[config][labs]") {
 }
 
 
-TEST_CASE("labs entry has incorrect type", "[config][labs][entry]") {
+TEST_CASE("labs entry has incorrect type", "[labs][entry]") {
     string fn = rand_string();
     string key = rand_string(1, chars_upper);
     json data = { {key, rand_int(9)} };
@@ -34,7 +34,7 @@ TEST_CASE("labs entry has incorrect type", "[config][labs][entry]") {
 }
 
 
-TEST_CASE("labs entry has incorrect format", "[config][labs][entry]") {
+TEST_CASE("labs entry has incorrect format", "[labs][entry]") {
     string fn = rand_string();
     string key = rand_string(1, chars_upper);
     json data = { {key, rand_string()} };
@@ -48,7 +48,7 @@ TEST_CASE("labs entry has incorrect format", "[config][labs][entry]") {
 }
 
 
-TEST_CASE("labs is valid", "[config][labs][entry]") {
+TEST_CASE("labs is valid", "[labs][entry]") {
     string key = rand_string(1, chars_upper);
     json data = { {key, "mon 00:00:00 - 23:59:59"} };
     LabSessions lab_sessions(rand_string());
@@ -61,7 +61,7 @@ TEST_CASE("labs is valid", "[config][labs][entry]") {
 }
 
 
-TEST_CASE("serialize labs", "[config][labs][serialize]") {
+TEST_CASE("serialize labs", "[labs][serialize]") {
     string key = rand_string(1, chars_upper);
     json data = { {key, "monday 00:00:00 - 23:59:59"} };
     LabSessions lab_sessions(rand_string());
