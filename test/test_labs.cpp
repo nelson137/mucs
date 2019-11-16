@@ -74,3 +74,31 @@ TEST_CASE("serialize labs", "[labs][serialize]") {
         Equals(actual.str(), Catch::CaseSensitive::No)
     );
 }
+
+
+TEST_CASE("is_active returns false when: weekday incorrect, time incorrect",
+          "[lab-sesh][is_active]") {
+    auto ls = rand_labsesh<NOT_TODAY,T_OUT_BOUND>();
+    REQUIRE(ls.is_active() == false);
+}
+
+
+TEST_CASE("is_active returns false when: weekday incorrect, time correct",
+          "[labs][is_active]") {
+    auto ls = rand_labsesh<NOT_TODAY,T_IN_BOUND>();
+    REQUIRE(ls.is_active() == false);
+}
+
+
+TEST_CASE("is_active returns false when: weekday correct, time incorrect",
+          "[labs][is_active]") {
+    auto ls = rand_labsesh<IS_TODAY,T_OUT_BOUND>();
+    REQUIRE(ls.is_active() == false);
+}
+
+
+TEST_CASE("is_active returns true when: weekday correct, time correct",
+          "[labs][is_active]") {
+    auto ls = rand_labsesh<IS_TODAY,T_IN_BOUND>();
+    REQUIRE(ls.is_active() == true);
+}
