@@ -33,7 +33,7 @@ ostream& operator<<(ostream& os, const chars_t& cc) {
 
 int rand_int(const int start, const int end) {
     random_device rng;
-    uniform_int_distribution<int> dist(start, end);
+    uniform_int_distribution<int> dist(start, end - 1);
     return dist(rng);
 }
 
