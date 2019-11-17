@@ -8,6 +8,8 @@
 #include "json.hpp"
 
 #include "mucs/except.hpp"
+#include "mucs/random.hpp"
+#include "mucs/temp_file.hpp"
 
 #include "test_util.hpp"
 
@@ -25,6 +27,8 @@ string error_id_unrecognized(
     const string& user,
     const string& id
 );
+
+json new_config_data();
 
 
 #endif

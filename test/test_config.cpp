@@ -15,6 +15,19 @@ string error_id_unrecognized(
 }
 
 
+json new_config_data() {
+    return {
+        {"filename", rand_string(4)},
+        {"course_id", rand_string()},
+        {"admin_hash", "!"},
+        {"homeworks", json::object()},
+        {"labs", json::object()},
+        {"current_lab", ""},
+        {"roster", json::object()}
+    };
+}
+
+
 TEST_CASE("config file doesn't exist", "[config][config-file]") {
     string fn = rand_string();
     REQUIRE_THROWS_WITH(
