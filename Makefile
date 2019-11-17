@@ -1,4 +1,4 @@
-TARGET       := mucs
+TARGET       := a.out
 TEST_TARGET  := runtests
 DEST         ?= /group/cs1050
 DEST_BIN     := $(DEST)/bin
