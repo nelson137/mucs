@@ -79,15 +79,6 @@ int parse_weekday(string w_str) {
 }
 
 
-tuple<string, string> path_split_ext(const string& path) {
-    auto i = path.find_last_of(".");
-    if (i == string::npos || i == 0)
-        return make_tuple(path, "");
-    else
-        return make_tuple(path.substr(0, i), path.substr(i));
-}
-
-
 string prompt_user(const string& prompt) {
     if (prompt.size())
         cout << prompt;
@@ -122,15 +113,3 @@ string string_wrap(string s, const string& prefix, const string& suffix) {
 string w_bold (string s) { return string_wrap(s, FG_BOLD);  }
 string w_green(string s) { return string_wrap(s, FG_GREEN); }
 string w_red  (string s) { return string_wrap(s, FG_RED);   }
-
-
-void verify_dir_exists(const string& dirpath) {
-    struct stat s;
-    if (stat(dirpath.c_str(), &s) == 0) {
-        if (S_ISDIR(s.st_mode) == 0)
-            throw mucs_exception(
-                "Path exists but is not a directory: " + dirpath);
-    } else {
-        throw mucs_exception("No such file or directory: " + dirpath);
-    }
-}

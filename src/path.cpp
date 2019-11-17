@@ -55,11 +55,6 @@ string Path::str() const {
 }
 
 
-int Path::chdir() const {
-    return ::chdir(this->m_path.c_str()) == 0;
-}
-
-
 bool Path::exists() const {
     return this->m_stat_ret == 0;
 }

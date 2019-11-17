@@ -38,7 +38,6 @@ public:
 
     string str() const;
 
-    int chdir() const;
     bool exists() const;
     bool is_dir() const;
     bool is_file() const;

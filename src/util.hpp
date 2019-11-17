@@ -8,7 +8,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <tuple>
 #include <vector>
 
 #include <pwd.h>
@@ -49,13 +48,9 @@ time_t parse_time(const string& t_str, const string& fmt = "%T");
 
 int parse_weekday(string w_str);
 
-tuple<string, string> path_split_ext(const string& path);
-
 string prompt_user(const string& prompt = "");
 
 vector<string> string_split(const string& s, const string& delim = ",");
-
-void verify_dir_exists(const string& dirpath);
 
 
 template<typename... String>
@@ -124,12 +119,6 @@ string stl_join(const Container& c, const string& delim = ",") {
 
 template<typename Container, typename UnaryOp>
 void stl_transform(Container& c, UnaryOp op) {
-    transform(c.begin(), c.end(), c.begin(), op);
-}
-
-
-template<template<typename> typename Container, typename T, typename UnaryOp>
-void stl_transform(Container<T>& c, UnaryOp op) {
     transform(c.begin(), c.end(), c.begin(), op);
 }
 
