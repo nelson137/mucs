@@ -29,7 +29,7 @@ Path Path::operator/(const string& rel_path) const {
 
 
 Path Path::operator/(const Path& other) const {
-    return this->operator/(other.str());
+    return this->operator/(other.m_path);
 }
 
 
@@ -41,12 +41,12 @@ Path& Path::operator/=(const string& rel_path) {
 
 
 Path& Path::operator/=(const Path& other) {
-    return this->operator/=(other.str());
+    return this->operator/=(other.m_path);
 }
 
 
 ostream& operator<<(ostream& os, const Path& p) {
-    return os << p.str();
+    return os << p.m_path;
 }
 
 
@@ -73,8 +73,7 @@ bool Path::is_file() const {
 vector<string> Path::ls() const {
     DIR *dir = opendir(this->m_path.c_str());
     if (dir == nullptr)
-        cerr << "Could not list config directory" << endl;
-        // throw mucs_exception("Could not list config directory");
+        throw mucs_exception("Could not list directory");
 
     vector<string> children;
     struct dirent *ent;
@@ -132,18 +131,13 @@ int Path::rm() const {
 
 
 int Path::rm_recurse() const {
-    Path cur = *this;
-    int ret;
-
     if (this->is_dir()) {
+        int ret;
         for (auto& child : this->ls()) {
-            cur /= child;
-            if ((ret = cur.rm()) < 0)
+            ret = this->operator/(child).rm_recurse();
+            if (ret < 0)
                 return ret;
         }
-    } else if (this->is_file()) {
-        return ::remove(this->m_path.c_str());
     }
-
-    return 0;
+    return this->rm();
 }

@@ -30,9 +30,9 @@ public:
     Path(const string& s);
 
     Path  operator/ (const string& rel_path) const;
-    Path  operator/ (const Path&   other   ) const;
+    Path  operator/ (const   Path&    other) const;
     Path& operator/=(const string& rel_path);
-    Path& operator/=(const Path&   other   );
+    Path& operator/=(const   Path&    other);
 
     friend ostream& operator<<(ostream& os, const Path& p);
 
