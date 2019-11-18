@@ -3,7 +3,7 @@
 
 Submitter::Submitter(const Path& sub_d) : submit_d(sub_d) {
     if (this->submit_d.exists())
-        this->submit_d.rm();
+        this->submit_d.rm_recurse();
 
     submit_d.mkdir_recurse();
 }
