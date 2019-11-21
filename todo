@@ -1,26 +1,16 @@
 branch: cpp-port
-    test "homeworks/entry has incorrect type"
-        use 'standardized' incorrect type error message
+    submit dir structure:
+        BASE = /group/cs1050/submissions
+        DATETIME = YYYY-MM-DD
+        TIME = HH:MM:SS
+        denied submission basenames are postfixed with a tilde
+        all submissions (including denied) are copied into:
+            BASE/COURSE/LAB_ID/ASSIGNMENT/archive/USER.DATE.TIME[~]
+        symlink to current submissions is:
+            BASE/COURSE/LAB_ID/ASSIGNMENT/USER
     copy files readonly
-        mode 440 instead of 660 in install call
-    use normalized keys in error messages instead of original ones
-    string LabSesh::format(string fmt = "{weekday} {start} - {end}") {
-        // replaces LabSesh::get_pretty()
-        // ls.format();
-        // ls.format("Lab {id} is not in session: {weekday} from {start} to {end}")
-        return fmt with replacements:
-            "{id}"      => this->id
-            "{weekday}" => this->weekday
-            "{start}"   => this->start
-            "{end}"     => this->end
-    }
-    "... expected type object for key" -> "... expected object for key"
+        install with mode 440 (instead of 660)
     success/error message for admin update-password
-    remove seconds from lab session times
     use makefiles dir, use default if none is specified in configs
     check submission files exist before confirmation prompt
-    get rid of #define's in mucs/except.hpp
     why is a variable name required here (f84aa2d test/test_homeworks.cpp:27:23)
-
-misc:
-    sanitize homework name input for directory names
