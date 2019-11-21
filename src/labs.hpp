@@ -35,14 +35,7 @@ struct LabSesh {
 
     bool is_active() const;
 
-    string w_raw() const;
-    string w_pretty() const;
-
-    string s_raw() const;
-    string s_pretty() const;
-
-    string e_raw() const;
-    string e_pretty() const;
+    string format(string fmt) const;
 
 };
 

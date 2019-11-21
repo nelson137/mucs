@@ -29,33 +29,26 @@ bool LabSesh::is_active() const {
 }
 
 
-string LabSesh::w_raw() const {
-    return to_string(this->weekday);
-}
+string LabSesh::format(string fmt) const {
+    static const string fmt_t = "%H:%M:%S";
+    static const string fmt_t_pretty = "%I:%M:%S%P";
 
+    const auto str_repl = [&](const string& pat, const string& repl) {
+        fmt = regex_replace(fmt, regex(pat), repl);
+    };
 
-string LabSesh::w_pretty() const {
-    return format_weekday(this->weekday);
-}
+    str_repl("\\{id}", this->id);
 
+    str_repl("\\{weekday}", format_weekday(this->weekday));
+    str_repl("\\{weekday_n}", to_string(this->weekday));
 
-string LabSesh::s_raw() const {
-    return format_time(this->start, "%H:%M:%S");
-}
+    str_repl("\\{start}", format_time(this->start, fmt_t));
+    str_repl("\\{start_p}", format_time(this->start, fmt_t_pretty));
 
+    str_repl("\\{end}", format_time(this->end, fmt_t));
+    str_repl("\\{end_p}", format_time(this->end, fmt_t_pretty));
 
-string LabSesh::s_pretty() const {
-    return format_time(this->start, "%I:%M:%S%P");
-}
-
-
-string LabSesh::e_raw() const {
-    return format_time(this->end, "%H:%M:%S");
-}
-
-
-string LabSesh::e_pretty() const {
-    return format_time(this->end, "%I:%M:%S%P");
+    return fmt;
 }
 
 
@@ -99,9 +92,7 @@ void from_json(const json& j, LabSessions& lab_sessions) {
 
 
 void to_json(json& j, const LabSesh& ls) {
-    ostringstream repr;
-    repr << ls.w_pretty() << ' ' << ls.s_raw() << " - " << ls.e_raw();
-    j = repr.str();
+    j = ls.format("{weekday} {start} - {end}");
 }
 
 

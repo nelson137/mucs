@@ -53,12 +53,10 @@ string IConfig::get_current_lab(const string& user) {
     if (user_labs.size() == 1) {
         string id = user_labs[0];
         auto ls = this->lab_sessions[id];
-        if (not ls.is_active()) {
-            ostringstream msg;
-            msg << "Lab " << ls.id << " is not in session: " << ls.w_pretty()
-                << " from " << ls.s_pretty() << " to " << ls.e_pretty();
-            throw mucs_exception(msg.str());
-        }
+        if (not ls.is_active())
+            throw mucs_exception(ls.format(
+                "Lab {id} is not in session: {weekday} from {start} to {end}"
+            ));
     } else {
         auto is_active = [&](const string& id) {
             return this->lab_sessions[id].is_active();
