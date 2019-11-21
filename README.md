@@ -28,87 +28,81 @@ Assignment submission system for the University of Missouri — Columbia Departm
     mucs admin update-roster
     mucs submit COURSE ASSIGNMENT FILE [...FILES]
 
-## OPTIONS
-
-**`-h`**, **`--help`**
-<br/>
-Print the help message.
-
 ## CONFIG
 
-Mucs is a config-driven program that looks in `/group/cs1050/config.d/` for files with the extension `.json`. Each of these files must contain valid json or an error message will be printed on execution. **Note that mucs will not do anything other than print the error message until the invalid json is fixed.**
+The behavior of Mucs is controlled by configuration files. All Mucs commands require the `COURSE` argument so that it can load the config for the specified course. Mucs is hard-coded to look for configs in the directory `/group/cs1050/config.d/`. For example, if a shell command executing Mucs begins with `mucs submit 1050`, then Mucs will attempt to load the config file `/group/cs1050/config.d/1050`.
+
+If the config file for the specified course is invalid an error message will be printed. **Note that Mucs will not do anything other than print this error message until the file is fixed.** For a config file to be considered valid it must contain a valid json object that specifies all [Config Properties](#config-properties).
 
 ### Example Invalid Config
 
-`/group/cs1050/config.d/invalid.json:`
+`/group/cs1050/config.d/invalid`
 
     {
         "course_number": "1050"
         // JSON does not support comments
     }
 
-Executing `mucs`:
+Executing Mucs:
 
-    $ mucs -h
+    $ mucs submit invalid
 
-    Invalid json: /group/cs1050/config.d/invalid.json
+    Invalid json: /group/cs1050/config.d/invalid
 
 ### Example Valid Config
 
-`/group/cs1050/config.d/cs1050.json:`
+The admin hash used in this example is the message-digest of an empty string.
+
+`/group/cs1050/config.d/1050`
 
     {
         "course_number": "1050",
-        "admin_hash": "",
-        "overrides": ["nwewnh"],
-        "homeworks": {
-            "hw1": "2019-9-13 21:00:00"
-        },
-        "labs": {
-            "A": "mon 08:00:00 - 10:30:00"
-        },
-        "roster": {
-            "nwewnh": "A"
-        }
+        "admin_hash": "d41d8cd98f00b204e9800998ecf8427e",
+        "overrides": ["jer676"],
+        "current_lab": "lab1",
+        "homeworks": { "hw1": "2019-9-13 21:00:00" },
+        "labs": { "A": "mon 08:00:00 - 10:30:00" },
+        "roster": { "nwewnh": "A" }
     }
 
 ### Config Properties
 
-**`course_number`**
+**admin_hash** `string`
 <br/>
-*`string`*
-<br/>
-A string identifier for the course being described by the config. It corresponds to argument `COURSE` in the [Submit Command](#submit-command).
+A string of the md5 message-digest of the admin password. See [Admin Password](#admin-password) for more information.
 
-**`admin_hash`**
+**course_number** `string`
 <br/>
-*`string`*
-<br/>
-The string md5 message-digest of the admin password. See [Admin Password](#admin-password) for more information.
+A string of the identifier for the course that the config describes. It corresponds to argument `COURSE` in the [Submit Command](#submit-command).
 
-**`overrides`**
-<br/>
-*`[string]`*
-<br/>
-An array of strings where each element is a string of the pawprint of a student whose due date checks will all be overriden. When these students use the [Submit Command](#submit-command), the submission directory will always be `/group/cs1050/submissions/COURSE/LAB_ID/overrides/PAWPRINT`, regardless of the `ASSIGNMENT`. **Note that subsequent submissions will delete the previous one**. These students' submissions will also never be denied, regardless of whether there an open lab session or homework assignment.
+**current_lab** `string`
+A string of the current lab assignment. This property must be kept up to date with the weekly labs. The first is typically `lab1`.
 
-**`homeworks`**
+**homeworks** `"name": "yyyy-mm-dd hh:mm:ss"`
 <br/>
-*`{ "name": "yyyy-mm-dd hh:mm:ss" }`*
+An object describing homework assignments and their due dates. The key of each property is the name of the assignment. The value of each property is a string of the assignment's due date. The due date is an ISO 8601 datetime, precise to the whole second, but with a space separating the date and time instead of the letter `T`.
 <br/>
-An object specifying homework assignments and their due dates. The key of each property is the name of the assignment. It is suggested that the names follow the format `hwN` where N is the N-th homework assignment for the semester, e.g. hw1, hw2. The value of each property is a string of the assignment's due date. The due date is an ISO 8601 datetime but with a space separating the date and time instead of a `T`. The time is only precise down to the whole second. An example `homeworks` entry: `"hw1": "2019-9-13 21:00:00"`.
+Example entry: `"hw1": "2019-09-13 17:00:00"`
 
-**`labs`**
+**labs** `"lab_id": "weekday hh:mm:ss - hh:mm:ss"`
 <br/>
-*`{ lab_id": "weekday hh:mm:ss - hh:mm:ss" }`*
+An object describing lab sessions. The key of each property is the lab's identifier. It's value is a string of the weekday that the lab is held, followed by its start and end time. Weekdays can be either the full weekday or its abbreviation to three letters, case insensitive. The times are ISO 8601 times, precise to the whole second.
 <br/>
-An object specifying the lab sessions. The key of each property is the lab's identifier. The convention for lab ids is capital letters starting with A. The value of each property is a string of the weekday that the lab is held, followed by its start and end times. Weekdays can be either the full weekday or its abbreviation to three letters, e.g. monday, tue. The times are ISO 8601 times with precision down to the whole second. An example `labs` entry: `"A": "mon 08:00:00 - 10:30:00"`.
+Example entry: `"A": "mon 08:00:00 - 10:30:00"`
 
-**`roster`**
+**overrides** `[string]`
 <br/>
-*`{ "pawprint": "lab_id[,lab_id2[,...]]" }`*
+An array where each element is a string of the pawprint of a student who will be allowed to submit any assignment at any time. It will force the `COURSE` argument for the [Submit Command](#submit-command) to always be `override`, meaning the submission directory will always be `/group/cs1050/submissions/COURSE/LAB_ID/overrides/PAWPRINT` regardless of the current assignment. **Note that submissions always delete any previous submission**, therefore the `overrides` array is should only be used for one assignment.
 <br/>
-An object specifying the students in the course and the lab session(s) in which they are enrolled. The key of each property is the pawprint of the student. The value of each property is a string describing the labs that the student attends in the form of a comma-separated list of the labs' ids. An entry for a student that attends one lab would look like this: `"nwewnh": "A"`. An entry for a student that attends two labs would look like this: `"nwewnh": "B,C"`.
+Example: `"overrides": ["nwewnh"]`
+
+**roster** `"pawprint": "lab_id[,lab_id2...]"`
+<br/>
+An object describing the students in the course and the lab session(s) in which they are enrolled. The key of each property is the student's pawprint. It's value is a string describing the labs that the student attends in the form of a comma-separated list of the labs' ids.
+<br/>
+Example entry with one lab `"nwewnh": "A"`
+<br/>
+Example entry with two labs: `"nwewnh": "B,C"`
 
 ## ADMIN COMMAND
 
@@ -120,7 +114,7 @@ The admin password is stored as an md5 message-digest in the config file. It is 
 
     read -s p; printf "$p" | md5sum
 
-This command will wait for you to type the new password and hit Enter. It will print out the new password's md5 hash-digest so that you can copy it into the config.
+The command will wait for you to type the new password and hit Enter. The md5 message-digest of the new password will be printed out so that you can copy it into the config.
 
 ### Admin Dump Command
 
@@ -128,23 +122,23 @@ Print information from the config files.
 
 ##### Admin Dump Options
 
-The options for this command filter down its output to only the specified pieces of information. Invoking this command with no options is the same as invoking it with all options: `mucs admin dump -clrw`.
+The options for this command filter its output to only the specified pieces of information. For example, the shell command `mucs admin dump -lc` will print only the labs and the current lab assignment. Invoking this command with no options behaves as if it were invoked with all options.
 
-**`-c`**, **`--current-assignments`**
+**-c**, **--current-assignments**
 <br/>
 Print the current lab and homework names.
 
-**`-l`**, **`--labs`**
+**-l**, **--labs**
 <br/>
 Print the lab sessions.
 
-**`-r`**, **`--roster`**
+**-r**, **--roster**
 <br/>
-Print the students and the lab session(s) that they attend.
+Print the students and the lab session(s) in which they are enrolled.
 
-**`-w`**, **`--homeworks`**
+**-w**, **--homeworks**
 <br/>
-Print the homeworks and their due dates.
+Print the homeworks.
 
 ### Admin Update Password Command
 
@@ -157,10 +151,6 @@ TODO
 ## SUBMIT COMMAND
 
 TODO
-
-## BUGS
-
-See [GitHub Issues](https://github.com/nelson137/mucs/issues).
 
 ## AUTHOR
 
