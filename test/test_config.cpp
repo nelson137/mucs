@@ -62,7 +62,7 @@ TEST_CASE("config file exists and has valid json", "[config][config-file]") {
     tf << data.str();
     try {
         Config(tf.name);
-    } catch (mucs_exception& me) {
+    } catch (const mucs_exception& me) {
         FAIL(me.what());
     }
 }
@@ -115,7 +115,7 @@ TEST_CASE("config is valid", "[config]") {
     try {
         data.get<Config>();
         SUCCEED("Successfully created Config object");
-    } catch (mucs_exception& me) {
+    } catch (const mucs_exception& me) {
         FAIL(me.what());
     }
 }

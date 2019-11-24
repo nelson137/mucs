@@ -55,7 +55,7 @@ TEST_CASE("labs is valid", "[labs][entry]") {
     try {
         data.get_to(lab_sessions);
         SUCCEED("Successfully created LabSessions object");
-    } catch (mucs_exception& me) {
+    } catch (const mucs_exception& me) {
         FAIL(me.what());
     }
 }

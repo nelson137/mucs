@@ -62,7 +62,7 @@ TEST_CASE("homeworks is valid", "[homeworks][entry]") {
     try {
         data.get<Homeworks>();
         SUCCEED("Successfully created Homeworks object");
-    } catch (mucs_exception& me) {
+    } catch (const mucs_exception& me) {
         FAIL(me.what());
     }
 }

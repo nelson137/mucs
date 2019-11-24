@@ -56,7 +56,7 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
         try {
             data.get<Config>();
             SUCCEED("Successfully created Roster object");
-        } catch (mucs_exception& me) {
+        } catch (const mucs_exception& me) {
             FAIL(me.what());
         }
     }
@@ -87,7 +87,7 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
         try {
             data.get<Config>();
             SUCCEED("Successfully created Roster object");
-        } catch (mucs_exception& me) {
+        } catch (const mucs_exception& me) {
             FAIL(me.what());
         }
     }
