@@ -34,6 +34,10 @@ void submit_command(SubmitOptions& opts) {
 #endif
 
     string user = get_user();
+
+    if (not config.roster.count(user))
+        throw mucs_exception("User not in course: " + user);
+
     string assignment;
 
     try {

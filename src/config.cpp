@@ -45,9 +45,6 @@ void IConfig::parse(const json& j) {
 
 
 string IConfig::get_current_lab(const string& user) {
-    if (not this->roster.count(user))
-        throw mucs_exception("User not in course: " + user);
-
     vector<string> user_labs = this->roster[user];
 
     if (user_labs.size() == 1) {
