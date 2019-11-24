@@ -11,8 +11,6 @@
 #include "mucs/random.hpp"
 #include "mucs/temp_file.hpp"
 
-#include "test_util.hpp"
-
 #include "../src/config.hpp"
 
 using namespace std;
