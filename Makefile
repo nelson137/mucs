@@ -22,18 +22,16 @@ SCRIPTS      := $(wildcard bin/mucs-*)
 INSTALL      := /usr/bin/install -g cs1050-ta
 LIBS         := -I$(LIB_D)/include -L$(LIB_D)/build -lmucs
 
-GPP_FLAGS    := -std=c++11 -Wall -Werror -Wno-noexcept-type --coverage -O0 -I$(INCLUDE_D)
-GPP_BASE     := /usr/bin/g++ $(GPP_FLAGS)
-ifeq ("$(shell which gccfilter)","")
-GPP          := $(GPP_BASE)
-else
-GPP          := gccfilter -c -n -a $(GPP_BASE)
+GPP          := /usr/bin/g++ -std=c++11 -Wall -Werror -Wno-noexcept-type --coverage -O0 -I$(INCLUDE_D)
+
+ifneq ("$(shell which gccfilter)","")
+GPP          := gccfilter -c -n -a $(GPP)
 endif
 
 LCOV         := /usr/bin/lcov -c --no-external
 GENHTML      := /usr/bin/genhtml --legend --function-coverage --demangle-cpp
 
-.PHONY: main test all libmucs install clean build_dirs all_dirs
+.PHONY: main test coverage all libmucs install clean build_dirs all_dirs
 
 
 main: $(TARGET)
