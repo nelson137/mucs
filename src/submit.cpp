@@ -25,7 +25,7 @@ bool Submitter::submit(const vector<string>& sources) {
 }
 
 
-void submit_command(SubmitOptions& opts) {
+void submit(SubmitOptions& opts) {
     IConfig config;
 #ifdef MUCS_TEST
     config = MockConfig();
@@ -40,17 +40,12 @@ void submit_command(SubmitOptions& opts) {
 
     string assignment;
 
-    try {
-        if (opts.assignment_type == "lab")
-            assignment = config.get_current_lab(user);
-        else if (opts.assignment_type == "hw")
-            assignment = config.get_current_hw();
-        else
-            throw mucs_exception("Not possible, caught by parser");
-    } catch (const mucs_exception& me) {
-        cerr << me.what() << endl;
-        return;
-    }
+    if (opts.assignment_type == "lab")
+        assignment = config.get_current_lab(user);
+    else if (opts.assignment_type == "hw")
+        assignment = config.get_current_hw();
+    else
+        throw mucs_exception("Not possible, caught by parser");
 
     string spacer = string(get_term_width(), '=');
     cout << w_green(spacer) << endl;

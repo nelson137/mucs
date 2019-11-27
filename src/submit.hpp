@@ -37,7 +37,7 @@ struct Submitter {
 };
 
 
-void submit_command(SubmitOptions& opts);
+void submit(SubmitOptions& opts);
 
 
 #endif

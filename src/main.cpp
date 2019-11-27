@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     CLI::App *submit_subcmd = app
         .add_subcommand("submit")
         ->callback([&]() {
-            submit_command(submit_opts);
+            subcommand(submit, submit_opts);
         });
     submit_subcmd
         ->add_option("course", submit_opts.course)
