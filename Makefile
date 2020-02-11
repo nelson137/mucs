@@ -31,21 +31,24 @@ endif
 LCOV         := /usr/bin/lcov -c --no-external
 GENHTML      := /usr/bin/genhtml --legend --function-coverage --demangle-cpp
 
-.PHONY: main test coverage all libmucs install clean build_dirs all_dirs
 
-
+.PHONY: main
 main: $(TARGET)
 
+.PHONY: test
 test: $(TEST_TARGET)
 
+.PHONY: coverage
 coverage: test
 	./runtests
 	@mkdir -p $(COVERAGE_D)
 	$(LCOV) -b $(SRC_D) -d $(BUILD_D)/$(SRC_D) -o $(COVERAGE_D)/report.info
 	$(GENHTML) $(COVERAGE_D)/report.info -o $(COVERAGE_D)
 
+.PHONY: all
 all: main test coverage
 
+.PHONY: libmucs
 libmucs:
 	@cd $(LIB_D) && $(MAKE)
 
@@ -64,6 +67,7 @@ $(BUILD_D)/%.o: %.cpp | build_dirs
 	@$(GPP) -c -MMD $< $(LIBS) -o $@
 	@echo $@
 
+.PHONY: install
 install: $(OBJS) | all_dirs $(TARGET)
 	[ -d "$(DEST)" ]
 	cd $(DEST) && \
@@ -73,14 +77,17 @@ install: $(OBJS) | all_dirs $(TARGET)
 	chmod u+s $(DEST_BIN)/$(TARGET)
 	$(INSTALL) -C -m 770 $(SCRIPTS) -t $(DEST_BIN)
 
+.PHONY: clean
 clean:
 	rm -rf $(TARGET) $(TEST_TARGET) $(BUILD_D) $(COVERAGE_D)
 	@cd $(LIB_D) && $(MAKE) clean
 
+.PHONY: build_dirs
 build_dirs:
 	@mkdir -p $(BUILD_D)/$(SRC_D)
 	@mkdir -p $(BUILD_D)/$(TEST_D)
 
+.PHONY: all_dirs
 all_dirs: | build_dirs
 	@mkdir -p $(DEST_BIN)
 
