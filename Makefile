@@ -22,7 +22,7 @@ SCRIPTS      := $(wildcard bin/mucs-*)
 INSTALL      := /usr/bin/install -g cs1050-ta
 LIBS         := -I$(LIB_D)/include -L$(LIB_D)/build -lmucs
 
-GPP          := /usr/bin/g++ -std=c++11 -Wall -Werror -Wno-noexcept-type --coverage -O0 -I$(INCLUDE_D)
+GPP          := /usr/bin/g++ -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type --coverage -O0 -I$(INCLUDE_D)
 
 ifneq ("$(shell whereis gccfilter >/dev/null)","")
 GPP          := gccfilter -c -n -a $(GPP)
