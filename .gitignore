@@ -1,5 +1,6 @@
 a.out
 runtests
+.ccls-cache/
 build/
 coverage/
 libmucs/build/
