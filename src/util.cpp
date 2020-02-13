@@ -86,10 +86,6 @@ time_t parse_time(const string& t_str, const string& fmt) {
 
 
 int parse_weekday(string w_str) {
-    if (w_str.size()) {
-        w_str[0] = toupper(w_str[0]);
-        transform(w_str.begin()+1, w_str.end(), w_str.begin()+1, ::tolower);
-    }
     tm t;
     memset(&t, -1, sizeof(t));
     istringstream(w_str) >> get_time(&t, "%a");
