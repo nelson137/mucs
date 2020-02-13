@@ -1,55 +1,36 @@
 #!/bin/bash
 
-USAGE='Usage: findall [ target... ] GREP_PATTERN'
+HERE="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+PROJ="$HERE/.."
 
-BIN="$( dirname "${BASH_SOURCE[0]}" )"
-PROJ="$(dirname "$BIN")"
+USAGE='Usage: findall [ TARGET... ] PATTERN'
 
-EXCLUDES=( bin examples include py py-test .ccls-cache )
-EXCLUDES=( $(for e in ${EXCLUDES[@]}; do echo "--exclude-dir $e"; done) )
-EXCLUDES="${EXCLUDES[@]}"
+PATTERN=
+TARGETS=()
 
-die() {
-    echo "$@" >&2
+# No arguments given
+if (( $# == 0 )); then
+    echo "$USAGE" >&2
     exit 1
-}
+fi
 
-info() {
-    echo "$@"
-    exit 0
-}
-
-
-show_help=0
-pattern=
-targets=()
-
-# Loop over cli args
-while (( $# )); do
+while (( $# > 0 )); do
     case "$1" in
-        -h|--help) show_help=1 ;;
-        *)         targets+=( "$1" ) ;;
+        -h|--help)
+            echo "$USAGE"; exit ;;
+        *)
+            (( $# == 1 )) && PATTERN="$1" || TARGETS+=( "$1" ) ;;
     esac
     shift
 done
 
-# Show usage if -h given
-(( $show_help )) && info "$USAGE"
-
-# No arguments given
-(( ${#targets[@]} == 0 )) && die "$USAGE"
-
-# Pop the last positional and assign it to pattern
-last="${#targets[@]}-1"
-pattern="${targets[$last]}"
-unset "targets[$last]"
-
 # No targets given
-# Default to source and test directories for C++ and Python
-(( ${#targets[@]} == 0 )) &&
-    targets=( src test libmucs/include/mucs libmucs/src)
+# Default to C++ source and test directories
+(( ${#TARGETS[@]} == 0 )) &&
+    TARGETS=( src test libmucs/{include/mucs,src} )
 
-# Execute `grep -R PATTERN` in each target directory
-for t in "${targets[@]}"; do
-    /bin/grep -nEIR --color=auto $EXCLUDES "$pattern" "$PROJ/$t"
-done
+pushd "$PROJ" >/dev/null
+
+    /bin/grep -EnRI --color=auto "$PATTERN" "${TARGETS[@]}"
+
+popd >/dev/null
