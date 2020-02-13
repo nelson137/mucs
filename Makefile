@@ -53,7 +53,7 @@ libmucs:
 	@cd $(LIB_D) && $(MAKE)
 
 $(TARGET): $(OBJS) | libmucs
-	@echo -n "$^ -> "
+	@echo -n "$(BUILD_D)/src/*.o -> "
 	@$(GPP) $^ $(LIBS) -o $@
 	@echo $@
 
