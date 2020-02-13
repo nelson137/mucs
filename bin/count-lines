@@ -1,45 +1,27 @@
 #!/bin/bash
 
-BIN="$( cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd )"
-PROJ="$(dirname "$BIN")"  # Project root
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Project root
+PROJ="$HERE/.."
 
-CPP_SRC_D="$PROJ/src"
-CPP_TEST_D="$PROJ/test"
-PY_SRC_D="$PROJ/py"
-PY_TEST_D="$PROJ/py-test"
-
-
-sum() {
-    if (( $# > 0 )); then
-        echo "$*" | sum
-    else
-        tr ' ' + | bc
-    fi
+count_dir() {
+    find "$@" -type f -exec wc -l {} \; | awk 'BEGIN{n=0} {n+=$1} END{print n}'
 }
 
-count() {
-    find "$1" -type f -exec \
-        wc -l {} \; |
-        awk '{print $1}' |
-        paste -sd ' ' |
-        sum
-}
+cpp_src="$(count_dir "$PROJ/src")"
+cpp_test="$(count_dir "$PROJ/test")"
+cpp_total="$(( cpp_src + cpp_test ))"
 
+py_src="$(count_dir "$PROJ/py")"
+py_test="$(count_dir "$PROJ/py-test")"
+py_total="$(( py_src + py_test ))"
 
-n_cpp_src="$(count "$CPP_SRC_D")"
-n_cpp_test="$(count "$CPP_TEST_D")"
-n_cpp="$(sum $n_cpp_src $n_cpp_test)"
-
-n_py_src="$(count "$PY_SRC_D")"
-n_py_test="$(count "$PY_TEST_D")"
-n_py="$(sum "$n_py_src" "$n_py_test")"
-
-echo "     C++ Source: $n_cpp_src"
-echo "       C++ Test: $n_cpp_test"
-echo "      Total C++: $n_cpp"
+echo "   C++ Source: $cpp_src"
+echo "     C++ Test: $cpp_test"
+echo "    Total C++: $cpp_total"
 echo
-echo "  Python Source: $n_py_src"
-echo "    Python Test: $n_py_test"
-echo "   Total Python: $n_py"
+echo "Python Source: $py_src"
+echo "  Python Test: $py_test"
+echo " Total Python: $py_total"
 echo
-echo "          Total: $(sum $n_cpp $n_py)"
+echo "        Total: $(( cpp_total + py_total ))"
