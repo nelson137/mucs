@@ -44,6 +44,24 @@ string get_user() {
 }
 
 
+string join_paths(string a, deque<string> parts) {
+    string b = parts.front();
+    parts.pop_front();
+
+    if (not a.size()) return b;
+    if (not b.size()) return a;
+
+    if (a.back() == '/' && b.front() == '/')
+        a.erase(a.end() - 1);
+    else if (a.back() != '/' && b.front() != '/')
+        a += "/";
+
+    return parts.size()
+        ? join_paths(a + b, parts)
+        : a + b;
+}
+
+
 system_clock::time_point parse_datetime(const string& dt_str) {
     time_t epoch = 0;
     tm *t = localtime(&epoch);

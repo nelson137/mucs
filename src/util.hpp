@@ -4,6 +4,7 @@
 
 #include <chrono>
 #include <ctime>
+#include <deque>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -42,6 +43,8 @@ int get_term_width();
 
 string get_user();
 
+string join_paths(string a, deque<string> parts);
+
 system_clock::time_point parse_datetime(const string& dt_str);
 
 time_t parse_time(const string& t_str, const string& fmt = "%T");
@@ -69,16 +72,9 @@ string error_config(
 
 
 template<typename... String>
-string join_paths(string a, string b = "", String... rest) {
-    if (not a.size()) return b;
-    if (not b.size()) return a;
-
-    if (a.back() == '/' && b.front() == '/')
-        a.erase(a.end() - 1);
-    else if (a.back() != '/' && b.front() != '/')
-        a += "/";
-
-    return a + join_paths(b, rest...);
+string join_paths(string a, string b, String... rest) {
+    deque<string> parts = {b, rest...};
+    return join_paths(a, parts);
 }
 
 
