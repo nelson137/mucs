@@ -5,7 +5,7 @@ USAGE='Usage: findall [ target... ] GREP_PATTERN'
 BIN="$( dirname "${BASH_SOURCE[0]}" )"
 PROJ="$(dirname "$BIN")"
 
-EXCLUDES=( bin examples include py py-test )
+EXCLUDES=( bin examples include py py-test .ccls-cache )
 EXCLUDES=( $(for e in ${EXCLUDES[@]}; do echo "--exclude-dir $e"; done) )
 EXCLUDES="${EXCLUDES[@]}"
 
