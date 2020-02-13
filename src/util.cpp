@@ -15,20 +15,27 @@ int current_weekday() {
 }
 
 
+string format_time(const tm& t, const string& fmt) {
+    size_t size = sizeof(char) * 32;
+    char *buf = static_cast<char*>(malloc(size));
+    while (strftime(buf, size, fmt.c_str(), &t) == 0) {
+        free(buf);
+        size *= 2;
+        buf = static_cast<char*>(malloc(size));
+    }
+    return string(buf);
+}
+
+
 string format_time(time_t tt, const string& fmt) {
-    tm *t = localtime(&tt);
-    ostringstream ret;
-    ret << put_time(t, fmt.c_str());
-    return ret.str();
+    return format_time(*localtime(&tt), fmt);
 }
 
 
 string format_weekday(int weekday) {
     tm t;
     t.tm_wday = weekday;
-    ostringstream ret;
-    ret << put_time(&t, "%A");
-    return ret.str();
+    return format_time(t, "%A");
 }
 
 
@@ -63,32 +70,25 @@ string join_paths(string a, deque<string> parts) {
 
 
 system_clock::time_point parse_datetime(const string& dt_str) {
-    time_t epoch = 0;
-    tm *t = localtime(&epoch);
-
-    istringstream ss(dt_str);
-    ss >> get_time(t, "%Y-%m-%d %T");
-
-    if (ss.fail())
+    tm t;
+    if (strptime(dt_str.c_str(), "%Y-%m-%d %T", &t) == nullptr)
         throw mucs_exception("Invalid datetime: " + dt_str);
-
-    return system_clock::from_time_t(mktime(t));
+    return system_clock::from_time_t(mktime(&t));
 }
 
 
-time_t parse_time(const string& t_str, const string& fmt) {
-    time_t epoch = 0;
-    tm *t = localtime(&epoch);
-    istringstream ss(t_str);
-    ss >> get_time(t, fmt.c_str());
-    return ss.fail() ? -1 : mktime(t);
+time_t parse_time(const string& t_str) {
+    tm t;
+    return strptime(t_str.c_str(), "%T", &t) == nullptr
+        ? -1
+        : mktime(&t);
 }
 
 
 int parse_weekday(string w_str) {
     tm t;
-    memset(&t, -1, sizeof(t));
-    istringstream(w_str) >> get_time(&t, "%a");
+    if (strptime(w_str.c_str(), "%a", &t) == nullptr)
+        throw mucs_exception("Invalid weekday: " + w_str);
     return t.tm_wday;
 }
 

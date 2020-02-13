@@ -35,6 +35,8 @@ time_t current_time();
 
 int current_weekday();
 
+string format_time(const tm& t, const string& fmt);
+
 string format_time(time_t tt, const string& fmt);
 
 string format_weekday(int weekday);
@@ -47,7 +49,7 @@ string join_paths(string a, deque<string> parts);
 
 system_clock::time_point parse_datetime(const string& dt_str);
 
-time_t parse_time(const string& t_str, const string& fmt = "%T");
+time_t parse_time(const string& t_str);
 
 int parse_weekday(string w_str);
 
