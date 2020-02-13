@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "catch.hpp"
-
 using namespace std;
 
 
