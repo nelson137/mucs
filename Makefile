@@ -24,7 +24,7 @@ LIBS         := -I$(LIB_D)/include -L$(LIB_D)/build -lmucs
 
 GPP          := /usr/bin/g++ -std=c++11 -Wall -Werror -Wno-noexcept-type --coverage -O0 -I$(INCLUDE_D)
 
-ifneq ("$(shell which gccfilter)","")
+ifneq ("$(shell whereis gccfilter >/dev/null)","")
 GPP          := gccfilter -c -n -a $(GPP)
 endif
 
@@ -58,7 +58,7 @@ $(TARGET): $(OBJS) | libmucs
 	@echo $@
 
 $(TEST_TARGET): $(OBJS_NO_MAIN) $(TEST_OBJS) | libmucs
-	@echo -n "$^ -> "
+	@echo -n "$(BUILD_D)/**/*.o -> "
 	@$(GPP) $^ $(LIBS) -o $@
 	@echo $@
 

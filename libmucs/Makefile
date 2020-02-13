@@ -8,7 +8,7 @@ SRCS      := $(wildcard $(SRC_D)/*.cpp)
 OBJS      := $(SRCS:$(SRC_D)/%.cpp=$(BUILD_D)/%.o)
 
 GPP_BASE  := /usr/bin/g++ -std=c++11 -Wall -Werror -I$(INCLUDE_D)
-ifeq ("$(shell which gccfilter)","")
+ifeq ("$(shell whereis gccfilter >/dev/null)","")
 GPP       := $(GPP_BASE)
 else
 GPP       := gccfilter -c -n -a $(GPP_BASE)
