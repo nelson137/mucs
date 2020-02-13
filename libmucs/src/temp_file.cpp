@@ -9,16 +9,20 @@ temp_file::temp_file(const string& dir) {
     static string name_template = "mucs-temp.XXXXXX";
 
     int size = dir.size() + 1 + name_template.size() + 1;
-    char full_template[size];
+    char *full_template = new char[size];
 
     snprintf(full_template, size, "%s/%s", dir.c_str(), name_template.c_str());
 
-    if ((this->fd = mkstemp(full_template)) < 0)
-        throw mucs_exception(
-            "Unable to make temporary file: " + string(full_template));
+    if ((this->fd = mkstemp(full_template)) < 0) {
+        const string err =
+            "Unable to make temporary file: " + string(full_template);
+        delete[] full_template;
+        throw mucs_exception(err);
+    }
 
     close(this->fd);
     this->name = full_template;
+    delete[] full_template;
 }
 
 

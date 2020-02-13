@@ -49,9 +49,9 @@ char rand_char(const chars_t& chars) {
 
 
 string rand_string(const int size, const chars_t& chars) {
-    char s[size+1];
+    string s;
+    s.reserve(size);
     for (int i=0; i<size; i++)
-        s[i] = rand_char(chars);
-    s[size] = '\0';
+        s += rand_char(chars);
     return s;
 }
