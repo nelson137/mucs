@@ -1,16 +1,16 @@
-branch: cpp-port
-    submit dir structure:
-        BASE = /group/cs1050/submissions
-        DATETIME = YYYY-MM-DD
-        TIME = HH:MM:SS
-        denied submission basenames are postfixed with a tilde
-        all submissions (including denied) are copied into:
-            BASE/COURSE/LAB_ID/ASSIGNMENT/archive/USER.DATE.TIME[~]
-        symlink to current submissions is:
-            BASE/COURSE/LAB_ID/ASSIGNMENT/USER
+cpp-port
+    accept ALL submits in new tree SUBMIT_BASE/COURSE/LAB/ASSIGNMENT/...
+        # symlink to most recent valid submission
+        USER -> .submissions/USER.YYYY-MM-DD.HH:MM:SS
+        # symlink to most recent late[/denied] submission if exists
+        USER.late -> .submissions/USER.YYYY-MM-DD.HH:MM:SS~
     copy files readonly
         install with mode 440 (instead of 660)
     success/error message for admin update-password
-    use makefiles dir, use default if none is specified in configs
     check submission files exist before confirmation prompt
     why is a variable name required here (f84aa2d test/test_homeworks.cpp:27:23)
+    error messages
+        move error_config() to libmucs (needed in src and tests)
+        create static mucs_exception::config()
+            call error_config()
+            return new instance
