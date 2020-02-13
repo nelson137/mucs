@@ -8,7 +8,7 @@ count_dir() {
     find "$@" -type f -exec wc -l {} \; | awk 'BEGIN{n=0} {n+=$1} END{print n}'
 }
 
-cpp_src="$(count_dir "$PROJ/src")"
+cpp_src="$(count_dir "$PROJ/src" "$PROJ/libmucs/"{include,src})"
 cpp_test="$(count_dir "$PROJ/test")"
 cpp_total="$(( cpp_src + cpp_test ))"
 
