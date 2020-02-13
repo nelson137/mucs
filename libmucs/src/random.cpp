@@ -49,7 +49,7 @@ char rand_char(const chars_t& chars) {
 
 
 string rand_string(const int size, const chars_t& chars) {
-    char s[size+1] = {0};
+    char s[size+1];
     for (int i=0; i<size; i++)
         s[i] = rand_char(chars);
     return s;
