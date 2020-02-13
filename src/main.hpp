@@ -13,8 +13,8 @@
 using namespace std;
 
 
-template<typename Func, typename... Args>
-void subcommand(const Func& cmd, Args&... args) {
+template<typename Cmd, typename... Args>
+void subcommand(const Cmd& cmd, Args&... args) {
     try {
         cmd(args...);
     } catch (const mucs_exception& me) {
