@@ -1,23 +1,13 @@
-#include "labs.hpp"
+#include "config.hpp"
 
 
 LabSesh::LabSesh() {
 }
 
 
-LabSesh::LabSesh(
-    const string& fn,
-    const string& i
-) : filename(fn), id(i) {
+LabSesh::LabSesh(const string& i) : id(i) {
     // Normalize id (uppercase)
     stl_transform(this->id, ::toupper);
-}
-
-
-LabSesh LabSesh::from_iter(const string& fn, const json::const_iterator& it) {
-    LabSesh ls(fn, it.key());
-    it.value().get_to(ls);
-    return ls;
 }
 
 
@@ -52,15 +42,13 @@ string LabSesh::format(string fmt) const {
 }
 
 
-LabSessions::LabSessions(const string& fn) {
-    this->filename = fn;
-}
-
-
 void from_json(const json& j, LabSesh& ls) {
     if (j.type() != json::value_t::string)
         throw mucs_exception(error_config(
-            "Lab entries must be of type string", ls.filename, "labs", ls.id));
+            "Lab entries must be of type string",
+            Config::get().filename,
+            "labs",
+            ls.id));
 
     // Normalize lab specification (lowercase)
     string lab_spec = j.get<string>();
@@ -72,7 +60,7 @@ void from_json(const json& j, LabSesh& ls) {
         throw mucs_exception(error_config(
             "Lab entries must be in the format " \
                 "\"<weekday> <start_time> - <end_time>\"",
-            ls.filename,
+            Config::get().filename,
             "labs",
             ls.id));
 
@@ -83,10 +71,16 @@ void from_json(const json& j, LabSesh& ls) {
 
 
 void from_json(const json& j, LabSessions& lab_sessions) {
+    auto& config = Config::get();
+    string id;
     for (auto it=j.begin(); it!=j.end(); it++) {
-        auto ls = LabSesh::from_iter(lab_sessions.filename, it);
-        lab_sessions[ls.id] = ls;
-        lab_sessions.all_ids.push_back(ls.id);
+        id = it.key();
+        // Normalize id (uppercase)
+        stl_transform(id, ::toupper);
+
+        LabSesh ls(id);
+        lab_sessions[id] = it.value().get_to(ls);
+        config.lab_ids.push_back(id);
     }
 }
 

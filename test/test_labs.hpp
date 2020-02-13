@@ -11,12 +11,12 @@
 #include "mucs/except.hpp"
 #include "mucs/random.hpp"
 
-#include "test_config.hpp"
+#include "util.hpp"
 
 #include "../src/config.hpp"
-#include "../src/labs.hpp"
 
 using namespace std;
+using Catch::Matchers::Equals;
 
 
 constexpr bool IS_TODAY      = true;
@@ -27,7 +27,7 @@ constexpr bool T_OUT_BOUND   = false;
 
 template<bool is_today, bool in_bound>
 LabSesh rand_labsesh() {
-    LabSesh ls(rand_string(), rand_string(2, chars_lower));
+    LabSesh ls(rand_string(2, chars_lower));
 
     int w = current_weekday();
     if (is_today)

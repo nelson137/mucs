@@ -2,20 +2,23 @@
 #define CONFIG_HPP
 
 
+#include <cctype>
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <map>
+#include <regex>
+#include <set>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "json.hpp"
 
 #include "mucs/except.hpp"
 
-#include "homeworks.hpp"
-#include "labs.hpp"
 #include "path.hpp"
-#include "roster.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -23,8 +26,108 @@ using namespace chrono;
 using json = nlohmann::json;
 
 
-struct IConfig {
+/*************************************************
+ * Homeworks
+ ************************************************/
 
+
+struct Hw {
+
+    string name;
+    system_clock::time_point duedate;
+
+    struct compare {
+        bool operator()(
+            const pair<string,Hw>& a,
+            const pair<string,Hw>& b
+        ) const;
+    };
+
+};
+
+
+struct Homeworks : public set<pair<string,Hw>, Hw::compare> {
+
+    using set<pair<string,Hw>,Hw::compare>::set;
+
+};
+
+
+void from_json(const json& j, Hw& hw);
+
+void from_json(const json& j, Homeworks& homeworks);
+
+void to_json(json& j, const Hw& hw);
+
+void to_json(json& j, const Homeworks& homeworks);
+
+
+/*************************************************
+ * LabSessions
+ ************************************************/
+
+
+struct LabSesh {
+
+    string id;
+    int weekday;
+    time_t start;
+    time_t end;
+
+    LabSesh();
+    LabSesh(const string& i);
+
+    bool is_active() const;
+
+    string format(string fmt) const;
+
+};
+
+
+struct LabSessions : public map<string, LabSesh> {
+
+    using map<string,LabSesh>::map;
+
+};
+
+
+void from_json(const json& j, LabSesh& ls);
+
+void from_json(const json& j, LabSessions& lab_sessions);
+
+void to_json(json& j, const LabSesh& ls);
+
+void to_json(json& j, const LabSessions& lab_sessions);
+
+
+/*************************************************
+ * Roster
+ ************************************************/
+
+
+struct Roster : public map<string, vector<string>> {
+
+    using map<string,vector<string>>::map;
+
+};
+
+
+void from_json(const json& j, Roster& roster);
+
+void to_json(json& j, const Roster& roster);
+
+
+/*************************************************
+ * Config
+ ************************************************/
+
+
+class Config {
+
+private:
+    Config();
+
+public:
     string filename;
     string course_id;
     string admin_hash;
@@ -32,18 +135,30 @@ struct IConfig {
     LabSessions lab_sessions;
     string current_lab;
     Roster roster;
+    vector<string> lab_ids;
 
-    IConfig();
+    static Config& get();
 
-    string error_msg(const string& msg, const string& a, const string& b);
-
-    void require_prop(
-        const json& j,
+    template<typename Dest>
+    static void get_to_required(
+        const json& parent,
         const string& key,
-        const json::value_type& type
-    );
+        const string& type,
+        Dest& dest
+    ) {
+        if (parent.count(key) == 0 || parent[key].type_name() != type)
+            throw mucs_exception(error_config(
+                "Config requires key \"" + key + "\" with type " + type,
+                get().filename));
+        parent[key].get_to(dest);
+    }
 
-    void parse(const json& j);
+    // Make sure no copies can be made
+    Config(const Config&) = delete;
+    void operator=(const Config&) = delete;
+
+    Config& parse(const json& root);
+    Config& parse_file(const Path& p);
 
     string get_current_lab(const string& user);
 
@@ -52,24 +167,9 @@ struct IConfig {
 };
 
 
-struct Config : public IConfig {
+void from_json(const json& j, Config& c);
 
-    Config();
-    Config(const Path& p);
-
-};
-
-
-struct MockConfig : public IConfig {
-
-    MockConfig(const json& j);
-
-};
-
-
-void from_json(const json& j, IConfig& cc);
-
-void to_json(json& j, const IConfig& cc);
+void to_json(json& j, const Config& c);
 
 
 #endif

@@ -1,17 +1,4 @@
-#include "homeworks.hpp"
-
-
-Hw::Hw(const string& fn, const string& n) : filename(fn), name(n) {
-    // Normalize name (lowercase)
-    stl_transform(this->name, ::tolower);
-}
-
-
-Hw Hw::from_iter(const string& fn, const json::const_iterator& it) {
-    Hw hw(fn, it.key());
-    it.value().get_to(hw);
-    return hw;
-}
+#include "config.hpp"
 
 
 bool Hw::compare::operator()(
@@ -19,11 +6,6 @@ bool Hw::compare::operator()(
     const pair<string,Hw>& b
 ) const {
     return a.second.duedate < b.second.duedate;
-}
-
-
-Homeworks::Homeworks(const string& fn) {
-    this->filename = fn;
 }
 
 
@@ -38,23 +20,22 @@ void from_json(const json& j, Homeworks& homeworks) {
         if (it.value().type() != json::value_t::string)
             throw mucs_exception(error_config(
                 "Homework entries must be of type string",
-                homeworks.filename,
+                Config::get().filename,
                 "homeworks",
                 it.key()));
 
-        auto hw = Hw::from_iter(homeworks.filename, it);
-        homeworks.insert({ hw.name, hw });
+        id = it.key();
+        // Normalize id (lowercase)
+        stl_transform(id, ::tolower);
+
+        homeworks.insert({ id, it.value().get<Hw>() });
     }
 }
 
 
 void to_json(json& j, const Hw& hw) {
     time_t tt = duration_cast<seconds>(hw.duedate.time_since_epoch()).count();
-    tm *t = localtime(&tt);
-
-    ostringstream os;
-    os << put_time(t, "%Y-%m-%d %T");
-    j = json(os.str());
+    j = json(format_time(tt, "%Y-%m-%d %T"));
 }
 
 

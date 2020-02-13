@@ -1,50 +1,53 @@
 #include "config.hpp"
 
 
-IConfig::IConfig() {
+Config::Config() {
 }
 
 
-void IConfig::require_prop(
-    const json& j,
-    const string& k,
-    const json::value_type& t
-) {
-    if (j.count(k) == 0 || j[k].type() != t)
-        throw mucs_exception(error_config(
-            "Config requires key \"" + k + "\" with type " + t.type_name(),
-            this->filename));
+Config& Config::get() {
+    static Config instance;
+    return instance;
 }
 
 
-void IConfig::parse(const json& j) {
-    j["filename"].get_to(this->filename);
-
-    this->require_prop(j, "course_id",   json::value_t::string);
-    this->require_prop(j, "admin_hash",  json::value_t::string);
-    this->require_prop(j, "homeworks",   json::value_t::object);
-    this->require_prop(j, "current_lab", json::value_t::string);
-    this->require_prop(j, "labs",        json::value_t::object);
-    this->require_prop(j, "roster",      json::value_t::object);
-
-    j["course_id"].get_to(this->course_id);
-
-    j["admin_hash"].get_to(this->admin_hash);
-
-    this->homeworks = Homeworks(this->filename);
-    j["homeworks"].get_to(this->homeworks);
-
-    j["current_lab"].get_to(this->current_lab);
-
-    this->lab_sessions = LabSessions(this->filename);
-    j["labs"].get_to(this->lab_sessions);
-
-    this->roster = Roster(this->filename, this->lab_sessions.all_ids);
-    j["roster"].get_to(this->roster);
+Config& Config::parse(const json& root) {
+    get_to_required(root, "course_id",   "string", this->course_id);
+    get_to_required(root, "admin_hash",  "string", this->admin_hash);
+    get_to_required(root, "homeworks",   "object", this->homeworks);
+    get_to_required(root, "current_lab", "string", this->current_lab);
+    get_to_required(root, "labs",        "object", this->lab_sessions);
+    get_to_required(root, "roster",      "object", this->roster);
+    return *this;
 }
 
 
-string IConfig::get_current_lab(const string& user) {
+Config& Config::parse_file(const Path& p) {
+    const string& filename = p.str();
+
+    if (not p.exists())
+        throw mucs_exception("Config file does not exist: " + filename);
+    if (not p.is_file())
+        throw mucs_exception(
+            "Config path must be a regular file: " + filename);
+
+    auto data = json::object();
+    ifstream fs(filename);
+
+    try {
+        fs >> data;
+        fs.close();
+    } catch (const json::parse_error& pe) {
+        fs.close();
+        throw mucs_exception("Invalid json: " + filename);
+    }
+
+    this->filename = filename;
+    return this->parse(data);
+}
+
+
+string Config::get_current_lab(const string& user) {
     vector<string> user_labs = this->roster[user];
 
     if (user_labs.size() == 1) {
@@ -67,7 +70,7 @@ string IConfig::get_current_lab(const string& user) {
 }
 
 
-string IConfig::get_current_hw() const {
+string Config::get_current_hw() const {
     system_clock::time_point now = system_clock::now();
     for (auto& e : this->homeworks)
         if (now < e.second.duedate)
@@ -78,66 +81,31 @@ string IConfig::get_current_hw() const {
 }
 
 
-Config::Config() {
-}
-
-
-Config::Config(const Path& p) {
-    if (not p.exists())
-        throw mucs_exception("Config file does not exist: " + p.str());
-    if (not p.is_file())
-        throw mucs_exception(
-            "Config path must be a regular file: " + p.str());
-
-    auto data = json::object();
-    ifstream fs(p.str());
-
-    try {
-        fs >> data;
-        fs.close();
-    } catch (const json::parse_error& pe) {
-        fs.close();
-        throw mucs_exception("Invalid json: " + p.str());
-    }
-
-    data["filename"] = p.str();
-    this->parse(data);
-}
-
-
-MockConfig::MockConfig(const json& j) {
-    j["filename"].get_to(this->filename);
-
+void from_json(const json& j, Config& c) {
     if (j.count("course_id") > 0)
-        j["course_id"].get_to(this->course_id);
+        j["course_id"].get_to(c.course_id);
 
     if (j.count("admin_hash") > 0)
-        j["admin_hash"].get_to(this->admin_hash);
+        j["admin_hash"].get_to(c.admin_hash);
 
     if (j.count("homeworks") > 0)
-        j["homeworks"].get_to(this->homeworks);
+        j["homeworks"].get_to(c.homeworks);
 
     if (j.count("labs") > 0)
-        j["labs"].get_to(this->lab_sessions);
+        j["labs"].get_to(c.lab_sessions);
 
     if (j.count("roster") > 0)
-        j["roster"].get_to(this->roster);
+        j["roster"].get_to(c.roster);
 }
 
 
-void from_json(const json& j, IConfig& cc) {
-    cc.parse(j);
-}
-
-
-void to_json(json& j, const IConfig& cc) {
+void to_json(json& j, const Config& c) {
     j = {
-        {"filename", cc.filename},
-        {"course_id", cc.course_id},
-        {"admin_hash", cc.admin_hash},
-        {"homeworks", cc.homeworks},
-        {"labs", cc.lab_sessions},
-        {"current_lab", cc.current_lab},
-        {"roster", cc.roster},
+        {"course_id", c.course_id},
+        {"admin_hash", c.admin_hash},
+        {"homeworks", c.homeworks},
+        {"labs", c.lab_sessions},
+        {"current_lab", c.current_lab},
+        {"roster", c.roster},
     };
 }

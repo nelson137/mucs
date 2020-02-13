@@ -10,7 +10,7 @@
 #include "mucs/except.hpp"
 #include "mucs/random.hpp"
 
-#include "test_config.hpp"
+#include "util.hpp"
 
 #include "../src/config.hpp"
 

@@ -4,57 +4,56 @@
 TEST_CASE("config has no key roster", "[config][roster]") {
     auto data = new_config_data();
     data.erase("roster");
+    auto& config = Config::get();
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
-        error_prop(data["filename"], "roster", "object")
+        config.parse(data),
+        error_prop(config.filename, "roster", "object")
     );
 }
 
 
 TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
-    auto data = new_config_data();
-    data["roster"] = rand_int(9);
+    auto data = new_config_data({ {"roster", rand_int(9)} });
+    auto& config = Config::get();
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
-        error_prop(data["filename"], "roster", "object")
+        config.parse(data),
+        error_prop(config.filename, "roster", "object")
     );
 }
 
 
 TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
-    string fn = rand_string();
+    auto& config = new_config();
     string user = rand_string(6);
     json data = { {user, rand_int(9)} };
-    Roster roster(fn, {});
     REQUIRE_THROWS_WITH(
-        data.get_to(roster),
+        data.get<Roster>(),
         "Roster entries must be of type string: " +
-            fn + "[\"roster\"][\"" + user + "\"]"
+            config.filename + "[\"roster\"][\"" + user + "\"]"
     );
 }
 
 
 TEST_CASE("roster entry has one lab id", "[roster][entry]") {
-    auto data = new_config_data();
-    string fn = data["filename"].get<string>();
     string user = rand_string(6);
-
     string id = rand_string(2, chars_lower);
+    auto data = new_config_data();
     data["labs"][id] = "mon 00:00:00 - 23:59:59";
+    auto& config = Config::get();
 
     SECTION("that is unrecognized") {
         string bad_id = id + "_";
         data["roster"][user] = bad_id;
         REQUIRE_THROWS_WITH(
-            data.get<Config>(),
-            error_id_unrecognized(fn, user, bad_id)
+            config.parse(data),
+            error_id_unrecognized(config.filename, user, bad_id)
         );
     }
 
     SECTION("that is recognized") {
         data["roster"][user] = id;
         try {
-            data.get<Config>();
+            config.parse(data);
             SUCCEED("Successfully created Roster object");
         } catch (const mucs_exception& me) {
             FAIL(me.what());
@@ -64,20 +63,19 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
 
 
 TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
-    auto data = new_config_data();
-    string fn = data["filename"].get<string>();
     string user = rand_string(6);
-
     string id = rand_string(2, chars_lower);
+    auto data = new_config_data();
     data["labs"][id] = "mon 00:00:00 - 23:59:59";
+    auto& config = Config::get();
 
     SECTION("one recognized, other unrecognized") {
         string bad_id = id + '_';
         string all_ids = id + ',' + bad_id;
         data["roster"][user] = all_ids;
         REQUIRE_THROWS_WITH(
-            data.get<Config>(),
-            error_id_unrecognized(fn, user, bad_id)
+            config.parse(data),
+            error_id_unrecognized(config.filename, user, bad_id)
         );
     }
 
@@ -85,7 +83,7 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
         string all_ids = id + "," + id;
         data["roster"][user] = all_ids;
         try {
-            data.get<Config>();
+            data.get_to(Config::get());
             SUCCEED("Successfully created Roster object");
         } catch (const mucs_exception& me) {
             FAIL(me.what());
@@ -95,19 +93,17 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
 
 
 TEST_CASE("serialize roster", "[roster][serialize]") {
-    auto data = new_config_data();
-    string fn = data["filename"].get<string>();
-
-    string id = rand_string(2, chars_lower);
-    data["labs"][id] = "mon 00:00:00 - 23:59:59";
     string user = rand_string(6);
+    string id = rand_string(2, chars_lower);
+    auto data = new_config_data();
+    data["labs"][id] = "mon 00:00:00 - 23:59:59";
+    auto& config = Config::get();
 
     SECTION("with one id") {
         data["roster"][user] = id;
-        auto config = data.get<Config>();
         ostringstream expected, actual;
         expected << data["roster"];
-        actual << json(config.roster);
+        actual << json(data.get_to(config).roster);
         REQUIRE_THAT(
             expected.str(),
             Equals(actual.str(), Catch::CaseSensitive::No)
@@ -116,10 +112,9 @@ TEST_CASE("serialize roster", "[roster][serialize]") {
 
     SECTION("with multiple ids") {
         data["roster"][user] = id + ',' + id;
-        auto config = data.get<Config>();
         ostringstream expected, actual;
         expected << data["roster"];
-        actual << json(config.roster);
+        actual << json(data.get_to(config).roster);
         REQUIRE_THAT(
             expected.str(),
             Equals(actual.str(), Catch::CaseSensitive::No)

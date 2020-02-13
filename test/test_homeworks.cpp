@@ -4,9 +4,10 @@
 TEST_CASE("config has no key homeworks", "[config][homeworks]") {
     auto data = new_config_data();
     data.erase("homeworks");
+    auto& config = Config::get();
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
-        error_prop(data["filename"], "homeworks", "object")
+        config.parse(data),
+        error_prop(config.filename, "homeworks", "object")
     );
 }
 
@@ -14,21 +15,21 @@ TEST_CASE("config has no key homeworks", "[config][homeworks]") {
 TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
     auto data = new_config_data();
     data["homeworks"] = rand_int(9);
+    auto& config = Config::get();
     REQUIRE_THROWS_WITH(
-        data.get<Config>(),
-        error_prop(data["filename"], "homeworks", "object")
+        config.parse(data),
+        error_prop(config.filename, "homeworks", "object")
     );
 }
 
 
 TEST_CASE("homeworks entry has incorrect type", "[homeworks][entry]") {
-    string fn = rand_string();
+    auto& config = new_config();
     string key = "hw" + to_string(rand_int(9));
     json data = { {key, rand_int(9)} };
-    Homeworks homeworks(fn);
     REQUIRE_THROWS_WITH(
-        data.get_to(homeworks),
-        "Homework entries must be of type string: " + fn +
+        data.get<Homeworks>(),
+        "Homework entries must be of type string: " + config.filename +
             "[\"homeworks\"][\"" + key + "\"]"
     );
 }

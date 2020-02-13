@@ -1,19 +1,14 @@
-#include "roster.hpp"
-
-
-Roster::Roster(const string& fn, const vector<string>& lab_ids) {
-    this->filename = fn;
-    this->all_lab_ids = lab_ids;
-}
+#include "config.hpp"
 
 
 void from_json(const json& j, Roster& roster) {
+    auto& config = Config::get();
     string user_orig, user, lab_ids, id;
     for (auto& entry : j.items()) {
         if (entry.value().type() != json::value_t::string)
             throw mucs_exception(error_config(
                 "Roster entries must be of type string",
-                roster.filename,
+                config.filename,
                 "roster",
                 entry.key()));
 
@@ -27,10 +22,10 @@ void from_json(const json& j, Roster& roster) {
             id = id_orig;
             // Normalize lab ids (uppercase)
             stl_transform(id, ::toupper);
-            if (not stl_contains(roster.all_lab_ids, id))
+            if (not stl_contains(config.lab_ids, id))
                 throw mucs_exception(error_config(
                     "Lab id not recognized",
-                    roster.filename,
+                    config.filename,
                     "roster",
                     user_orig));
             roster[user].push_back(id);
