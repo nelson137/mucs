@@ -17,11 +17,11 @@ int current_weekday() {
 
 string format_time(const tm& t, const string& fmt) {
     size_t size = sizeof(char) * 32;
-    char *buf = static_cast<char*>(malloc(size));
+    char *buf = new char[size];
     while (strftime(buf, size, fmt.c_str(), &t) == 0) {
-        free(buf);
+        delete[] buf;
         size *= 2;
-        buf = static_cast<char*>(malloc(size));
+        buf = new char[size];
     }
     return string(buf);
 }
