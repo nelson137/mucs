@@ -54,10 +54,7 @@ void submit(SubmitOptions& opts) {
     cout << endl;
     cout << w_green(spacer) << endl;
 
-    string input = prompt_user("Are you sure you want to submit [Y/n]? ");
-    cout << endl;
-    stl_transform(input, ::tolower);
-    if (input != "y") {
+    if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false) {
         cerr << w_red("Submission cancelled") << endl;
         return;
     }

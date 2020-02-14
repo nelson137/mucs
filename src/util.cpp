@@ -93,12 +93,14 @@ int parse_weekday(string w_str) {
 }
 
 
-string prompt_user(const string& prompt) {
+bool prompt_yesno(const string& prompt) {
     if (prompt.size())
         cout << prompt;
     string response;
     cin >> response;
-    return response;
+    cout << endl;
+    stl_transform(response, ::tolower);
+    return string_strip(response) == "y";
 }
 
 
@@ -115,6 +117,14 @@ vector<string> string_split(const string& s, const string& delim) {
     tokens.push_back(s.substr(last));
 
     return tokens;
+}
+
+
+string string_strip(string s) {
+    static const string whitespace = " \t\n";
+    const size_t begin = s.find_first_not_of(whitespace);
+    const size_t end = s.find_last_not_of(whitespace);
+    return begin == string::npos ? "" : s.substr(begin, end - begin + 1);
 }
 
 

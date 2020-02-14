@@ -53,9 +53,11 @@ time_t parse_time(const string& t_str);
 
 int parse_weekday(string w_str);
 
-string prompt_user(const string& prompt = "");
+bool prompt_yesno(const string& prompt = "");
 
 vector<string> string_split(const string& s, const string& delim = ",");
+
+string string_strip(string s);
 
 
 template<typename... String>
