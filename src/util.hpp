@@ -55,7 +55,7 @@ int parse_weekday(string w_str);
 
 bool prompt_yesno(const string& prompt = "");
 
-vector<string> string_split(const string& s, const string& delim = ",");
+vector<string> string_split(const string& s, const string& delim);
 
 string string_strip(string s);
 

@@ -18,7 +18,7 @@ void from_json(const json& j, Roster& roster) {
 
         lab_ids = entry.value().get<string>();
 
-        for (auto&& id_orig : string_split(lab_ids)) {
+        for (auto&& id_orig : string_split(lab_ids, ",")) {
             id = id_orig;
             // Normalize lab ids (uppercase)
             stl_transform(id, ::toupper);
