@@ -7,7 +7,6 @@
 #include <ctime>
 #include <fstream>
 #include <map>
-#include <regex>
 #include <set>
 #include <sstream>
 #include <string>

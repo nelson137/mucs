@@ -23,20 +23,25 @@ string LabSesh::format(string fmt) const {
     static const string fmt_t = "%H:%M:%S";
     static const string fmt_t_pretty = "%I:%M:%S%P";
 
-    const auto str_repl = [&](const string& pat, const string& repl) {
-        fmt = regex_replace(fmt, regex(pat), repl);
+    map<string,string> repl = {
+        {"{id}", this->id},
+
+        {"{weekday}", format_weekday(this->weekday)},
+        {"{weekday_n}", to_string(this->weekday)},
+
+        {"{start}", format_time(this->start, fmt_t)},
+        {"{start_p}", format_time(this->start, fmt_t_pretty)},
+
+        {"{end}", format_time(this->end, fmt_t)},
+        {"{end_p}", format_time(this->end, fmt_t_pretty)}
     };
 
-    str_repl("\\{id}", this->id);
-
-    str_repl("\\{weekday}", format_weekday(this->weekday));
-    str_repl("\\{weekday_n}", to_string(this->weekday));
-
-    str_repl("\\{start}", format_time(this->start, fmt_t));
-    str_repl("\\{start_p}", format_time(this->start, fmt_t_pretty));
-
-    str_repl("\\{end}", format_time(this->end, fmt_t));
-    str_repl("\\{end_p}", format_time(this->end, fmt_t_pretty));
+    size_t i;
+    for (const auto& r : repl) {
+        i = 0;
+        while ((i = fmt.find(r.first, i)) != string::npos)
+            fmt.replace(i, r.first.size(), r.second);
+    }
 
     return fmt;
 }
@@ -50,23 +55,28 @@ void from_json(const json& j, LabSesh& ls) {
             "labs",
             ls.id));
 
-    // Normalize lab specification (lowercase)
-    string lab_spec = j.get<string>();
-    stl_transform(lab_spec, ::tolower);
-
-    regex lab_spec_re(R"(\s*(\S+)\s+(\S+)\s*-\s*(\S+)\s*)");
-    smatch match;
-    if (not regex_match(lab_spec, match, lab_spec_re))
+    auto invalid_lab_spec = [&] () {
         throw mucs_exception(error_config(
             "Lab entries must be in the format " \
                 "\"<weekday> <start_time> - <end_time>\"",
             Config::get().filename,
             "labs",
             ls.id));
+    };
 
-    ls.weekday = parse_weekday(match[1]);
-    ls.start = parse_time(match[2]);
-    ls.end = parse_time(match[3]);
+    string lab_spec_str = j.get<string>();
+
+    // Should be {"<weekday> <start_time> ", " <end_time>"}
+    vector<string> chunks = string_split(lab_spec_str, "-");
+    if (chunks.size() != 2)
+        invalid_lab_spec();
+
+    // Should be {"<weekday>", "<start_time>", ""}
+    vector<string> wday_start = string_split(chunks[0], " ");
+    ls.weekday = parse_weekday(wday_start[0]);
+    ls.start = parse_time(wday_start[1]);
+
+    ls.end = parse_time(chunks[1]);
 }
 
 
