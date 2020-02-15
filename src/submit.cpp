@@ -43,7 +43,7 @@ void submit(SubmitOptions& opts) {
     else
         throw mucs_exception("Not possible, caught by parser");
 
-    string spacer = string(get_term_width(), '=');
+    string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
     cout << w_green(spacer) << endl;
     cout << "Course:     " << w_bold(opts.course) << endl;
     cout << "Assignment: " << w_bold(assignment) << endl;

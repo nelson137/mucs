@@ -42,7 +42,7 @@ string format_weekday(int weekday) {
 int get_term_width() {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    return w.ws_col * TERM_WIDTH_COEFF;
+    return w.ws_col;
 }
 
 
