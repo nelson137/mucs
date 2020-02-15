@@ -31,17 +31,6 @@ endif
 LCOV         := /usr/bin/lcov -c --no-external
 GENHTML      := /usr/bin/genhtml --legend --function-coverage --demangle-cpp
 
-define BEGIN_STEP
-	@echo -n "$1 -> "
-	@tput sc
-	@printf '\n\n'
-endef
-
-define END_STEP
-	@tput rc
-	@echo "$1"
-endef
-
 
 .PHONY: main
 main: $(TARGET)
@@ -61,22 +50,19 @@ all: main test coverage
 
 .PHONY: libmucs
 libmucs:
-	@cd $(LIB_D) && $(MAKE)
+	@$(MAKE) -C $(LIB_D)
 
 $(TARGET): $(OBJS) | libmucs
-	$(call BEGIN_STEP,$(BUILD_D)/src/*.o)
+	@echo "$(BUILD_D)/src/*.o -> $@"
 	@$(GPP) $^ $(LIBS) -o $@
-	$(call END_STEP,$@)
 
 $(TEST_TARGET): $(OBJS_NO_MAIN) $(TEST_OBJS) | libmucs
-	$(call BEGIN_STEP,$(BUILD_D)/**/*.o)
+	@echo "$(BUILD_D)/**/*.o -> $@"
 	@$(GPP) $^ $(LIBS) -o $@
-	$(call END_STEP,$@)
 
 $(BUILD_D)/%.o: %.cpp | build_dirs
-	$(call BEGIN_STEP,$<)
+	@echo "$< -> $@"
 	@$(GPP) -c -MMD $< $(LIBS) -o $@
-	$(call END_STEP,$@)
 
 .PHONY: install
 install: $(OBJS) | all_dirs $(TARGET)
@@ -91,7 +77,7 @@ install: $(OBJS) | all_dirs $(TARGET)
 .PHONY: clean
 clean:
 	rm -rf $(TARGET) $(TEST_TARGET) $(BUILD_D) $(COVERAGE_D)
-	@cd $(LIB_D) && $(MAKE) clean
+	@$(MAKE) -C $(LIB_D)
 
 .PHONY: build_dirs
 build_dirs:
