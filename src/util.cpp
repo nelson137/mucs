@@ -85,7 +85,7 @@ time_t parse_time(const string& t_str) {
 }
 
 
-int parse_weekday(string w_str) {
+int parse_weekday(const string& w_str) {
     tm t;
     if (strptime(w_str.c_str(), "%a", &t) == nullptr)
         throw mucs_exception("Invalid weekday: " + w_str);

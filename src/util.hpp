@@ -51,7 +51,7 @@ system_clock::time_point parse_datetime(const string& dt_str);
 
 time_t parse_time(const string& t_str);
 
-int parse_weekday(string w_str);
+int parse_weekday(const string& w_str);
 
 bool prompt_yesno(const string& prompt = "");
 
