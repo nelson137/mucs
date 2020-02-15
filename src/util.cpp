@@ -23,7 +23,9 @@ string format_time(const tm& t, const string& fmt) {
         size *= 2;
         buf = new char[size];
     }
-    return string(buf);
+    string ret(buf);
+    delete[] buf;
+    return ret;
 }
 
 
