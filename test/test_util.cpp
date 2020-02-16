@@ -201,3 +201,50 @@ TEST_CASE("stl_join", "[stl_join]") {
 
     REQUIRE_THAT(stl_join(container), Equals(expected));
 }
+
+
+TEST_CASE("string_split", "[string_split]") {
+    string test_str;
+    vector<string> expected;
+
+    SECTION("empty string") {
+        expected = {""};
+    }
+
+    SECTION("non-empty string") {
+        SECTION("with 1 element") {
+            test_str = "a";
+            expected = {"a"};
+        }
+        SECTION("with multiple elements") {
+            test_str = "a,b,c";
+            expected = {"a", "b", "c"};
+        }
+    }
+
+    REQUIRE(string_split(test_str, ",") == expected);
+}
+
+
+TEST_CASE("string_strip", "[string_strip]") {
+    string test_str, expected;
+
+    SECTION("empty string") {
+    }
+
+    SECTION("all whitespace") {
+        test_str = " \t\n";
+        expected = "";
+    }
+
+    SECTION("whitespace prefix") {
+        test_str = " \t\na";
+        expected = "a";
+    }
+    SECTION("whitespace suffix") {
+        test_str = "b \t\n";
+        expected = "b";
+    }
+
+    REQUIRE_THAT(string_strip(test_str), Equals(expected));
+}
