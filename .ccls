@@ -1,0 +1,10 @@
+clang
+-std=c++11
+-pedantic
+-Wall
+-Werror
+-Wno-noexcept-type
+-Iinclude
+-Ilibmucs/include
+%cpp -Llibmucs/build
+%cpp -lmucs
