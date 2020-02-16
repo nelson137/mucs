@@ -2,6 +2,7 @@
 #define MUCS_EXCEPT_HPP
 
 
+#include <algorithm>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -17,27 +18,18 @@ private:
 public:
     template<typename... T>
     mucs_exception(string msg1, T... msgs) {
-        this->message = "";
-        vector<string> pieces = { msg1, msgs... };
-        if (pieces.size()) {
-            this->message += pieces[0];
-            for (auto it=pieces.begin()+1; it != pieces.end(); it++)
-                this->message += " " + *it;
-        }
+        this->message = msg1;
+        vector<string> pieces = { msgs... };
+        for_each(pieces.begin(), pieces.end(), [&](const string& p) {
+            this->message += " " + p;
+        });
     }
 
-    const char *what() const noexcept {
-        return this->message.c_str();
-    }
+    const char *what() const noexcept;
 
-    operator string() const {
-        return this->message;
-    }
+    operator string() const;
 
-    friend ostream& operator<<(ostream& os, const mucs_exception& me) {
-        os << me.message;
-        return os;
-    }
+    friend ostream& operator<<(ostream& os, const mucs_exception& me);
 
 };
 
