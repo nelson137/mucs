@@ -124,15 +124,9 @@ void stl_transform(Container& c, UnaryOp op) {
 }
 
 
-string string_wrap(
-    string s,
-    const string& prefix = FG_RESET,
-    const string& suffix = FG_RESET
-);
-
-string w_bold (string s);
-string w_green(string s);
-string w_red  (string s);
+string w_bold (const string& s);
+string w_green(const string& s);
+string w_red  (const string& s);
 
 
 #endif

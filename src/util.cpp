@@ -130,12 +130,6 @@ string string_strip(string s) {
 }
 
 
-string string_wrap(string s, const string& prefix, const string& suffix) {
-    s.insert(0, prefix);
-    s += suffix;
-    return s;
-}
-
-string w_bold (string s) { return string_wrap(s, FG_BOLD);  }
-string w_green(string s) { return string_wrap(s, FG_GREEN); }
-string w_red  (string s) { return string_wrap(s, FG_RED);   }
+string w_bold (const string& s) { return FG_BOLD  + s + FG_RESET; }
+string w_green(const string& s) { return FG_GREEN + s + FG_RESET; }
+string w_red  (const string& s) { return FG_RED   + s + FG_RESET; }
