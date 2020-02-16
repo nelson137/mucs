@@ -35,7 +35,7 @@ void from_json(const json& j, Homeworks& homeworks) {
 
 void to_json(json& j, const Hw& hw) {
     time_t tt = duration_cast<seconds>(hw.duedate.time_since_epoch()).count();
-    j = json(format_time(tt, "%Y-%m-%d %T"));
+    j = json(format_datetime(tt, "%Y-%m-%d %T"));
 }
 
 

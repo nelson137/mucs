@@ -29,11 +29,11 @@ string LabSesh::format(string fmt) const {
         {"{weekday}", format_weekday(this->weekday)},
         {"{weekday_n}", to_string(this->weekday)},
 
-        {"{start}", format_time(this->start, fmt_t)},
-        {"{start_p}", format_time(this->start, fmt_t_pretty)},
+        {"{start}", format_datetime(this->start, fmt_t)},
+        {"{start_p}", format_datetime(this->start, fmt_t_pretty)},
 
-        {"{end}", format_time(this->end, fmt_t)},
-        {"{end_p}", format_time(this->end, fmt_t_pretty)}
+        {"{end}", format_datetime(this->end, fmt_t)},
+        {"{end_p}", format_datetime(this->end, fmt_t_pretty)}
     };
 
     size_t i;

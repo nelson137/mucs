@@ -15,7 +15,7 @@ int current_weekday() {
 }
 
 
-string format_time(const tm& t, const string& fmt) {
+string format_datetime(const tm& t, const string& fmt) {
     size_t size = sizeof(char) * 32;
     char *buf = new char[size];
     while (strftime(buf, size, fmt.c_str(), &t) == 0) {
@@ -29,15 +29,15 @@ string format_time(const tm& t, const string& fmt) {
 }
 
 
-string format_time(time_t tt, const string& fmt) {
-    return format_time(*localtime(&tt), fmt);
+string format_datetime(time_t tt, const string& fmt) {
+    return format_datetime(*localtime(&tt), fmt);
 }
 
 
 string format_weekday(int weekday) {
     tm t;
     t.tm_wday = weekday;
-    return format_time(t, "%A");
+    return format_datetime(t, "%A");
 }
 
 
