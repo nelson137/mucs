@@ -1,7 +1,7 @@
 #include "test_util.hpp"
 
 
-TEST_CASE("join_paths", "[join_paths]") {
+TEST_CASE("join_paths", "[util][join_paths]") {
     string expected, actual;
 
     SECTION("empty, empty") {
@@ -52,7 +52,7 @@ TEST_CASE("join_paths", "[join_paths]") {
 }
 
 
-TEST_CASE("parse_datetime", "[parse_datetime]") {
+TEST_CASE("parse_datetime", "[util][parse_datetime]") {
     tm expected;
     // tm_year = years since 1900
     expected.tm_year = 2000 + rand_int(20) - 1900;  // 2000 - 2019
@@ -93,7 +93,7 @@ TEST_CASE("parse_datetime", "[parse_datetime]") {
 }
 
 
-TEST_CASE("parse_time", "[parse_time]") {
+TEST_CASE("parse_time", "[util][parse_time]") {
     tm expected;
     expected.tm_hour = rand_int(24);
     expected.tm_min = rand_int(60);
@@ -122,7 +122,7 @@ TEST_CASE("parse_time", "[parse_time]") {
 }
 
 
-TEST_CASE("parse_weekday", "[parse_weekday]") {
+TEST_CASE("parse_weekday", "[util][parse_weekday]") {
     static vector<string> weekdays = {
         "Sunday",
         "Monday",
@@ -149,7 +149,7 @@ TEST_CASE("parse_weekday", "[parse_weekday]") {
 }
 
 
-TEST_CASE("stl_contains", "[stl_contains]") {
+TEST_CASE("stl_contains", "[util][stl_contains]") {
     vector<int> container;
     int target = rand_int(10, 20);
 
@@ -180,7 +180,7 @@ TEST_CASE("stl_contains", "[stl_contains]") {
 }
 
 
-TEST_CASE("stl_join", "[stl_join]") {
+TEST_CASE("stl_join", "[util][stl_join]") {
     vector<int> container;
     string expected;
 
@@ -203,7 +203,7 @@ TEST_CASE("stl_join", "[stl_join]") {
 }
 
 
-TEST_CASE("string_split", "[string_split]") {
+TEST_CASE("string_split", "[util][string_split]") {
     string test_str;
     vector<string> expected;
 
@@ -226,7 +226,7 @@ TEST_CASE("string_split", "[string_split]") {
 }
 
 
-TEST_CASE("string_strip", "[string_strip]") {
+TEST_CASE("string_strip", "[util][string_strip]") {
     string test_str, expected;
 
     SECTION("empty string") {
