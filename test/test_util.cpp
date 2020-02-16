@@ -7,29 +7,29 @@ TEST_CASE("join_paths", "[join_paths]") {
     SECTION("empty, empty") {
         expected = "";
         actual = join_paths("", "");
-    };
+    }
 
     SECTION("not empty, empty") {
         expected = "a";
         actual = join_paths("a", "");
-    };
+    }
     SECTION("empty, not empty") {
         expected = "a";
         actual = join_paths("", "a");
-    };
+    }
 
     SECTION("two args") {
         expected = "a/b";
         actual = join_paths("a", "b");
-    };
+    }
     SECTION("three args") {
         expected = "a/b/c";
         actual = join_paths("a", "b", "c");
-    };
+    }
     SECTION("four args") {
         expected = "a/b/c/d";
         actual = join_paths("a", "b", "c", "d");
-    };
+    }
 
     SECTION("no slash, no slash") {
         expected = "a/b";
@@ -48,7 +48,7 @@ TEST_CASE("join_paths", "[join_paths]") {
         actual = join_paths("a/", "/b");
     }
 
-    REQUIRE_THAT(expected, Equals(actual));
+    REQUIRE_THAT(actual, Equals(expected));
 }
 
 
@@ -73,12 +73,12 @@ TEST_CASE("parse_datetime", "[parse_datetime]") {
         time_t parsed_tt = system_clock::to_time_t(parsed_dt);
         tm actual = *localtime(&parsed_tt);
 
-        REQUIRE(expected.tm_year == actual.tm_year);
-        REQUIRE(expected.tm_mon == actual.tm_mon);
-        REQUIRE(expected.tm_mday == actual.tm_mday);
-        REQUIRE(expected.tm_hour == actual.tm_hour);
-        REQUIRE(expected.tm_min == actual.tm_min);
-        REQUIRE(expected.tm_mday == actual.tm_mday);
+        REQUIRE(actual.tm_year == expected.tm_year);
+        REQUIRE(actual.tm_mon == expected.tm_mon);
+        REQUIRE(actual.tm_mday == expected.tm_mday);
+        REQUIRE(actual.tm_hour == expected.tm_hour);
+        REQUIRE(actual.tm_min == expected.tm_min);
+        REQUIRE(actual.tm_mday == expected.tm_mday);
     }
 
     SECTION("invalid") {
@@ -108,9 +108,9 @@ TEST_CASE("parse_time", "[parse_time]") {
         time_t parsed_tt = parse_time(expected_str);
         tm actual = *localtime(&parsed_tt);
 
-        REQUIRE(expected.tm_hour == actual.tm_hour);
-        REQUIRE(expected.tm_min == actual.tm_min);
-        REQUIRE(expected.tm_sec == actual.tm_sec);
+        REQUIRE(actual.tm_hour == expected.tm_hour);
+        REQUIRE(actual.tm_min == expected.tm_min);
+        REQUIRE(actual.tm_sec == expected.tm_sec);
     }
 
     SECTION("invalid") {
@@ -136,7 +136,7 @@ TEST_CASE("parse_weekday", "[parse_weekday]") {
     SECTION("valid") {
         int expected = rand_int(7);
         int actual = parse_weekday(weekdays[expected]);
-        REQUIRE(expected == actual);
+        REQUIRE(actual == expected);
     }
 
     SECTION("invalid") {
