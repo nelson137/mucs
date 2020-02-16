@@ -49,19 +49,19 @@ string LabSesh::format(string fmt) const {
 
 void from_json(const json& j, LabSesh& ls) {
     if (j.type() != json::value_t::string)
-        throw mucs_exception(error_config(
+        throw mucs_exception::config(
             "Lab entries must be of type string",
             Config::get().filename,
             "labs",
-            ls.id));
+            ls.id);
 
     auto invalid_lab_spec = [&] () {
-        throw mucs_exception(error_config(
+        throw mucs_exception::config(
             "Lab entries must be in the format " \
                 "\"<weekday> <start_time> - <end_time>\"",
             Config::get().filename,
             "labs",
-            ls.id));
+            ls.id);
     };
 
     string lab_spec_str = j.get<string>();

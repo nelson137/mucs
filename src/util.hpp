@@ -61,21 +61,6 @@ string string_strip(string s);
 
 
 template<typename... String>
-string error_config(
-    const string& msg,
-    const string& filename,
-    const String&... pack_keys
-) {
-    vector<string> keys = { pack_keys... };
-    ostringstream ret;
-    ret << msg << ": " << filename;
-    for (const auto& k : keys)
-        ret << "[\"" << k << "\"]";
-    return ret.str();
-}
-
-
-template<typename... String>
 string join_paths(string a, string b, String... rest) {
     deque<string> parts = {b, rest...};
     return join_paths(a, parts);

@@ -146,9 +146,9 @@ public:
         Dest& dest
     ) {
         if (parent.count(key) == 0 || parent[key].type_name() != type)
-            throw mucs_exception(error_config(
+            throw mucs_exception::config(
                 "Config requires key \"" + key + "\" with type " + type,
-                get().filename));
+                get().filename);
         parent[key].get_to(dest);
     }
 
