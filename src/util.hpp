@@ -111,8 +111,9 @@ string stl_join(const Container& c, const string& delim = ",") {
     ostringstream ss;
     if (c.size())
         ss << c[0];
-    for (auto i=c.begin()+1; i!=c.end(); i++)
-        ss << delim << *i;
+    if (c.size() > 1)
+        for (auto i=c.begin()+1; i!=c.end(); i++)
+            ss << delim << *i;
     return ss.str();
 }
 
