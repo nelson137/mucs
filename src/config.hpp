@@ -70,8 +70,8 @@ struct LabSesh {
 
     string id;
     int weekday;
-    time_t start;
-    time_t end;
+    system_clock::time_point start;
+    system_clock::time_point end;
 
     LabSesh();
     LabSesh(const string& i);

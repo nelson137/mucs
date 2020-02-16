@@ -14,7 +14,7 @@ LabSesh::LabSesh(const string& i) : id(i) {
 bool LabSesh::is_active() const {
     if (current_weekday() != this->weekday)
         return false;
-    time_t now = current_time();
+    system_clock::time_point now = system_clock::now();
     return this->start <= now && now < this->end;
 }
 

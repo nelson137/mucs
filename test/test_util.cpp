@@ -105,8 +105,9 @@ TEST_CASE("parse_time", "[util][parse_time]") {
     SECTION("valid") {
         expected_str = format_datetime(expected, time_fmt);
 
-        time_t parsed_tt = parse_time(expected_str);
-        tm actual = *localtime(&parsed_tt);
+        system_clock::time_point parsed_tt = parse_time(expected_str);
+        time_t actual_t = system_clock::to_time_t(parsed_tt);
+        tm actual = *localtime(&actual_t);
 
         REQUIRE(actual.tm_hour == expected.tm_hour);
         REQUIRE(actual.tm_min == expected.tm_min);
@@ -117,7 +118,10 @@ TEST_CASE("parse_time", "[util][parse_time]") {
         expected.tm_sec = rand_int(-59, 0);
         expected_str = format_datetime(expected, time_fmt);
 
-        REQUIRE(parse_time(expected_str) == -1);
+        REQUIRE_THROWS_WITH(
+            parse_time(expected_str),
+            "Invalid time: " + expected_str
+        );
     }
 }
 
