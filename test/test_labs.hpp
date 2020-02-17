@@ -19,14 +19,13 @@ using namespace std;
 using Catch::Matchers::Equals;
 
 
-constexpr bool IS_TODAY      = true;
-constexpr bool NOT_TODAY     = false;
-constexpr bool T_IN_BOUND    = true;
-constexpr bool T_OUT_BOUND   = false;
+constexpr bool TODAY      = true;
+constexpr bool NOT_TODAY  = false;
+constexpr bool ACTIVE     = true;
+constexpr bool NOT_ACTIVE = false;
 
 
-/*
-template<bool is_today, bool in_bound>
+template<bool is_today, bool is_active>
 LabSesh rand_labsesh() {
     LabSesh ls(rand_string(2, chars_lower));
 
@@ -36,28 +35,40 @@ LabSesh rand_labsesh() {
     else
         ls.weekday = (w + rand_int(1,7)) % 7;
 
-    static int zero            = 0;
-    static int before_noon     = 43199;
-    static int two             = 50400;
-    static int before_midnight = 86399;
-    if (in_bound) {
-        ls.start = zero;
-        ls.end = before_midnight;
+    static tm tm_0 =
+        { 0,  0,  0, 1, 0, 70, 0, 0, 0};
+    static tm tm_2 =
+        { 0,  0,  2, 1, 0, 70, 0, 0, 0};
+    static tm tm_22 =
+        { 0,  0, 22, 1, 0, 70, 0, 0, 0};
+    static tm tm_midnight =
+        {59, 59, 23, 1, 0, 70, 0, 0, 0};
+
+    static const system_clock::time_point tp_0 =
+        system_clock::from_time_t(mktime(&tm_0));
+    static const system_clock::time_point tp_2 =
+        system_clock::from_time_t(mktime(&tm_2));
+    static const system_clock::time_point tp_22 =
+        system_clock::from_time_t(mktime(&tm_22));
+    static const system_clock::time_point tp_midnight =
+        system_clock::from_time_t(mktime(&tm_midnight));
+
+    if (is_active) {
+        ls.start = tp_0;
+        ls.end = tp_midnight;
     } else {
-        time_t tt_now = time(nullptr);
-        int h = localtime(&tt_now)->tm_hour;
-        if (h <= 12) {
-            ls.start = two;
-            ls.end = before_midnight;
+        time_t now = time(nullptr);
+        if (localtime(&now)->tm_hour <= 12) {
+            ls.start = tp_22;
+            ls.end = tp_midnight;
         } else {
-            ls.start = zero;
-            ls.end = before_noon;
+            ls.start = tp_0;
+            ls.end = tp_2;
         }
     }
 
     return ls;
 }
-*/
 
 
 #endif

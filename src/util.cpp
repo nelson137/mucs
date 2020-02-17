@@ -10,7 +10,7 @@ system_clock::time_point current_time() {
     t.tm_min = now->tm_min;
     t.tm_sec = now->tm_sec;
 
-    return system_clock::from_time_t(mktime(&t) + now->tm_gmtoff);
+    return system_clock::from_time_t(mktime(&t));
 }
 
 
