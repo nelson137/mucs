@@ -21,8 +21,7 @@ void from_json(const json& j, Homeworks& homeworks) {
             throw mucs_exception::config(
                 "Homework entries must be of type string",
                 Config::get().filename,
-                "homeworks",
-                it.key());
+                {"homeworks", it.key()});
 
         id = it.key();
         // Normalize id (lowercase)

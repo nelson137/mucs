@@ -9,8 +9,7 @@ void from_json(const json& j, Roster& roster) {
             throw mucs_exception::config(
                 "Roster entries must be of type string",
                 config.filename,
-                "roster",
-                entry.key());
+                {"roster", entry.key()});
 
         // Normalize user (lowercase)
         user = user_orig = entry.key();
@@ -26,8 +25,7 @@ void from_json(const json& j, Roster& roster) {
                 throw mucs_exception::config(
                     "Lab id not recognized",
                     config.filename,
-                    "roster",
-                    user_orig);
+                    {"roster", user_orig});
             roster[user].push_back(id);
         }
     }

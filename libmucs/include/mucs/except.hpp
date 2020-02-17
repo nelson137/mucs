@@ -3,6 +3,7 @@
 
 
 #include <algorithm>
+#include <initializer_list>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -17,8 +18,8 @@ private:
     string message;
 
 public:
-    template<typename... T>
-    mucs_exception(string msg1, T... msgs) {
+    template<typename... String>
+    mucs_exception(string msg1, String... msgs) {
         this->message = msg1;
         vector<string> pieces = { msgs... };
         for_each(pieces.begin(), pieces.end(), [&](const string& p) {
@@ -26,30 +27,17 @@ public:
         });
     }
 
-    template<typename... String>
     static string config_msg(
         const string& msg,
         const string& filename,
-        const String&... pack_keys
-    ) {
-        vector<string> keys = { pack_keys... };
-        ostringstream ret;
-        ret << msg << ": " << filename;
-        for (const auto& k : keys)
-            ret << "[\"" << k << "\"]";
-        return ret.str();
-    }
+        initializer_list<string> keys = {}
+    );
 
-    template<typename... String>
     static mucs_exception config(
         const string& msg,
         const string& filename,
-        const String&... pack_keys
-    ) {
-        return mucs_exception(
-            mucs_exception::config_msg(msg, filename, pack_keys...)
-        );
-    }
+        initializer_list<string> keys = {}
+    );
 
     const char *what() const noexcept;
 

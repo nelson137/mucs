@@ -52,16 +52,14 @@ void from_json(const json& j, LabSesh& ls) {
         throw mucs_exception::config(
             "Lab entries must be of type string",
             Config::get().filename,
-            "labs",
-            ls.id);
+            {"labs", ls.id});
 
     auto invalid_lab_spec = [&] () {
         throw mucs_exception::config(
             "Lab entries must be in the format " \
                 "\"<weekday> <start_time> - <end_time>\"",
             Config::get().filename,
-            "labs",
-            ls.id);
+            {"labs", ls.id});
     };
 
     string lab_spec_str = j.get<string>();
