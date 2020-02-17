@@ -8,7 +8,6 @@ cpp-port
         install with mode 440 (instead of 660)
     success/error message for admin update-password
     check submission files exist before confirmation prompt
-    why is a variable name required here (f84aa2d test/test_homeworks.cpp:27:23)
     error messages
         move error_config() to libmucs (needed in src and tests)
         create static mucs_exception::config()
