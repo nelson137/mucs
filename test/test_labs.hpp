@@ -25,6 +25,7 @@ constexpr bool T_IN_BOUND    = true;
 constexpr bool T_OUT_BOUND   = false;
 
 
+/*
 template<bool is_today, bool in_bound>
 LabSesh rand_labsesh() {
     LabSesh ls(rand_string(2, chars_lower));
@@ -56,6 +57,7 @@ LabSesh rand_labsesh() {
 
     return ls;
 }
+*/
 
 
 #endif

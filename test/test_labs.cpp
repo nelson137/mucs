@@ -72,6 +72,7 @@ TEST_CASE("serialize labs", "[labs][serialize]") {
 }
 
 
+/*
 TEST_CASE("is_active returns false when: weekday incorrect, time incorrect",
           "[lab-sesh][is_active]") {
     auto ls = rand_labsesh<NOT_TODAY,T_OUT_BOUND>();
@@ -98,3 +99,4 @@ TEST_CASE("is_active returns true when: weekday correct, time correct",
     auto ls = rand_labsesh<IS_TODAY,T_IN_BOUND>();
     REQUIRE(ls.is_active() == true);
 }
+*/
