@@ -31,13 +31,13 @@ using namespace chrono;
 using json = nlohmann::json;
 
 
-time_t current_time();
+system_clock::time_point current_time();
 
 int current_weekday();
 
 string format_datetime(const tm& t, const string& fmt);
 
-string format_datetime(time_t tt, const string& fmt);
+string format_datetime(const system_clock::time_point& tp, const string& fmt);
 
 string format_weekday(int weekday);
 
@@ -49,7 +49,7 @@ string join_paths(string a, deque<string> parts);
 
 system_clock::time_point parse_datetime(const string& dt_str);
 
-time_t parse_time(const string& t_str);
+system_clock::time_point parse_time(const string& t_str);
 
 int parse_weekday(const string& w_str);
 
@@ -58,6 +58,8 @@ bool prompt_yesno(const string& prompt = "");
 vector<string> string_split(const string& s, const string& delim);
 
 string string_strip(string s);
+
+tm tm_zero();
 
 
 template<typename... String>
