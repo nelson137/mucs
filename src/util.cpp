@@ -147,6 +147,7 @@ tm tm_zero() {
     zero.tm_hour = 0;
     zero.tm_min = 0;
     zero.tm_sec = 0;
+    zero.tm_gmtoff = 0;
     // Calendar
     zero.tm_yday = 0;
     zero.tm_wday = 0;
