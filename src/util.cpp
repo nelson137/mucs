@@ -78,7 +78,7 @@ string join_paths(string a, deque<string> parts) {
 
 
 system_clock::time_point parse_datetime(const string& dt_str) {
-    tm t;
+    tm t = tm_zero();
     if (strptime(dt_str.c_str(), "%Y-%m-%d %T", &t) == nullptr)
         throw mucs_exception("Invalid datetime: " + dt_str);
     return system_clock::from_time_t(mktime(&t));
