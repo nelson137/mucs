@@ -99,7 +99,7 @@ Ret execute(Args& args) {
     const int CHILD_ERR = pipe_err[1];
 
     pid_t pid;
-    int ret;
+    int ret = 0;
     string out, err;
 
     if ((pid = fork()) < 0) {
