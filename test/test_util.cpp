@@ -55,9 +55,9 @@ TEST_CASE("join_paths", "[util][join_paths]") {
 TEST_CASE("parse_datetime", "[util][parse_datetime]") {
     tm expected;
     // tm_year = years since 1900
-    expected.tm_year = 2000 + rand_int(20) - 1900;  // 2000 - 2019
+    expected.tm_year = rand_int(2000, 2020) - 1900;
     // tm_mon: Jan=0, Feb=1, ...
-    expected.tm_mon = rand_int(11);
+    expected.tm_mon = rand_int(12);
     expected.tm_mday = rand_int(1, 29);
     expected.tm_hour = rand_int(24);
     expected.tm_min = rand_int(60);
@@ -71,14 +71,14 @@ TEST_CASE("parse_datetime", "[util][parse_datetime]") {
 
         auto parsed_dt = parse_datetime(expected_str);
         time_t parsed_tt = system_clock::to_time_t(parsed_dt);
-        tm actual = *localtime(&parsed_tt);
+        tm *actual = localtime(&parsed_tt);
 
-        REQUIRE(actual.tm_year == expected.tm_year);
-        REQUIRE(actual.tm_mon == expected.tm_mon);
-        REQUIRE(actual.tm_mday == expected.tm_mday);
-        REQUIRE(actual.tm_hour == expected.tm_hour);
-        REQUIRE(actual.tm_min == expected.tm_min);
-        REQUIRE(actual.tm_mday == expected.tm_mday);
+        REQUIRE(actual->tm_year == expected.tm_year);
+        REQUIRE(actual->tm_mon == expected.tm_mon);
+        REQUIRE(actual->tm_mday == expected.tm_mday);
+        REQUIRE(actual->tm_hour == expected.tm_hour);
+        REQUIRE(actual->tm_min == expected.tm_min);
+        REQUIRE(actual->tm_mday == expected.tm_mday);
     }
 
     SECTION("invalid") {
@@ -107,11 +107,11 @@ TEST_CASE("parse_time", "[util][parse_time]") {
 
         system_clock::time_point parsed_tt = parse_time(expected_str);
         time_t actual_t = system_clock::to_time_t(parsed_tt);
-        tm actual = *localtime(&actual_t);
+        tm *actual = localtime(&actual_t);
 
-        REQUIRE(actual.tm_hour == expected.tm_hour);
-        REQUIRE(actual.tm_min == expected.tm_min);
-        REQUIRE(actual.tm_sec == expected.tm_sec);
+        REQUIRE(actual->tm_hour == expected.tm_hour);
+        REQUIRE(actual->tm_min == expected.tm_min);
+        REQUIRE(actual->tm_sec == expected.tm_sec);
     }
 
     SECTION("invalid") {

@@ -16,8 +16,7 @@ system_clock::time_point current_time() {
 
 int current_weekday() {
     time_t now = time(nullptr);
-    tm *t = localtime(&now);
-    return t->tm_wday;
+    return localtime(&now)->tm_wday;
 }
 
 
