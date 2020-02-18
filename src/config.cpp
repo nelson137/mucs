@@ -47,6 +47,16 @@ Config& Config::parse_file(const Path& p) {
 }
 
 
+string Config::get_assignment(const string& type, const string& user) {
+    if (type == "lab")
+        return this->get_current_lab(user);
+    else if (type == "hw")
+        return this->get_current_hw();
+
+    throw mucs_exception("Assignment type not recognized: " + type);
+}
+
+
 string Config::get_current_lab(const string& user) {
     vector<string> user_labs = this->roster[user];
 

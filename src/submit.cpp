@@ -34,14 +34,7 @@ void submit(SubmitOptions& opts) {
     if (not config.roster.count(user))
         throw mucs_exception("User not in course: " + user);
 
-    string assignment;
-
-    if (opts.assignment_type == "lab")
-        assignment = config.get_current_lab(user);
-    else if (opts.assignment_type == "hw")
-        assignment = config.get_current_hw();
-    else
-        throw mucs_exception("Not possible, caught by parser");
+    string assignment = config.get_assignment(opts.assignment_type, user);
 
     string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
     cout << w_green(spacer) << endl;
