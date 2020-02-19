@@ -42,7 +42,7 @@ void submit(SubmitOptions& opts) {
     cout << "Assignment: " << w_bold(assignment) << endl;
     cout << "User:       " << w_bold(user) << endl;
     cout << "Files:     ";
-    for (auto& s : opts.sources)
+    for (const auto& s : opts.sources)
         cout << ' ' << w_bold(s);
     cout << endl;
     cout << w_green(spacer) << endl;
