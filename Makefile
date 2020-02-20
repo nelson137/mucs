@@ -23,7 +23,7 @@ CFLAGS       := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
 LDFLAGS      := -L$(LIB_D)/build
 LDLIBS       := -lmucs
 
-CXX          := /usr/bin/g++ --coverage -O0 -I$(INCLUDE_D) -I$(LIB_D)/include
+CXX          := /usr/bin/g++ -I$(INCLUDE_D) -I$(LIB_D)/include
 ifneq ($(shell whereis gccfilter | awk '{print $$2}'),)
 CXX          := gccfilter -c -n -a $(CXX)
 endif
@@ -71,7 +71,12 @@ $(TEST_TARGET): $(OBJS_NO_MAIN) $(TEST_OBJS) | libmucs
 
 $(BUILD_D)/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
-	@$(CXX) $(CFLAGS) -c -MMD $< -o $@
+ifneq ($(LCOV)$(GENHTML),)
+ifeq ($(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|coverage' && echo yes),yes)
+	$(eval COVFLAGS := --coverage -O0)
+endif
+endif
+	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $< -o $@
 
 .PHONY: install
 install: $(OBJS) | all_dirs $(TARGET)
