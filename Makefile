@@ -30,8 +30,13 @@ endif
 
 INSTALL      := /usr/bin/install -g cs1050-ta
 
+ifneq ($(shell whereis lcov | awk '{print $$2}'),)
 LCOV         := /usr/bin/lcov -c --no-external
+endif
+
+ifneq ($(shell whereis genhtml | awk '{print $$2}'),)
 GENHTML      := /usr/bin/genhtml --legend --function-coverage --demangle-cpp
+endif
 
 
 .PHONY: main
@@ -40,12 +45,14 @@ main: $(TARGET)
 .PHONY: test
 test: $(TEST_TARGET)
 
+ifneq ($(LCOV)$(GENHTML),)
 .PHONY: coverage
 coverage: test
 	./runtests
 	@mkdir -p $(COVERAGE_D)
 	$(LCOV) -b $(SRC_D) -d $(BUILD_D)/$(SRC_D) -o $(COVERAGE_D)/report.info
 	$(GENHTML) $(COVERAGE_D)/report.info -o $(COVERAGE_D)
+endif
 
 .PHONY: all
 all: main test coverage
