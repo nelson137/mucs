@@ -23,18 +23,22 @@ CFLAGS       := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
 LDFLAGS      := -L$(LIB_D)/build
 LDLIBS       := -lmucs
 
+define can-find-exe
+$(shell whereis $1 | awk '{print (NF>1) ? "yes" : "no"; exit}')
+endef
+
 CXX          := /usr/bin/g++ -I$(INCLUDE_D) -I$(LIB_D)/include
-ifneq ($(shell whereis gccfilter | awk '{print $$2}'),)
+ifeq ($(call can-find-exe,gccfilter),yes)
 CXX          := gccfilter -c -n -a $(CXX)
 endif
 
 INSTALL      := /usr/bin/install -g cs1050-ta
 
-ifneq ($(shell whereis lcov | awk '{print $$2}'),)
+ifeq ($(call can-find-exe,lcov),yes)
 LCOV         := /usr/bin/lcov -c --no-external
 endif
 
-ifneq ($(shell whereis genhtml | awk '{print $$2}'),)
+ifeq ($(call can-find-exe,genhtml),yes)
 GENHTML      := /usr/bin/genhtml --legend --function-coverage --demangle-cpp
 endif
 
