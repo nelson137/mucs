@@ -43,27 +43,27 @@ GENHTML      := genhtml --legend --function-coverage --demangle-cpp
 endif
 
 
-.PHONY: main
 main: $(TARGET)
+.PHONY: main
 
-.PHONY: test
 test: $(TEST_TARGET)
+.PHONY: test
 
 ifneq ($(LCOV)$(GENHTML),)
-.PHONY: coverage
 coverage: test
 	./runtests
 	@mkdir -p $(COVERAGE_D)
 	$(LCOV) -b $(SRC_D) -d $(BUILD_D)/$(SRC_D) -o $(COVERAGE_D)/report.info
 	$(GENHTML) $(COVERAGE_D)/report.info -o $(COVERAGE_D)
+.PHONY: coverage
 endif
 
-.PHONY: all
 all: main test coverage
+.PHONY: all
 
-.PHONY: libmucs
 libmucs:
 	@$(MAKE) -C $(LIB_D)
+.PHONY: libmucs
 
 $(TARGET): $(OBJS) | libmucs
 	@echo "$(BUILD_D)/src/*.o -> $@"
@@ -82,7 +82,6 @@ endif
 endif
 	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $< -o $@
 
-.PHONY: install
 install: $(OBJS) | all_dirs $(TARGET)
 	[ -d "$(DEST)" ]
 	cd $(DEST) && \
@@ -91,20 +90,21 @@ install: $(OBJS) | all_dirs $(TARGET)
 	$(INSTALL) -m 755 $(TARGET) $(DEST_BIN)/$(TARGET)
 	chmod u+s $(DEST_BIN)/$(TARGET)
 	$(INSTALL) -C -m 770 $(SCRIPTS) -t $(DEST_BIN)
+.PHONY: install
 
-.PHONY: clean
 clean:
 	rm -rf $(TARGET) $(TEST_TARGET) $(BUILD_D) $(COVERAGE_D)
 	@$(MAKE) -C $(LIB_D)
+.PHONY: clean
 
-.PHONY: build_dirs
 build_dirs:
 	@mkdir -p $(BUILD_D)/$(SRC_D)
 	@mkdir -p $(BUILD_D)/$(TEST_D)
+.PHONY: build_dirs
 
-.PHONY: all_dirs
 all_dirs: | build_dirs
 	@mkdir -p $(DEST_BIN)
+.PHONY: all_dirs
 
 
 -include $(OBJS:%.o=%.d)
