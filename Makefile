@@ -19,14 +19,16 @@ TEST_OBJS    := $(TEST_SRCS:%.cpp=$(BUILD_D)/%.o)
 
 SCRIPTS      := $(wildcard bin/mucs-*)
 
-INSTALL      := /usr/bin/install -g cs1050-ta
-LIBS         := -I$(LIB_D)/include -L$(LIB_D)/build -lmucs
+CFLAGS       := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
+LDFLAGS      := -L$(LIB_D)/build
+LDLIBS       := -lmucs
 
-GPP          := /usr/bin/g++ -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type --coverage -O0 -I$(INCLUDE_D)
-
+CXX          := /usr/bin/g++ --coverage -O0 -I$(INCLUDE_D) -I$(LIB_D)/include
 ifneq ("$(shell whereis gccfilter >/dev/null)","")
-GPP          := gccfilter -c -n -a $(GPP)
+CXX          := gccfilter -c -n -a $(CXX)
 endif
+
+INSTALL      := /usr/bin/install -g cs1050-ta
 
 LCOV         := /usr/bin/lcov -c --no-external
 GENHTML      := /usr/bin/genhtml --legend --function-coverage --demangle-cpp
@@ -54,15 +56,15 @@ libmucs:
 
 $(TARGET): $(OBJS) | libmucs
 	@echo "$(BUILD_D)/src/*.o -> $@"
-	@$(GPP) $^ $(LIBS) -o $@
+	@$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 $(TEST_TARGET): $(OBJS_NO_MAIN) $(TEST_OBJS) | libmucs
 	@echo "$(BUILD_D)/**/*.o -> $@"
-	@$(GPP) $^ $(LIBS) -o $@
+	@$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 $(BUILD_D)/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
-	@$(GPP) -c -MMD $< $(LIBS) -o $@
+	@$(CXX) $(CFLAGS) -c -MMD $< -o $@
 
 .PHONY: install
 install: $(OBJS) | all_dirs $(TARGET)
