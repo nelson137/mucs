@@ -9,6 +9,8 @@ OBJS_NO_MAIN := $(filter-out %/main.o,$(OBJS))
 TEST_SRCS    := $(wildcard test/*.cpp)
 TEST_OBJS    := $(TEST_SRCS:%.cpp=build/%.o)
 
+ALL_OBJS     := $(OBJS_NO_MAIN) $(TEST_OBJS)
+
 SCRIPTS      := $(wildcard bin/mucs-*)
 
 CFLAGS       := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
@@ -54,13 +56,13 @@ libmucs:
 	@$(MAKE) -C libmucs
 .PHONY: libmucs
 
-$(TARGET): $(OBJS) | libmucs
+$(TARGET): libmucs $(OBJS)
 	@echo "build/src/*.o -> $@"
-	@$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+	@$(CXX) $(LDFLAGS) $(OBJS) -o $@ $(LDLIBS)
 
-$(TEST_TARGET): $(OBJS_NO_MAIN) $(TEST_OBJS) | libmucs
+$(TEST_TARGET): libmucs $(ALL_OBJS)
 	@echo "build/**/*.o -> $@"
-	@$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+	@$(CXX) $(LDFLAGS) $(ALL_OBJS) -o $@ $(LDLIBS)
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
@@ -71,7 +73,7 @@ endif
 endif
 	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $< -o $@
 
-install: $(OBJS) | all_dirs $(TARGET)
+install: $(TARGET)
 	mkdir -p $(DEST)/{bin,config.d,submissions}
 	chmod 775 $(DEST)/{bin,config.d}
 	chmod 770 $(DEST)/submissions
@@ -85,13 +87,8 @@ clean:
 .PHONY: clean
 
 build_dirs:
-	@mkdir -p build/src
-	@mkdir -p build/test
+	@mkdir -p build/{src,test}
 .PHONY: build_dirs
-
-all_dirs: | build_dirs
-	@mkdir -p $(DEST)/bin
-.PHONY: all_dirs
 
 
 -include $(OBJS:%.o=%.d)
