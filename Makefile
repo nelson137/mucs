@@ -24,7 +24,7 @@ LDFLAGS      := -L$(LIB_D)/build
 LDLIBS       := -lmucs
 
 CXX          := /usr/bin/g++ --coverage -O0 -I$(INCLUDE_D) -I$(LIB_D)/include
-ifneq ("$(shell whereis gccfilter >/dev/null)","")
+ifneq ($(shell whereis gccfilter | awk '{print $$2}'),)
 CXX          := gccfilter -c -n -a $(CXX)
 endif
 
