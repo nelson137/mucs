@@ -27,19 +27,19 @@ define can-find-exe
 $(shell whereis $1 | awk '{print (NF>1) ? "yes" : "no"; exit}')
 endef
 
-CXX          := /usr/bin/g++ -I$(INCLUDE_D) -I$(LIB_D)/include
+CXX          := g++ -I$(INCLUDE_D) -I$(LIB_D)/include
 ifeq ($(call can-find-exe,gccfilter),yes)
 CXX          := gccfilter -c -n -a $(CXX)
 endif
 
-INSTALL      := /usr/bin/install -g cs1050-ta
+INSTALL      := install -g cs1050-ta
 
 ifeq ($(call can-find-exe,lcov),yes)
-LCOV         := /usr/bin/lcov -c --no-external
+LCOV         := lcov -c --no-external
 endif
 
 ifeq ($(call can-find-exe,genhtml),yes)
-GENHTML      := /usr/bin/genhtml --legend --function-coverage --demangle-cpp
+GENHTML      := genhtml --legend --function-coverage --demangle-cpp
 endif
 
 
