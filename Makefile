@@ -58,9 +58,6 @@ coverage: test
 .PHONY: coverage
 endif
 
-all: main test coverage
-.PHONY: all
-
 libmucs:
 	@$(MAKE) -C $(LIB_D)
 .PHONY: libmucs
