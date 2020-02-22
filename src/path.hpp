@@ -29,6 +29,9 @@ public:
     Path();
     Path(const string& s);
 
+    Path  operator+ (const string& s) const;
+    Path& operator+=(const string& s);
+
     Path  operator/ (const string& rel_path) const;
     Path  operator/ (const   Path&    other) const;
     Path& operator/=(const string& rel_path);

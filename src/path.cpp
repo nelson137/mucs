@@ -23,6 +23,18 @@ Path::Path(const string& s) : Path() {
 }
 
 
+Path Path::operator+(const string& s) const {
+    return Path(this->m_path + s);
+}
+
+
+Path& Path::operator+=(const string& s) {
+    this->m_path += s;
+    this->stat();
+    return *this;
+}
+
+
 Path Path::operator/(const string& rel_path) const {
     return Path(join_paths(this->m_path, rel_path));
 }
