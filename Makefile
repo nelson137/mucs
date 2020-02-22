@@ -66,12 +66,13 @@ $(TEST_TARGET): libmucs $(ALL_OBJS)
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
-ifneq ($(LCOV)$(GENHTML),)
 ifeq ($(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|coverage' && echo yes),yes)
+	$(eval DATA_CONFIG := -DMUCS_ROOT_X='$(shell pwd)/test_root')
+ifneq ($(LCOV)$(GENHTML),)
 	$(eval COVFLAGS := --coverage -O0)
 endif
 endif
-	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $< -o $@
+	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $(DATA_CONFIG) $< -o $@
 
 install: $(TARGET)
 	mkdir -p $(DEST)/{bin,config.d,submissions}
