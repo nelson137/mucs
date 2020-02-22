@@ -96,6 +96,10 @@ clean:
 	@$(MAKE) -C libmucs
 .PHONY: clean
 
+wipe: clean
+	rm -rf test_root/submissions
+.PHONY: wipe
+
 build_dirs:
 	@mkdir -p build/{src,test}
 .PHONY: build_dirs
