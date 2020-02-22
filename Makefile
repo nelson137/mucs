@@ -36,6 +36,8 @@ ifeq ($(call can-find-exe,genhtml),yes)
 GENHTML      := genhtml --legend --function-coverage --demangle-cpp
 endif
 
+TESTING      := $(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|$(TEST_TARGET)|coverage' && echo yes)
+
 
 main: $(TARGET)
 .PHONY: main
@@ -66,7 +68,7 @@ $(TEST_TARGET): libmucs $(ALL_OBJS)
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
-ifeq ($(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|coverage' && echo yes),yes)
+ifeq ($(TESTING),yes)
 	$(eval DATA_CONFIG := -DMUCS_ROOT_X='$(shell pwd)/test_root')
 ifneq ($(LCOV)$(GENHTML),)
 	$(eval COVFLAGS := --coverage -O0)
