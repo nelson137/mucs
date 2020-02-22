@@ -86,11 +86,10 @@ system_clock::time_point parse_datetime(const string& dt_str) {
 
 
 system_clock::time_point parse_time(const string& t_str) {
-    time_t t_t = time(nullptr);
-    tm *t = localtime(&t_t);
-    if (strptime(t_str.c_str(), "%T", t) == nullptr)
+    tm t = tm_zero();
+    if (strptime(t_str.c_str(), "%T", &t) == nullptr)
         throw mucs_exception("Invalid time: " + t_str);
-    return system_clock::from_time_t(mktime(t));
+    return system_clock::from_time_t(mktime(&t));
 }
 
 

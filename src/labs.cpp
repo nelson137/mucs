@@ -73,7 +73,6 @@ void from_json(const json& j, LabSesh& ls) {
     vector<string> wday_start = string_split(chunks[0], " ");
     ls.weekday = parse_weekday(wday_start[0]);
     ls.start = parse_time(wday_start[1]);
-
     ls.end = parse_time(chunks[1]);
 }
 
