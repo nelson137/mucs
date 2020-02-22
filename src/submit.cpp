@@ -47,9 +47,19 @@ void submit(SubmitOptions& opts) {
         return;
     }
 
-    Path submit_d =
-        Path(SUBMISSIONS_ROOT) / opts.course / lab / assignment / user;
+    Path assignment_d =
+        Path(SUBMISSIONS_ROOT) / opts.course / lab / assignment;
+
+    string now_str = format_datetime(system_clock::now(), ".%Y-%m-%d.%T");
+    Path submit_d = assignment_d / ".submissions" / user + now_str;
     submit_d.mkdir_recurse();
+
+    Path latest_link = assignment_d / user;
+    if (latest_link.exists())
+        if (latest_link.rm() == false)
+            throw mucs_exception(
+                "Error removing symbolic link:", latest_link.str());
+    latest_link.link_to(submit_d);
 
     Exec::Args ea = {
         "/usr/bin/install", "-C", "-m", "660", "-t", submit_d.str()

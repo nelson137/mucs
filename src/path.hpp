@@ -44,6 +44,7 @@ public:
     bool exists() const;
     bool is_dir() const;
     bool is_file() const;
+    bool link_to(const Path& target) const;
     vector<string> ls() const;
     int mkdir() const;
     int mkdir_recurse() const;

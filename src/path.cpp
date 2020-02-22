@@ -82,6 +82,11 @@ bool Path::is_file() const {
 }
 
 
+bool Path::link_to(const Path& target) const {
+    return symlink(target.str().c_str(), this->m_path.c_str()) == 0;
+}
+
+
 vector<string> Path::ls() const {
     DIR *dir = opendir(this->m_path.c_str());
     if (dir == nullptr)

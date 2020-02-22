@@ -2,6 +2,7 @@
 #define SUBMIT_HPP
 
 
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,6 +16,7 @@
 #include "util.hpp"
 
 using namespace std;
+using namespace chrono;
 
 
 struct SubmitOptions {
