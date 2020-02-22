@@ -46,5 +46,5 @@ json new_config_data(json j) {
 
 
 Config& new_config(const json& j) {
-    return clean_config().parse(new_config_data(j));
+    return new_config_data(j).get_to(clean_config());
 }
