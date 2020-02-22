@@ -9,7 +9,26 @@ void submit(SubmitOptions& opts) {
     if (not config.roster.count(user))
         throw mucs_exception("User not in course: " + user);
 
-    string assignment = config.get_assignment(opts.assignment_type, user);
+    vector<string> user_labs = config.roster[user];
+    string lab;
+    if (user_labs.size() == 1) {
+        lab = user_labs[0];
+        auto ls = config.lab_sessions[lab];
+        if (ls.is_active() == false)
+            throw mucs_exception(ls.format(
+                "Lab {id} is not in session: {weekday} from {start} to {end}"
+            ));
+    } else {
+        auto active_lab = stl_find_if(user_labs, [&] (const string& id) {
+            return config.lab_sessions[id].is_active();
+        });
+        if (active_lab == user_labs.end())
+            throw mucs_exception(
+                "None of your labs are in session:", stl_join(user_labs));
+        lab = *active_lab;
+    }
+
+    string assignment = config.get_assignment(opts.assignment_type);
 
     string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
     cout << w_green(spacer) << endl;
@@ -27,7 +46,8 @@ void submit(SubmitOptions& opts) {
         return;
     }
 
-    Path submit_d = Path(SUBMISSIONS_ROOT) / opts.course / assignment / user;
+    Path submit_d =
+        Path(SUBMISSIONS_ROOT) / opts.course / lab / assignment / user;
     submit_d.mkdir_recurse();
 
     Exec::Args ea = {

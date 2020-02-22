@@ -47,9 +47,9 @@ Config& Config::parse_file(const Path& p) {
 }
 
 
-string Config::get_assignment(const string& type, const string& user) {
+string Config::get_assignment(const string& type) const {
     if (type == "lab")
-        return this->get_current_lab(user);
+        return this->get_current_lab();
     else if (type == "hw")
         return this->get_current_hw();
 
@@ -57,25 +57,7 @@ string Config::get_assignment(const string& type, const string& user) {
 }
 
 
-string Config::get_current_lab(const string& user) {
-    vector<string> user_labs = this->roster[user];
-
-    if (user_labs.size() == 1) {
-        string id = user_labs[0];
-        auto ls = this->lab_sessions[id];
-        if (not ls.is_active())
-            throw mucs_exception(ls.format(
-                "Lab {id} is not in session: {weekday} from {start} to {end}"
-            ));
-    } else {
-        auto is_active = [&](const string& id) {
-            return this->lab_sessions[id].is_active();
-        };
-        if (none_of(user_labs.begin(), user_labs.end(), is_active))
-            throw mucs_exception(
-                "None of your labs are in session:", stl_join(user_labs));
-    }
-
+string Config::get_current_lab() const {
     return this->current_lab;
 }
 

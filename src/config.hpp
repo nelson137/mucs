@@ -159,10 +159,8 @@ public:
     Config& parse(const json& root);
     Config& parse_file(const Path& p);
 
-    string get_assignment(const string& type, const string& user);
-
-    string get_current_lab(const string& user);
-
+    string get_assignment(const string& type) const;
+    string get_current_lab() const;
     string get_current_hw() const;
 
 };

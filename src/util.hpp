@@ -93,6 +93,16 @@ void stl_extend(Container& a, const Container& b) {
 }
 
 
+template<
+    typename Container,
+    typename ContainerIt = typename Container::const_iterator,
+    typename UnaryPredicate
+>
+ContainerIt stl_find_if(const Container& container, const UnaryPredicate& p) {
+    return find_if(container.begin(), container.end(), p);
+}
+
+
 template<typename Container>
 string stl_join(const Container& c, const string& delim = ",") {
     ostringstream ss;
