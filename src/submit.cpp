@@ -42,10 +42,8 @@ void submit(SubmitOptions& opts) {
     cout << endl;
     cout << w_green(spacer) << endl;
 
-    if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false) {
-        cerr << w_red("Submission cancelled") << endl;
-        return;
-    }
+    if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false)
+        throw mucs_exception("Submission cancelled");
 
     Path assignment_d =
         Path(SUBMISSIONS_ROOT) / opts.course / lab / assignment;
@@ -77,9 +75,8 @@ void submit(SubmitOptions& opts) {
         cout << endl;
     }
 
-    if (ret.code == 0) {
+    if (ret.code == 0)
         cout << w_green("Submission complete") << endl;
-    } else {
-        cerr << w_red("Submission failed") << endl;
-    }
+    else
+        throw mucs_exception("Submission failed");
 }
