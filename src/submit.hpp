@@ -26,17 +26,6 @@ struct SubmitOptions {
 };
 
 
-struct Submitter {
-
-    Path submit_d;
-
-    Submitter(const Path& sub_d);
-
-    bool submit(const vector<string>& sources);
-
-};
-
-
 void submit(SubmitOptions& opts);
 
 

@@ -1,33 +1,8 @@
 #include "submit.hpp"
 
 
-Submitter::Submitter(const Path& sub_d) : submit_d(sub_d) {
-    if (this->submit_d.exists())
-        this->submit_d.rm_recurse();
-
-    submit_d.mkdir_recurse();
-}
-
-
-bool Submitter::submit(const vector<string>& sources) {
-    Exec::Args ea = {
-        "/usr/bin/install", "-C", "-m", "660", "-t", this->submit_d.str()
-    };
-    stl_extend<vector<string>>(ea, sources);
-    Exec::Ret ret = Exec::execute(ea);
-
-    if (ret.code != 0 && ret.err.size()) {
-        cerr << ret.err;
-        cout << endl;
-    }
-
-    return ret.code == 0;
-}
-
-
 void submit(SubmitOptions& opts) {
-    auto& config = Config::get();
-    config.parse_file(Path(CONFIG_DIR) / opts.course);
+    auto& config = Config::get().parse_file(Path(CONFIG_DIR) / opts.course);
 
     string user = get_user();
 
@@ -52,10 +27,21 @@ void submit(SubmitOptions& opts) {
         return;
     }
 
-    auto submit_d = Path(SUBMISSIONS_ROOT) / opts.course / assignment / user;
+    Path submit_d = Path(SUBMISSIONS_ROOT) / opts.course / assignment / user;
+    submit_d.mkdir_recurse();
 
-    Submitter submitter(submit_d);
-    if (submitter.submit(opts.sources)) {
+    Exec::Args ea = {
+        "/usr/bin/install", "-C", "-m", "660", "-t", submit_d.str()
+    };
+    stl_extend<vector<string>>(ea, opts.sources);
+    Exec::Ret ret = Exec::execute(ea);
+
+    if (ret.code != 0 && ret.err.size()) {
+        cerr << ret.err;
+        cout << endl;
+    }
+
+    if (ret.code == 0) {
         cout << w_green("Submission complete") << endl;
     } else {
         cerr << w_red("Submission failed") << endl;
