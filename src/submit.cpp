@@ -33,6 +33,7 @@ void submit(SubmitOptions& opts) {
     string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
     cout << w_green(spacer) << endl;
     cout << "Course:     " << w_bold(opts.course) << endl;
+    cout << "Lab:        " << w_bold(lab) << endl;
     cout << "Assignment: " << w_bold(assignment) << endl;
     cout << "User:       " << w_bold(user) << endl;
     cout << "Files:     ";
