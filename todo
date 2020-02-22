@@ -1,15 +1,5 @@
 cpp-port
-    accept ALL submits in new tree SUBMIT_BASE/COURSE/LAB/ASSIGNMENT/...
-        # symlink to most recent valid submission
-        USER -> .submissions/USER.YYYY-MM-DD.HH:MM:SS
-        # symlink to most recent late[/denied] submission if exists
-        USER.late -> .submissions/USER.YYYY-MM-DD.HH:MM:SS~
-    copy files readonly
-        install with mode 440 (instead of 660)
+    accept lates submissions
+        USER(.late|~) -> .submissions/...
     success/error message for admin update-password
     check submission files exist before confirmation prompt
-    error messages
-        move error_config() to libmucs (needed in src and tests)
-        create static mucs_exception::config()
-            call error_config()
-            return new instance
