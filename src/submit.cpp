@@ -52,7 +52,12 @@ void submit(SubmitOptions& opts) {
 
     string now_str = format_datetime(system_clock::now(), ".%Y-%m-%d.%T");
     Path submit_d = assignment_d / ".submissions" / user + now_str;
-    submit_d.mkdir_recurse();
+
+    if (submit_d.exists())
+        throw mucs_exception(
+            "Attempted successive submissions too quickly, please try again");
+    else
+        submit_d.mkdir_recurse();
 
     Path latest_link = assignment_d / user;
     if (latest_link.exists())
