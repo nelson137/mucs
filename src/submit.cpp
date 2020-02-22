@@ -65,7 +65,7 @@ void submit(SubmitOptions& opts) {
     latest_link.link_to(submit_d);
 
     Exec::Args ea = {
-        "/usr/bin/install", "-C", "-m", "660", "-t", submit_d.str()
+        "/usr/bin/install", "-C", "-m", "440", "-t", submit_d.str()
     };
     stl_extend<vector<string>>(ea, opts.sources);
     Exec::Ret ret = Exec::execute(ea);
