@@ -138,7 +138,7 @@ int Path::mkdir_recurse() const {
 
 
 int Path::rm() const {
-    return ::remove(this->m_path.c_str());
+    return ::remove(this->m_path.c_str()) == 0;
 }
 
 
