@@ -28,6 +28,14 @@ struct SubmitOptions {
 };
 
 
+void submit_summary(
+    const string& course,
+    const string& lab,
+    const string& assignment,
+    const string& user,
+    const vector<string>& sources
+);
+
 void submit(SubmitOptions& opts);
 
 

@@ -162,6 +162,7 @@ public:
     string get_assignment(const string& type) const;
     string get_current_lab() const;
     string get_current_hw() const;
+    string get_lab(const string& user) const;
 
 };
 

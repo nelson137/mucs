@@ -73,6 +73,31 @@ string Config::get_current_hw() const {
 }
 
 
+string Config::get_lab(const string& user) const {
+    const vector<string>& user_labs = this->roster.at(user);
+    string lab;
+
+    if (user_labs.size() == 1) {
+        lab = user_labs[0];
+        const LabSesh& ls = this->lab_sessions.at(lab);
+        if (ls.is_active() == false)
+            throw mucs_exception(ls.format(
+                "Lab {id} is not in session: {weekday} from {start} to {end}"
+            ));
+    } else {
+        auto active_lab = stl_find_if(user_labs, [&] (const string& id) {
+            return this->lab_sessions.at(id).is_active();
+        });
+        if (active_lab == user_labs.end())
+            throw mucs_exception(
+                "None of your labs are in session:", stl_join(user_labs));
+        lab = *active_lab;
+    }
+
+    return lab;
+}
+
+
 void from_json(const json& j, Config& c) {
     if (j.count("course_id") > 0)
         j["course_id"].get_to(c.course_id);

@@ -1,46 +1,40 @@
 #include "submit.hpp"
 
 
-void submit(SubmitOptions& opts) {
-    auto& config = Config::get().parse_file(Path(CONFIG_DIR) / opts.course);
+void submit_summary(
+    const string& course,
+    const string& lab,
+    const string& assignment,
+    const string& user,
+    const vector<string>& sources
+) {
+    const string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
 
-    string user = get_user();
-
-    if (not config.roster.count(user))
-        throw mucs_exception("User not in course: " + user);
-
-    vector<string> user_labs = config.roster[user];
-    string lab;
-    if (user_labs.size() == 1) {
-        lab = user_labs[0];
-        auto ls = config.lab_sessions[lab];
-        if (ls.is_active() == false)
-            throw mucs_exception(ls.format(
-                "Lab {id} is not in session: {weekday} from {start} to {end}"
-            ));
-    } else {
-        auto active_lab = stl_find_if(user_labs, [&] (const string& id) {
-            return config.lab_sessions[id].is_active();
-        });
-        if (active_lab == user_labs.end())
-            throw mucs_exception(
-                "None of your labs are in session:", stl_join(user_labs));
-        lab = *active_lab;
-    }
-
-    string assignment = config.get_assignment(opts.assignment_type);
-
-    string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
     cout << w_green(spacer) << endl;
-    cout << "Course:     " << w_bold(opts.course) << endl;
+    cout << "Course:     " << w_bold(course) << endl;
     cout << "Lab:        " << w_bold(lab) << endl;
     cout << "Assignment: " << w_bold(assignment) << endl;
     cout << "User:       " << w_bold(user) << endl;
     cout << "Files:     ";
-    for (const auto& s : opts.sources)
+    for (const auto& s : sources)
         cout << ' ' << w_bold(s);
     cout << endl;
     cout << w_green(spacer) << endl;
+
+}
+
+
+void submit(SubmitOptions& opts) {
+    auto& config = Config::get().parse_file(Path(CONFIG_DIR) / opts.course);
+
+    string user = get_user();
+    if (not config.roster.count(user))
+        throw mucs_exception("User not in course:", user);
+
+    string lab = config.get_lab(user);
+    string assignment = config.get_assignment(opts.assignment_type);
+
+    submit_summary(opts.course, lab, assignment, user, opts.sources);
 
     if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
@@ -59,10 +53,9 @@ void submit(SubmitOptions& opts) {
         submit_d.mkdir_recurse();
 
     Path latest_link = assignment_d / user;
-    if (latest_link.exists())
-        if (latest_link.rm() == false)
-            throw mucs_exception(
-                "Error removing symbolic link:", latest_link.str());
+    if (latest_link.exists() && latest_link.rm() == false)
+        throw mucs_exception(
+            "Error removing symbolic link:", latest_link.str());
     latest_link.link_to(submit_d_rel);
 
     Exec::Args ea = {
