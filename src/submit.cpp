@@ -49,7 +49,8 @@ void submit(SubmitOptions& opts) {
         Path(SUBMISSIONS_ROOT) / opts.course / lab / assignment;
 
     string now_str = format_datetime(system_clock::now(), ".%Y-%m-%d.%T");
-    Path submit_d = assignment_d / ".submissions" / user + now_str;
+    Path submit_d_rel = Path(".submissions") / user + now_str;
+    Path submit_d = assignment_d / submit_d_rel;
 
     if (submit_d.exists())
         throw mucs_exception(
@@ -62,7 +63,7 @@ void submit(SubmitOptions& opts) {
         if (latest_link.rm() == false)
             throw mucs_exception(
                 "Error removing symbolic link:", latest_link.str());
-    latest_link.link_to(submit_d);
+    latest_link.link_to(submit_d_rel);
 
     Exec::Args ea = {
         "/usr/bin/install", "-C", "-m", "440", "-t", submit_d.str()
