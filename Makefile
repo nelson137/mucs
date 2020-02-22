@@ -38,6 +38,10 @@ endif
 
 TESTING      := $(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|$(TEST_TARGET)|coverage' && echo yes)
 
+define local-mucs-root
+$(eval DATA_CONFIG := -DMUCS_ROOT_X='$(shell pwd)/test_root')
+endef
+
 
 main: $(TARGET)
 .PHONY: main
@@ -68,8 +72,11 @@ $(TEST_TARGET): libmucs $(ALL_OBJS)
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
+ifeq ($(MUCS_ROOT),local)
+	$(call local-mucs-root)
+endif
 ifeq ($(TESTING),yes)
-	$(eval DATA_CONFIG := -DMUCS_ROOT_X='$(shell pwd)/test_root')
+	$(call local-mucs-root)
 ifneq ($(LCOV)$(GENHTML),)
 	$(eval COVFLAGS := --coverage -O0)
 endif
