@@ -2,6 +2,7 @@
 #define CONFIG_HPP
 
 
+#include <algorithm>
 #include <cctype>
 #include <chrono>
 #include <ctime>
@@ -75,6 +76,9 @@ struct LabSesh {
 
     LabSesh();
     LabSesh(const string& i);
+
+    operator string() const;
+    friend ostream& operator<<(ostream& os, const LabSesh& ls);
 
     bool is_active() const;
 
@@ -162,7 +166,9 @@ public:
     string get_assignment(const string& type) const;
     string get_current_lab() const;
     string get_current_hw() const;
-    string get_lab(const string& user) const;
+
+    vector<LabSesh> get_user_labs(const string& user) const;
+    LabSesh get_lab(const string& id) const;
 
 };
 

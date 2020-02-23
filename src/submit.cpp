@@ -3,7 +3,7 @@
 
 void submit_summary(
     const string& course,
-    const string& lab,
+    const LabSesh& lab,
     const string& assignment,
     const string& user,
     const vector<string>& sources
@@ -31,7 +31,7 @@ void submit(SubmitOptions& opts) {
     if (not config.roster.count(user))
         throw mucs_exception("User not in course:", user);
 
-    string lab = config.get_lab(user);
+    LabSesh lab = config.get_lab(user);
     string assignment = config.get_assignment(opts.assignment_type);
 
     submit_summary(opts.course, lab, assignment, user, opts.sources);

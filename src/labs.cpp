@@ -11,6 +11,11 @@ LabSesh::LabSesh(const string& i) : id(i) {
 }
 
 
+LabSesh::operator string() const {
+    return this->id;
+}
+
+
 bool LabSesh::is_active() const {
     if (current_weekday() != this->weekday)
         return false;
@@ -44,6 +49,11 @@ string LabSesh::format(string fmt) const {
     }
 
     return fmt;
+}
+
+
+ostream& operator<<(ostream& os, const LabSesh& ls) {
+    return os << ls.id;
 }
 
 

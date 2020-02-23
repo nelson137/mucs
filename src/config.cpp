@@ -73,21 +73,18 @@ string Config::get_current_hw() const {
 }
 
 
-string Config::get_lab(const string& user) const {
-    const vector<string>& user_labs = this->roster.at(user);
-    string lab;
+LabSesh Config::get_lab(const string& user) const {
+    const vector<LabSesh>& user_labs = this->get_user_labs(user);
+    LabSesh lab;
 
     if (user_labs.size() == 1) {
         lab = user_labs[0];
-        const LabSesh& ls = this->lab_sessions.at(lab);
-        if (ls.is_active() == false)
-            throw mucs_exception(ls.format(
+        if (lab.is_active() == false)
+            throw mucs_exception(lab.format(
                 "Lab {id} is not in session: {weekday} from {start} to {end}"
             ));
     } else {
-        auto active_lab = stl_find_if(user_labs, [&] (const string& id) {
-            return this->lab_sessions.at(id).is_active();
-        });
+        auto active_lab = stl_find_if(user_labs, mem_fn(&LabSesh::is_active));
         if (active_lab == user_labs.end())
             throw mucs_exception(
                 "None of your labs are in session:", stl_join(user_labs));
@@ -95,6 +92,24 @@ string Config::get_lab(const string& user) const {
     }
 
     return lab;
+}
+
+
+vector<LabSesh> Config::get_user_labs(const string& user) const {
+    const vector<string>& user_lab_ids = this->roster.at(user);
+    vector<LabSesh> user_labs;
+    user_labs.reserve(user_lab_ids.size());
+
+    transform(
+        user_lab_ids.begin(),
+        user_lab_ids.end(),
+        back_inserter(user_labs),
+        [&] (const string& id) {
+            return this->lab_sessions.at(id);
+        }
+    );
+
+    return user_labs;
 }
 
 
