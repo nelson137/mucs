@@ -96,10 +96,10 @@ void stl_extend(Container& a, const Container& b) {
 template<
     typename Container,
     typename ContainerIt = typename Container::const_iterator,
-    typename UnaryPredicate
+    typename UnaryOp
 >
-ContainerIt stl_find_if(const Container& container, const UnaryPredicate& p) {
-    return find_if(container.begin(), container.end(), p);
+ContainerIt stl_find_if(const Container& container, const UnaryOp& op) {
+    return find_if(container.begin(), container.end(), op);
 }
 
 

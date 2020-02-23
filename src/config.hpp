@@ -48,7 +48,7 @@ struct Hw {
 
 struct Homeworks : public set<pair<string,Hw>, Hw::compare> {
 
-    using set<pair<string,Hw>,Hw::compare>::set;
+    using set<pair<string,Hw>, Hw::compare>::set;
 
 };
 
@@ -89,7 +89,7 @@ struct LabSesh {
 
 struct LabSessions : public map<string, LabSesh> {
 
-    using map<string,LabSesh>::map;
+    using map<string, LabSesh>::map;
 
 };
 
@@ -110,7 +110,7 @@ void to_json(json& j, const LabSessions& lab_sessions);
 
 struct Roster : public map<string, vector<string>> {
 
-    using map<string,vector<string>>::map;
+    using map<string, vector<string>>::map;
 
 };
 
@@ -132,13 +132,18 @@ private:
 
 public:
     string filename;
+
     string course_id;
+
     string admin_hash;
-    Homeworks homeworks;
+
     LabSessions lab_sessions;
-    string current_lab;
-    Roster roster;
     vector<string> lab_ids;
+    string current_lab;
+
+    Homeworks homeworks;
+
+    Roster roster;
 
     static Config& get();
 

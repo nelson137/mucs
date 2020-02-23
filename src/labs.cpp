@@ -95,8 +95,8 @@ void from_json(const json& j, LabSessions& lab_sessions) {
         // Normalize id (uppercase)
         stl_transform(id, ::toupper);
 
-        LabSesh ls(id);
-        lab_sessions[id] = it.value().get_to(ls);
+        lab_sessions[id] = LabSesh(id);
+        it.value().get_to(lab_sessions[id]);
         config.lab_ids.push_back(id);
     }
 }
