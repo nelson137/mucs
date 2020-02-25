@@ -49,6 +49,8 @@ string join_paths(string a, deque<string> parts);
 
 system_clock::time_point parse_datetime(const string& dt_str);
 
+system_clock::time_point parse_date(const string& d_str);
+
 system_clock::time_point parse_time(const string& t_str);
 
 int parse_weekday(const string& w_str);

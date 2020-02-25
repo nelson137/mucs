@@ -85,6 +85,14 @@ system_clock::time_point parse_datetime(const string& dt_str) {
 }
 
 
+system_clock::time_point parse_date(const string& d_str) {
+    tm t = tm_zero();
+    if (strptime(d_str.c_str(), "%Y-%m-%d", &t) == nullptr)
+        throw mucs_exception("Invalid date:", d_str);
+    return system_clock::from_time_t(mktime(&t));
+}
+
+
 system_clock::time_point parse_time(const string& t_str) {
     tm t = tm_zero();
     if (strptime(t_str.c_str(), "%T", &t) == nullptr)
