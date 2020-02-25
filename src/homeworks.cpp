@@ -33,7 +33,7 @@ void from_json(const json& j, Homeworks& homeworks) {
 
 
 void to_json(json& j, const Hw& hw) {
-    j = json(format_datetime(hw.duedate, "%Y-%m-%d %T"));
+    j = json(format_datetime(hw.duedate, DATETIME_FMT));
 }
 
 

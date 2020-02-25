@@ -18,6 +18,7 @@
 
 #include "mucs/except.hpp"
 
+#include "consts.hpp"
 #include "path.hpp"
 #include "util.hpp"
 

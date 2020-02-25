@@ -63,11 +63,10 @@ TEST_CASE("parse_datetime", "[util][parse_datetime]") {
     expected.tm_min = rand_int(60);
     expected.tm_sec = rand_int(60);
 
-    static const string dt_fmt = "%Y-%m-%d %H:%M:%S";
     string expected_str;
 
     SECTION("valid") {
-        expected_str = format_datetime(expected, dt_fmt);
+        expected_str = format_datetime(expected, DATETIME_FMT);
 
         auto parsed_dt = parse_datetime(expected_str);
         time_t parsed_tt = system_clock::to_time_t(parsed_dt);
@@ -83,7 +82,7 @@ TEST_CASE("parse_datetime", "[util][parse_datetime]") {
 
     SECTION("invalid") {
         expected.tm_sec = rand_int(-59, 0);
-        expected_str = format_datetime(expected, dt_fmt);
+        expected_str = format_datetime(expected, DATETIME_FMT);
 
         REQUIRE_THROWS_WITH(
             parse_datetime(expected_str),
@@ -99,11 +98,10 @@ TEST_CASE("parse_time", "[util][parse_time]") {
     expected.tm_min = rand_int(60);
     expected.tm_sec = rand_int(60);
 
-    static const string time_fmt = "%H:%M:%S";
     string expected_str;
 
     SECTION("valid") {
-        expected_str = format_datetime(expected, time_fmt);
+        expected_str = format_datetime(expected, TIME_FMT);
 
         system_clock::time_point parsed_tt = parse_time(expected_str);
         time_t actual_t = system_clock::to_time_t(parsed_tt);
@@ -116,7 +114,7 @@ TEST_CASE("parse_time", "[util][parse_time]") {
 
     SECTION("invalid") {
         expected.tm_sec = rand_int(-59, 0);
-        expected_str = format_datetime(expected, time_fmt);
+        expected_str = format_datetime(expected, TIME_FMT);
 
         REQUIRE_THROWS_WITH(
             parse_time(expected_str),

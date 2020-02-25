@@ -19,6 +19,11 @@ using namespace std;
 #define SUBMISSIONS_ROOT (MUCS_ROOT "/submissions")
 #define CONFIG_DIR (MUCS_ROOT "/config.d")
 
+#define DATETIME_FMT     "%Y-%m-%d %H:%M:%S"
+#define DATETIME_EXT_FMT ".%Y-%m-%d.%H:%M:%S"
+#define DATE_FMT         "%Y-%m-%d"
+#define TIME_FMT         "%H:%M:%S"
+
 constexpr double TERM_WIDTH_COEFF = .85;
 
 static const string FG_BOLD  = "\033[1m";

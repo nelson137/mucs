@@ -25,7 +25,6 @@ bool LabSesh::is_active() const {
 
 
 string LabSesh::format(string fmt) const {
-    static const string fmt_t = "%H:%M:%S";
     static const string fmt_t_pretty = "%I:%M:%S%P";
 
     map<string,string> repl = {
@@ -34,10 +33,10 @@ string LabSesh::format(string fmt) const {
         {"{weekday}", format_weekday(this->weekday)},
         {"{weekday_n}", to_string(this->weekday)},
 
-        {"{start}", format_datetime(this->start, fmt_t)},
+        {"{start}", format_datetime(this->start, TIME_FMT)},
         {"{start_p}", format_datetime(this->start, fmt_t_pretty)},
 
-        {"{end}", format_datetime(this->end, fmt_t)},
+        {"{end}", format_datetime(this->end, TIME_FMT)},
         {"{end_p}", format_datetime(this->end, fmt_t_pretty)}
     };
 

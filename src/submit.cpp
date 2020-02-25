@@ -42,7 +42,7 @@ void submit(SubmitOptions& opts) {
     Path assignment_d =
         Path(SUBMISSIONS_ROOT) / opts.course / lab / assignment;
 
-    string now_str = format_datetime(system_clock::now(), ".%Y-%m-%d.%T");
+    string now_str = format_datetime(system_clock::now(), DATETIME_EXT_FMT);
     Path submit_d_rel = Path(".submissions") / user + now_str;
     Path submit_d = assignment_d / submit_d_rel;
 
