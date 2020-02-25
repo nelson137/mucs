@@ -11,6 +11,18 @@ Config& Config::get() {
 }
 
 
+mucs_exception Config::error(
+    const string& msg,
+    const initializer_list<string>& keys
+) {
+    ostringstream ret;
+    ret << msg << ": " << Config::get().filename;
+    for (const auto& k : keys)
+        ret << "[\"" << k << "\"]";
+    return ret.str();
+}
+
+
 Config& Config::parse(const json& root) {
     get_to_required(root, "course_id",   "string", this->course_id);
     get_to_required(root, "admin_hash",  "string", this->admin_hash);

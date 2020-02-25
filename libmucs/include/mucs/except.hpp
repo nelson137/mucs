@@ -27,18 +27,6 @@ public:
         });
     }
 
-    static string config_msg(
-        const string& msg,
-        const string& filename,
-        initializer_list<string> keys = {}
-    );
-
-    static mucs_exception config(
-        const string& msg,
-        const string& filename,
-        initializer_list<string> keys = {}
-    );
-
     const char *what() const noexcept;
 
     operator string() const;

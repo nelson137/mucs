@@ -58,16 +58,13 @@ ostream& operator<<(ostream& os, const LabSesh& ls) {
 
 void from_json(const json& j, LabSesh& ls) {
     if (j.type() != json::value_t::string)
-        throw mucs_exception::config(
-            "Lab entries must be of type string",
-            Config::get().filename,
-            {"labs", ls.id});
+        throw Config::error(
+            "Lab entries must be of type string", {"labs", ls.id});
 
     auto invalid_lab_spec = [&] () {
-        throw mucs_exception::config(
+        throw Config::error(
             "Lab entries must be in the format " \
                 "\"<weekday> <start_time> - <end_time>\"",
-            Config::get().filename,
             {"labs", ls.id});
     };
 

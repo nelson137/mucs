@@ -140,6 +140,11 @@ public:
 
     static Config& get();
 
+    static mucs_exception error(
+        const string& msg,
+        const initializer_list<string>& keys = {}
+    );
+
     template<typename Dest>
     static void get_to_required(
         const json& parent,
@@ -148,9 +153,8 @@ public:
         Dest& dest
     ) {
         if (parent.count(key) == 0 || parent[key].type_name() != type)
-            throw mucs_exception::config(
-                "Config requires key \"" + key + "\" with type " + type,
-                get().filename);
+            throw Config::error(
+                "Config requires key \"" + key + "\" with type " + type);
         parent[key].get_to(dest);
     }
 

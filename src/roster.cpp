@@ -6,9 +6,8 @@ void from_json(const json& j, Roster& roster) {
     string user_orig, user, lab_ids, id;
     for (auto& entry : j.items()) {
         if (entry.value().type() != json::value_t::string)
-            throw mucs_exception::config(
+            throw Config::error(
                 "Roster entries must be of type string",
-                config.filename,
                 {"roster", entry.key()});
 
         // Normalize user (lowercase)
@@ -22,10 +21,8 @@ void from_json(const json& j, Roster& roster) {
             // Normalize lab ids (uppercase)
             stl_transform(id, ::toupper);
             if (not stl_contains(config.lab_ids, id))
-                throw mucs_exception::config(
-                    "Lab id not recognized",
-                    config.filename,
-                    {"roster", user_orig});
+                throw Config::error(
+                    "Lab id not recognized", {"roster", user_orig});
             roster[user].push_back(id);
         }
     }
