@@ -53,7 +53,7 @@ string Config::get_assignment(const string& type) const {
     else if (type == "hw")
         return this->get_current_hw();
 
-    throw mucs_exception("Assignment type not recognized: " + type);
+    throw mucs_exception("Assignment type not recognized:", type);
 }
 
 
@@ -63,13 +63,14 @@ string Config::get_current_lab() const {
 
 
 string Config::get_current_hw() const {
-    system_clock::time_point now = system_clock::now();
+    const auto& now = system_clock::now();
+
     for (auto& e : this->homeworks)
         if (now < e.second.duedate)
             return e.first;
 
     throw mucs_exception(
-        "No open homework assignments for course: " + this->course_id);
+        "No open homework assignments for course:", this->course_id);
 }
 
 
