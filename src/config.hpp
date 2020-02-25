@@ -18,6 +18,7 @@
 
 #include "mucs/except.hpp"
 
+#include "consts.hpp"
 #include "path.hpp"
 #include "util.hpp"
 
@@ -43,6 +44,9 @@ struct Hw {
         ) const;
     };
 
+    friend void from_json(const json& j, Hw& hw);
+    friend void to_json(json& j, const Hw& hw);
+
 };
 
 
@@ -50,16 +54,10 @@ struct Homeworks : public set<pair<string,Hw>, Hw::compare> {
 
     using set<pair<string,Hw>, Hw::compare>::set;
 
+    friend void from_json(const json& j, Homeworks& homeworks);
+    friend void to_json(json& j, const Homeworks& homeworks);
+
 };
-
-
-void from_json(const json& j, Hw& hw);
-
-void from_json(const json& j, Homeworks& homeworks);
-
-void to_json(json& j, const Hw& hw);
-
-void to_json(json& j, const Homeworks& homeworks);
 
 
 /*************************************************
@@ -81,12 +79,18 @@ struct LabSesh {
 
     string format(string fmt) const;
 
+    friend void from_json(const json& j, LabSesh& ls);
+    friend void to_json(json& j, const LabSesh& ls);
+
 };
 
 
 struct LabSessions : public map<string, LabSesh> {
 
     using map<string, LabSesh>::map;
+
+    friend void from_json(const json& j, LabSessions& lab_sessions);
+    friend void to_json(json& j, const LabSessions& lab_sessions);
 
 };
 
@@ -104,6 +108,9 @@ struct LabAsgmnt {
         ) const;
     };
 
+    friend void from_json(const json& j, LabAsgmnt& lab_a);
+    friend void to_json(json& j, const LabAsgmnt& lab_a);
+
 };
 
 
@@ -111,24 +118,10 @@ struct LabAssignments : public set<pair<string,LabAsgmnt>,LabAsgmnt::compare> {
 
     using set<pair<string, LabAsgmnt>, LabAsgmnt::compare>::set;
 
+    friend void from_json(const json& j, LabAssignments& lab_assignments);
+    friend void to_json(json& j, const LabAssignments& lab_assignments);
+
 };
-
-
-void from_json(const json& j, LabSesh& ls);
-
-void from_json(const json& j, LabSessions& lab_sessions);
-
-void from_json(const json& j, LabAsgmnt& lab_a);
-
-void from_json(const json& j, LabAssignments& lab_assignments);
-
-void to_json(json& j, const LabSesh& ls);
-
-void to_json(json& j, const LabSessions& lab_sessions);
-
-void to_json(json& j, const LabAsgmnt& lab_a);
-
-void to_json(json& j, const LabAssignments& lab_assignments);
 
 
 /*************************************************
@@ -140,12 +133,10 @@ struct Roster : public map<string, vector<string>> {
 
     using map<string, vector<string>>::map;
 
+    friend void from_json(const json& j, Roster& roster);
+    friend void to_json(json& j, const Roster& roster);
+
 };
-
-
-void from_json(const json& j, Roster& roster);
-
-void to_json(json& j, const Roster& roster);
 
 
 /*************************************************
@@ -175,6 +166,11 @@ public:
 
     static Config& get();
 
+    static mucs_exception error(
+        const string& msg,
+        const initializer_list<string>& keys = {}
+    );
+
     template<typename Dest>
     static void get_to_required(
         const json& parent,
@@ -183,9 +179,8 @@ public:
         Dest& dest
     ) {
         if (parent.count(key) == 0 || parent[key].type_name() != type)
-            throw mucs_exception::config(
-                "Config requires key \"" + key + "\" with type " + type,
-                get().filename);
+            throw Config::error(
+                "Config requires key \"" + key + "\" with type " + type);
         parent[key].get_to(dest);
     }
 
@@ -203,12 +198,10 @@ public:
     vector<LabSesh> get_user_labs(const string& user) const;
     LabSesh get_lab(const string& id) const;
 
+    friend void from_json(const json& j, Config& c);
+    friend void to_json(json& j, const Config& c);
+
 };
-
-
-void from_json(const json& j, Config& c);
-
-void to_json(json& j, const Config& c);
 
 
 #endif

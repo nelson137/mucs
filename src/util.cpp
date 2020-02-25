@@ -90,7 +90,7 @@ system_clock::time_point parse_datetime(
 
 system_clock::time_point parse_date(const string& d_str) {
     try {
-        return parse_datetime(d_str, "%Y-%m-%d");
+        return parse_datetime(d_str, DATE_FMT);
     } catch (const mucs_exception& me) {
         throw mucs_exception("Invalid date:", d_str);
     }
@@ -99,7 +99,7 @@ system_clock::time_point parse_date(const string& d_str) {
 
 system_clock::time_point parse_time(const string& t_str) {
     try {
-        return parse_datetime(t_str, "%T");
+        return parse_datetime(t_str, TIME_FMT);
     } catch (const mucs_exception& me) {
         throw mucs_exception("Invalid time:", t_str);
     }

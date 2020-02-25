@@ -18,9 +18,8 @@ void from_json(const json& j, Homeworks& homeworks) {
     string id;
     for (auto it=j.begin(); it!=j.end(); it++) {
         if (it.value().type() != json::value_t::string)
-            throw mucs_exception::config(
+            throw Config::error(
                 "Homework entries must be of type string",
-                Config::get().filename,
                 {"homeworks", it.key()});
 
         id = it.key();
@@ -33,7 +32,7 @@ void from_json(const json& j, Homeworks& homeworks) {
 
 
 void to_json(json& j, const Hw& hw) {
-    j = json(format_datetime(hw.duedate, "%Y-%m-%d %T"));
+    j = json(format_datetime(hw.duedate, DATETIME_FMT));
 }
 
 
