@@ -91,13 +91,44 @@ struct LabSessions : public map<string, LabSesh> {
 };
 
 
+struct LabAsgmnt {
+
+    string name;
+    system_clock::time_point start;
+    system_clock::time_point end;
+
+    struct compare {
+        bool operator()(
+            const pair<string, LabAsgmnt>& a,
+            const pair<string, LabAsgmnt>& b
+        ) const;
+    };
+
+};
+
+
+struct LabAssignments : public set<pair<string,LabAsgmnt>,LabAsgmnt::compare> {
+
+    using set<pair<string, LabAsgmnt>, LabAsgmnt::compare>::set;
+
+};
+
+
 void from_json(const json& j, LabSesh& ls);
 
 void from_json(const json& j, LabSessions& lab_sessions);
 
+void from_json(const json& j, LabAsgmnt& lab_a);
+
+void from_json(const json& j, LabAssignments& lab_assignments);
+
 void to_json(json& j, const LabSesh& ls);
 
 void to_json(json& j, const LabSessions& lab_sessions);
+
+void to_json(json& j, const LabAsgmnt& lab_a);
+
+void to_json(json& j, const LabAssignments& lab_assignments);
 
 
 /*************************************************
@@ -134,9 +165,9 @@ public:
 
     string admin_hash;
 
-    LabSessions lab_sessions;
     vector<string> lab_ids;
-    string current_lab;
+    LabSessions lab_sessions;
+    LabAssignments lab_assignments;
 
     Homeworks homeworks;
 

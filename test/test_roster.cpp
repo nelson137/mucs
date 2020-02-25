@@ -38,7 +38,7 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
     string user = rand_string(6);
     string id = rand_string(2, chars_lower);
     auto data = new_config_data();
-    data["labs"][id] = "mon 00:00:00 - 23:59:59";
+    data["lab_sessions"][id] = "mon 00:00:00 - 23:59:59";
     auto& config = Config::get();
 
     SECTION("that is unrecognized") {

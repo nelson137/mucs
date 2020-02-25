@@ -47,19 +47,27 @@ ostream& operator<<(ostream& os, const LabSesh& ls) {
 }
 
 
+bool LabAsgmnt::compare::operator()(
+    const pair<string, LabAsgmnt>& a,
+    const pair<string, LabAsgmnt>& b
+) const {
+    return a.second.start < b.second.start;
+}
+
+
 void from_json(const json& j, LabSesh& ls) {
     if (j.type() != json::value_t::string)
         throw mucs_exception::config(
-            "Lab entries must be of type string",
+            "lab_sessions entries must be of type string",
             Config::get().filename,
-            {"labs", ls.id});
+            {"lab_sessions", ls.id});
 
     auto invalid_lab_spec = [&] () {
         throw mucs_exception::config(
-            "Lab entries must be in the format " \
+            "lab_sessions entries must be in the format " \
                 "\"<weekday> <start_time> - <end_time>\"",
             Config::get().filename,
-            {"labs", ls.id});
+            {"lab_sessions", ls.id});
     };
 
     string lab_spec_str = j.get<string>();
@@ -93,6 +101,35 @@ void from_json(const json& j, LabSessions& lab_sessions) {
 }
 
 
+void from_json(const json& j, LabAsgmnt& lab_a) {
+    lab_a.start = parse_date(j.get<string>());
+    lab_a.end = lab_a.start + duration<long, ratio<86400>>(1);
+}
+
+
+void from_json(const json& j, LabAssignments& lab_assignments) {
+    string name;
+    LabAsgmnt lab_a;
+
+    for (auto it=j.begin(); it!=j.end(); it++) {
+        if (it.value().type() != json::value_t::string)
+            throw mucs_exception::config(
+                "lab_assignments entries must be of type string",
+                Config::get().filename,
+                {"lab_assignments", it.key()});
+
+        name = it.key();
+        // Normalize name (lowercase)
+        stl_transform(name, ::tolower);
+
+        lab_a = LabAsgmnt();
+        lab_a.name = name;
+        lab_a = it.value().get<LabAsgmnt>();
+        lab_assignments.insert({ name, lab_a });
+    }
+}
+
+
 void to_json(json& j, const LabSesh& ls) {
     j = ls.format("{weekday} {start} - {end}");
 }
@@ -102,4 +139,16 @@ void to_json(json& j, const LabSessions& lab_sessions) {
     j = json::object();
     for (auto& ls : lab_sessions)
         j[ls.first] = json(ls.second);
+}
+
+
+void to_json(json& j, const LabAsgmnt& lab_a) {
+    j = format_datetime(lab_a.start, "%Y-%m-%d");
+}
+
+
+void to_json(json& j, const LabAssignments& lab_assignments) {
+    j = json::object();
+    for (auto& la : lab_assignments)
+        j[la.first] = json(la.second);
 }

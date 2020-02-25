@@ -12,12 +12,12 @@ Config& Config::get() {
 
 
 Config& Config::parse(const json& root) {
-    get_to_required(root, "course_id",   "string", this->course_id);
-    get_to_required(root, "admin_hash",  "string", this->admin_hash);
-    get_to_required(root, "homeworks",   "object", this->homeworks);
-    get_to_required(root, "current_lab", "string", this->current_lab);
-    get_to_required(root, "labs",        "object", this->lab_sessions);
-    get_to_required(root, "roster",      "object", this->roster);
+    get_to_required(root, "course_id",       "string", this->course_id);
+    get_to_required(root, "admin_hash",      "string", this->admin_hash);
+    get_to_required(root, "lab_sessions",    "object", this->lab_sessions);
+    get_to_required(root, "lab_assignments", "object", this->lab_assignments);
+    get_to_required(root, "homeworks",       "object", this->homeworks);
+    get_to_required(root, "roster",          "object", this->roster);
     return *this;
 }
 
@@ -58,7 +58,14 @@ string Config::get_assignment(const string& type) const {
 
 
 string Config::get_current_lab() const {
-    return this->current_lab;
+    const auto& now = system_clock::now();
+
+    for (auto& l : this->lab_assignments)
+        if (now < l.second.start)
+            return l.first;
+
+    throw mucs_exception(
+        "No open lab assignments for course:", this->course_id);
 }
 
 
@@ -136,9 +143,9 @@ void to_json(json& j, const Config& c) {
     j = {
         {"course_id", c.course_id},
         {"admin_hash", c.admin_hash},
+        {"lab_sessions", c.lab_sessions},
+        {"lab_assignments", c.lab_assignments},
         {"homeworks", c.homeworks},
-        {"labs", c.lab_sessions},
-        {"current_lab", c.current_lab},
         {"roster", c.roster},
     };
 }

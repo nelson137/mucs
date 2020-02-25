@@ -20,12 +20,12 @@ Config& clean_config() {
 
     config.filename = rand_string();
 
-    if (config.course_id.size())    config.course_id = "";
-    if (config.admin_hash.size())   config.admin_hash = "";
-    if (config.homeworks.size())    config.homeworks = {};
-    if (config.lab_sessions.size()) config.lab_sessions = {};
-    if (config.current_lab.size())  config.current_lab = "";
-    if (config.roster.size())       config.roster = {};
+    if (config.course_id.size())       config.course_id = "";
+    if (config.admin_hash.size())      config.admin_hash = "";
+    if (config.homeworks.size())       config.homeworks = {};
+    if (config.lab_sessions.size())    config.lab_sessions = {};
+    if (config.lab_assignments.size()) config.lab_assignments = {};
+    if (config.roster.size())          config.roster = {};
 
     return config;
 }
@@ -34,12 +34,12 @@ Config& clean_config() {
 json new_config_data(json j) {
     clean_config();
 
-    if (j.count("course_id") == 0)   j["course_id"] = rand_string(4);
-    if (j.count("admin_hash") == 0)  j["admin_hash"] = "!";
-    if (j.count("homeworks") == 0)   j["homeworks"] = json::object();
-    if (j.count("labs") == 0)        j["labs"] = json::object();
-    if (j.count("current_lab") == 0) j["current_lab"] = "";
-    if (j.count("roster") == 0)      j["roster"] = json::object();
+    if (j.count("course_id") == 0)       j["course_id"] = rand_string(4);
+    if (j.count("admin_hash") == 0)      j["admin_hash"] = "!";
+    if (j.count("homeworks") == 0)       j["homeworks"] = json::object();
+    if (j.count("lab_sessions") == 0)    j["lab_sessions"] = json::object();
+    if (j.count("lab_assignments") == 0) j["lab_assignments"] = json::object();
+    if (j.count("roster") == 0)          j["roster"] = json::object();
 
     return j;
 }
