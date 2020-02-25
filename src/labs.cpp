@@ -1,16 +1,6 @@
 #include "config.hpp"
 
 
-LabSesh::LabSesh() {
-}
-
-
-LabSesh::LabSesh(const string& i) : id(i) {
-    // Normalize id (uppercase)
-    stl_transform(this->id, ::toupper);
-}
-
-
 LabSesh::operator string() const {
     return this->id;
 }
@@ -95,9 +85,10 @@ void from_json(const json& j, LabSessions& lab_sessions) {
         // Normalize id (uppercase)
         stl_transform(id, ::toupper);
 
-        lab_sessions[id] = LabSesh(id);
-        it.value().get_to(lab_sessions[id]);
         config.lab_ids.push_back(id);
+        lab_sessions[id] = LabSesh();
+        lab_sessions[id].id = id;
+        it.value().get_to(lab_sessions[id]);
     }
 }
 

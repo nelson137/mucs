@@ -74,9 +74,6 @@ struct LabSesh {
     system_clock::time_point start;
     system_clock::time_point end;
 
-    LabSesh();
-    LabSesh(const string& i);
-
     operator string() const;
     friend ostream& operator<<(ostream& os, const LabSesh& ls);
 
