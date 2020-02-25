@@ -47,7 +47,10 @@ string get_user();
 
 string join_paths(string a, deque<string> parts);
 
-system_clock::time_point parse_datetime(const string& dt_str);
+system_clock::time_point parse_datetime(
+    const string& dt_str,
+    const string& fmt = "%Y-%m-%d %T"
+);
 
 system_clock::time_point parse_date(const string& d_str);
 

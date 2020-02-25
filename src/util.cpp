@@ -77,27 +77,32 @@ string join_paths(string a, deque<string> parts) {
 }
 
 
-system_clock::time_point parse_datetime(const string& dt_str) {
+system_clock::time_point parse_datetime(
+    const string& dt_str,
+    const string& fmt
+) {
     tm t = tm_zero();
-    if (strptime(dt_str.c_str(), "%Y-%m-%d %T", &t) == nullptr)
-        throw mucs_exception("Invalid datetime: " + dt_str);
+    if (strptime(dt_str.c_str(), fmt.c_str(), &t) == nullptr)
+        throw mucs_exception("Invalid datetime:", dt_str);
     return system_clock::from_time_t(mktime(&t));
 }
 
 
 system_clock::time_point parse_date(const string& d_str) {
-    tm t = tm_zero();
-    if (strptime(d_str.c_str(), "%Y-%m-%d", &t) == nullptr)
+    try {
+        return parse_datetime(d_str, "%Y-%m-%d");
+    } catch (const mucs_exception& me) {
         throw mucs_exception("Invalid date:", d_str);
-    return system_clock::from_time_t(mktime(&t));
+    }
 }
 
 
 system_clock::time_point parse_time(const string& t_str) {
-    tm t = tm_zero();
-    if (strptime(t_str.c_str(), "%T", &t) == nullptr)
-        throw mucs_exception("Invalid time: " + t_str);
-    return system_clock::from_time_t(mktime(&t));
+    try {
+        return parse_datetime(t_str, "%T");
+    } catch (const mucs_exception& me) {
+        throw mucs_exception("Invalid time:", t_str);
+    }
 }
 
 
