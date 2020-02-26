@@ -18,7 +18,7 @@ LDFLAGS      := -Llibmucs/build
 LDLIBS       := -lmucs
 
 define can-find-exe
-$(shell whereis $1 | awk '{print (NF>1) ? "yes" : "no"; exit}')
+$(shell whereis $1 | awk 'NF>1 {print "yes"; exit}')
 endef
 
 CXX          := g++ -Iinclude -Ilibmucs/include
@@ -93,7 +93,7 @@ install: $(TARGET)
 
 clean:
 	rm -rf $(TARGET) $(TEST_TARGET) build coverage
-	@$(MAKE) -C libmucs
+	@$(MAKE) -C libmucs clean
 .PHONY: clean
 
 wipe: clean
