@@ -13,8 +13,8 @@ CXX       := gccfilter -c -n -a $(CXX)
 endif
 
 
-.PHONY: main
 main: $(TARGET)
+.PHONY: main
 
 $(TARGET): $(OBJS)
 	@ar rv $@ $^
@@ -23,13 +23,13 @@ build/%.o: src/%.cpp | build_dir
 	@echo "$< -> $@"
 	@$(CXX) -c -MMD $< -o $@
 
-.PHONY: clean
 clean:
 	rm -rf build
+.PHONY: clean
 
-.PHONY: build_dir
 build_dir:
 	@mkdir -p build
+.PHONY: build_dir
 
 
 -include $(OBJS:%.o=%.d)
