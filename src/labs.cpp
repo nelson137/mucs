@@ -76,7 +76,12 @@ void from_json(const json& j, LabSesh& ls) {
         invalid_lab_spec();
 
     // Should be {"<weekday>", "<start_time>", ""}
+    // There will be no third element if lab_spec_str doesn't have spaces
+    //   around the dash
     vector<string> wday_start = string_split(chunks[0], " ");
+    if (wday_start.size() < 2)
+        invalid_lab_spec();
+
     ls.weekday = parse_weekday(wday_start[0]);
     ls.start = parse_time(wday_start[1]);
     ls.end = parse_time(chunks[1]);
