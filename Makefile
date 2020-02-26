@@ -92,8 +92,8 @@ install: $(TARGET)
 .PHONY: install
 
 clean:
-	rm -rf $(TARGET) $(TEST_TARGET) build coverage
 	@$(MAKE) -C libmucs clean
+	rm -rf $(TARGET) $(TEST_TARGET) build coverage
 .PHONY: clean
 
 wipe: clean
