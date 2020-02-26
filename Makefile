@@ -101,7 +101,7 @@ wipe: clean
 .PHONY: wipe
 
 build_dirs:
-	@mkdir -p build/{src,test}
+	@mkdir -p build/src build/test
 .PHONY: build_dirs
 
 
