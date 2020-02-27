@@ -116,7 +116,7 @@ vector<LabSesh> Config::get_user_labs(const string& user) const {
         user_lab_ids.begin(),
         user_lab_ids.end(),
         back_inserter(user_labs),
-        [&] (const string& id) {
+        [&] (const string& id) -> const LabSesh& {
             return this->lab_sessions.at(id);
         }
     );

@@ -55,10 +55,11 @@ const string& Args::operator[](int i) const {
 
 
 ostream& operator<<(ostream& os, const Args& ea) {
-    auto contains_whitespace = [](const string& s) {
-        return any_of(s.begin(), s.end(), [](char c){ return isspace(c); });
+    auto contains_whitespace = [](const string& s) -> bool {
+        return any_of(
+            s.begin(), s.end(), [] (char c) -> bool { return isspace(c); });
     };
-    auto wrap = [&](string s) {
+    auto wrap = [&] (string s) -> string {
         if (contains_whitespace(s))
             return '\'' + s + '\'';
         return s;
