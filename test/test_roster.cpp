@@ -2,7 +2,7 @@
 
 
 TEST_CASE("config has no key roster", "[config][roster]") {
-    auto data = new_config_data();
+    auto data = new_config<json>();
     data.erase("roster");
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
@@ -13,7 +13,7 @@ TEST_CASE("config has no key roster", "[config][roster]") {
 
 
 TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
-    auto data = new_config_data({ {"roster", rand_int(9)} });
+    auto data = new_config<json>({ {"roster", rand_int(9)} });
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
         config.parse(data),
@@ -23,7 +23,7 @@ TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
 
 
 TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
-    auto& config = new_config();
+    auto& config = new_config<Config&>();
     string user = rand_string(6);
     json data = { {user, rand_int(9)} };
     REQUIRE_THROWS_WITH(
@@ -37,7 +37,7 @@ TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
 TEST_CASE("roster entry has one lab id", "[roster][entry]") {
     string user = rand_string(6);
     string id = rand_string(2, chars_lower);
-    auto data = new_config_data();
+    auto data = new_config<json>();
     data["labs"][id] = "mon 00:00:00 - 23:59:59";
     auto& config = Config::get();
 
@@ -65,7 +65,7 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
 TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
     string user = rand_string(6);
     string id = rand_string(2, chars_lower);
-    auto data = new_config_data();
+    auto data = new_config<json>();
     data["labs"][id] = "mon 00:00:00 - 23:59:59";
     auto& config = Config::get();
 

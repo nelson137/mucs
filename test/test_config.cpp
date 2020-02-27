@@ -30,7 +30,7 @@ TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
 
 TEST_CASE("config file exists and has valid json", "[config][config-file]") {
     ostringstream data;
-    data << new_config_data();
+    data << new_config<json>();
     temp_file tf{};
     tf << data.str();
     try {
@@ -42,7 +42,7 @@ TEST_CASE("config file exists and has valid json", "[config][config-file]") {
 
 
 TEST_CASE("config has no key course_id", "[config][course_id]") {
-    auto data = new_config_data();
+    auto data = new_config<json>();
     data.erase("course_id");
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
@@ -54,7 +54,7 @@ TEST_CASE("config has no key course_id", "[config][course_id]") {
 
 TEST_CASE("value for key course_id has incorrect type",
           "[config][course_id]") {
-    auto data = new_config_data({ {"course_id", rand_int(9)} });
+    auto data = new_config<json>({ {"course_id", rand_int(9)} });
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
         config.parse(data),
@@ -64,7 +64,7 @@ TEST_CASE("value for key course_id has incorrect type",
 
 
 TEST_CASE("config has no key admin_hash", "[config][admin_hash]") {
-    auto data = new_config_data();
+    auto data = new_config<json>();
     data.erase("admin_hash");
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
@@ -76,7 +76,7 @@ TEST_CASE("config has no key admin_hash", "[config][admin_hash]") {
 
 TEST_CASE("value for key admin_hash has incorrect type",
           "[config][admin_hash]") {
-    auto data = new_config_data({ {"admin_hash", rand_int(9)} });
+    auto data = new_config<json>({ {"admin_hash", rand_int(9)} });
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
         config.parse(data),
@@ -86,7 +86,7 @@ TEST_CASE("value for key admin_hash has incorrect type",
 
 
 TEST_CASE("config is valid", "[config]") {
-    auto data = new_config_data();
+    auto data = new_config<json>();
     try {
         Config::get().parse(data);
         SUCCEED("Successfully created Config object");
@@ -97,7 +97,7 @@ TEST_CASE("config is valid", "[config]") {
 
 
 TEST_CASE("serialize config", "[config][serialize]") {
-    auto data = new_config_data();
+    auto data = new_config<json>();
     ostringstream expected, actual;
     expected << data;
     actual << json(data.get_to(Config::get()));

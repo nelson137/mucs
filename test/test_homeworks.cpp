@@ -2,7 +2,7 @@
 
 
 TEST_CASE("config has no key homeworks", "[config][homeworks]") {
-    auto data = new_config_data();
+    auto data = new_config<json>();
     data.erase("homeworks");
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
@@ -13,7 +13,7 @@ TEST_CASE("config has no key homeworks", "[config][homeworks]") {
 
 
 TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
-    auto data = new_config_data();
+    auto data = new_config<json>();
     data["homeworks"] = rand_int(9);
     auto& config = Config::get();
     REQUIRE_THROWS_WITH(
@@ -24,7 +24,7 @@ TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
 
 
 TEST_CASE("homeworks entry has incorrect type", "[homeworks][entry]") {
-    auto& config = new_config();
+    auto& config = new_config<Config&>();
     string key = "hw" + to_string(rand_int(9));
     json data = { {key, rand_int(9)} };
     REQUIRE_THROWS_WITH(
