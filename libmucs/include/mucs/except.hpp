@@ -3,7 +3,6 @@
 
 
 #include <algorithm>
-#include <initializer_list>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -19,12 +18,15 @@ private:
 
 public:
     template<typename... String>
-    mucs_exception(string msg1, String... msgs) {
-        this->message = msg1;
+    mucs_exception(const string& msg1, const String&... msgs) {
         vector<string> pieces = { msgs... };
-        for_each(pieces.begin(), pieces.end(), [&](const string& p) {
-            this->message += " " + p;
-        });
+        ostringstream full_msg;
+
+        full_msg << msg1;
+        for (const auto& p : pieces)
+            full_msg << ' ' << p;
+
+        this->message = full_msg.str();
     }
 
     const char *what() const noexcept;
