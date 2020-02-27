@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <initializer_list>
 #include <map>
 #include <set>
 #include <sstream>
