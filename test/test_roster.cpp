@@ -94,16 +94,15 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
 
 TEST_CASE("serialize roster", "[roster][serialize]") {
     string user = rand_string(6);
-    string id = rand_string(2, chars_lower);
-    auto data = new_config_data();
-    data["labs"][id] = "mon 00:00:00 - 23:59:59";
-    auto& config = Config::get();
+    string id = rand_string(2, chars_upper);
+    Config::get().lab_ids = { id };
+    json data = {};
 
     SECTION("with one id") {
-        data["roster"][user] = id;
+        data[user] = id;
         ostringstream expected, actual;
-        expected << data["roster"];
-        actual << json(data.get_to(config).roster);
+        expected << data;
+        actual << json(data.get<Roster>());
         REQUIRE_THAT(
             expected.str(),
             Equals(actual.str(), Catch::CaseSensitive::No)
@@ -111,10 +110,10 @@ TEST_CASE("serialize roster", "[roster][serialize]") {
     }
 
     SECTION("with multiple ids") {
-        data["roster"][user] = id + ',' + id;
+        data[user] = id + ',' + id;
         ostringstream expected, actual;
-        expected << data["roster"];
-        actual << json(data.get_to(config).roster);
+        expected << data;
+        actual << json(data.get<Roster>());
         REQUIRE_THAT(
             expected.str(),
             Equals(actual.str(), Catch::CaseSensitive::No)
