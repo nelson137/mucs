@@ -68,7 +68,7 @@ $(TARGET): libmucs $(OBJS)
 
 $(TEST_TARGET): libmucs $(ALL_OBJS)
 	@echo "build/**/*.o -> $@"
-	@$(CXX) $(LDFLAGS) $(ALL_OBJS) -o $@ $(LDLIBS)
+	@$(CXX) $(LDFLAGS) $(ALL_OBJS) -o $@ $(LDLIBS) -lgcov
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
