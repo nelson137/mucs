@@ -63,27 +63,27 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
 
 
 TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
+    auto& config = Config::get();
     string user = rand_string(6);
     string id = rand_string(2, chars_lower);
-    auto data = new_config<json>();
-    data["labs"][id] = "mon 00:00:00 - 23:59:59";
-    auto& config = Config::get();
+    config.lab_ids = { id };
+    json data = {};
 
     SECTION("one recognized, other unrecognized") {
         string bad_id = id + '_';
         string all_ids = id + ',' + bad_id;
-        data["roster"][user] = all_ids;
+        data[user] = all_ids;
         REQUIRE_THROWS_WITH(
-            config.parse(data),
+            data.get<Roster>(),
             error_id_unrecognized(config.filename, user, bad_id)
         );
     }
 
     SECTION("all recognized") {
         string all_ids = id + "," + id;
-        data["roster"][user] = all_ids;
+        data[user] = all_ids;
         try {
-            data.get_to(Config::get());
+            data.get<Roster>();
             SUCCEED("Successfully created Roster object");
         } catch (const mucs_exception& me) {
             FAIL(me.what());
