@@ -4,7 +4,7 @@ SRCS      := $(wildcard src/*.cpp)
 OBJS      := $(SRCS:src/%.cpp=build/%.o)
 
 define can-find-exe
-$(shell whereis $1 | awk 'NF>1 {print "yes"; exit}')
+$(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
 endef
 
 CXX       := /usr/bin/g++ -std=c++11 -pedantic -Wall -Werror -Iinclude

@@ -18,7 +18,7 @@ LDFLAGS      := -Llibmucs/build
 LDLIBS       := -lmucs
 
 define can-find-exe
-$(shell whereis $1 | awk 'NF>1 {print "yes"; exit}')
+$(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
 endef
 
 CXX          := g++ -Iinclude -Ilibmucs/include
