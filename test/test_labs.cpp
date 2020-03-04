@@ -62,13 +62,9 @@ TEST_CASE("labs is valid", "[labs][entry]") {
 TEST_CASE("serialize labs", "[labs][serialize]") {
     string key = rand_string(1, chars_upper);
     json data = { {key, "monday 00:00:00 - 23:59:59"} };
-    ostringstream expected, actual;
-    expected << data;
-    actual << json(data.get<LabSessions>());
-    REQUIRE_THAT(
-        expected.str(),
-        Equals(actual.str(), Catch::CaseSensitive::No)
-    );
+    string expected = data.dump();
+    string actual = json(data.get<LabSessions>()).dump();
+    REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }
 
 

@@ -100,23 +100,15 @@ TEST_CASE("serialize roster", "[roster][serialize]") {
 
     SECTION("with one id") {
         data[user] = id;
-        ostringstream expected, actual;
-        expected << data;
-        actual << json(data.get<Roster>());
-        REQUIRE_THAT(
-            expected.str(),
-            Equals(actual.str(), Catch::CaseSensitive::No)
-        );
+        string expected = data.dump();
+        string actual = json(data.get<Roster>()).dump();
+        REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
     }
 
     SECTION("with multiple ids") {
         data[user] = id + ',' + id;
-        ostringstream expected, actual;
-        expected << data;
-        actual << json(data.get<Roster>());
-        REQUIRE_THAT(
-            expected.str(),
-            Equals(actual.str(), Catch::CaseSensitive::No)
-        );
+        string expected = data.dump();
+        string actual = json(data.get<Roster>()).dump();
+        REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
     }
 }

@@ -29,10 +29,8 @@ TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
 
 
 TEST_CASE("config file exists and has valid json", "[config][config-file]") {
-    ostringstream data;
-    data << new_config<json>();
     temp_file tf{};
-    tf << data.str();
+    tf << new_config<json>().dump();
     try {
         Config::get().parse_file(tf.name);
     } catch (const mucs_exception& me) {
@@ -98,11 +96,7 @@ TEST_CASE("config is valid", "[config]") {
 
 TEST_CASE("serialize config", "[config][serialize]") {
     auto data = new_config<json>();
-    ostringstream expected, actual;
-    expected << data;
-    actual << json(data.get_to(Config::get()));
-    REQUIRE_THAT(
-        expected.str(),
-        Equals(actual.str(), Catch::CaseSensitive::No)
-    );
+    string expected = data.dump();
+    string actual = json(data.get_to(Config::get())).dump();
+    REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }

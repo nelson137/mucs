@@ -71,11 +71,7 @@ TEST_CASE("homeworks is valid", "[homeworks][entry]") {
 
 TEST_CASE("serialize homeworks", "[homeworks][serialize]") {
     json data = { {"hw1", "1970-01-01 00:00:00"} };
-    ostringstream expected, actual;
-    expected << data;
-    actual << json(data.get<Homeworks>());
-    REQUIRE_THAT(
-        expected.str(),
-        Equals(actual.str(), Catch::CaseSensitive::No)
-    );
+    string expected = data.dump();
+    string actual = json(data.get<Homeworks>()).dump();
+    REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }
