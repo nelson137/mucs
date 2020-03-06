@@ -1,6 +1,8 @@
 #include "test_main.hpp"
 
 
-TEST_CASE("mucs has tests", "[mucs]") {
-    SUCCEED("mucs has tests");
+int main(int argc, char *argv[]) {
+    NOW = system_clock::now();
+
+    return Catch::Session().run(argc, argv);
 }

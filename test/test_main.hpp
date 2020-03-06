@@ -2,10 +2,15 @@
 #define TEST_MAIN_HPP
 
 
-#define CATCH_CONFIG_MAIN
+#include <chrono>
+
+#define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
 
+#include "../src/util.hpp"
+
 using namespace std;
+using namespace chrono;
 
 
 #endif

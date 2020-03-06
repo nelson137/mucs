@@ -1,8 +1,11 @@
 #include "util.hpp"
 
 
+system_clock::time_point NOW;
+
+
 system_clock::time_point current_time() {
-    time_t now_t = time(nullptr);
+    time_t now_t = system_clock::to_time_t(NOW);
     tm *now = localtime(&now_t);
 
     tm t = tm_zero();
@@ -15,7 +18,7 @@ system_clock::time_point current_time() {
 
 
 int current_weekday() {
-    time_t now = time(nullptr);
+    time_t now = system_clock::to_time_t(NOW);
     return localtime(&now)->tm_wday;
 }
 

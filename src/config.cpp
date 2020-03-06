@@ -75,9 +75,8 @@ string Config::get_current_lab() const {
 
 
 string Config::get_current_hw() const {
-    system_clock::time_point now = system_clock::now();
     for (auto& e : this->homeworks)
-        if (now < e.second.duedate)
+        if (NOW < e.second.duedate)
             return e.first;
 
     throw mucs_exception(

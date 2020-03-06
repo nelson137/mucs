@@ -2,6 +2,7 @@
 #define MAIN_HPP
 
 
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,8 +11,10 @@
 
 #include "consts.hpp"
 #include "submit.hpp"
+#include "util.hpp"
 
 using namespace std;
+using namespace chrono;
 
 
 #endif

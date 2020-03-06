@@ -2,6 +2,8 @@
 
 
 int main(int argc, char **argv) {
+    NOW = system_clock::now();
+
     SubmitOptions submit_opts = {};
 
     vector<string> configs = Path(CONFIG_DIR).ls();

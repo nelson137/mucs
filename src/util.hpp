@@ -31,6 +31,9 @@ using namespace chrono;
 using json = nlohmann::json;
 
 
+extern system_clock::time_point NOW;
+
+
 system_clock::time_point current_time();
 
 int current_weekday();
