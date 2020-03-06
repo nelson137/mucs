@@ -14,14 +14,4 @@
 using namespace std;
 
 
-template<typename Cmd, typename... Args>
-void subcommand(const Cmd& cmd, Args&... args) {
-    try {
-        cmd(args...);
-    } catch (const mucs_exception& me) {
-        cerr << me.what() << endl;
-    }
-}
-
-
 #endif

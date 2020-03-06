@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     CLI::App *submit_subcmd = app
         .add_subcommand("submit")
         ->callback([&] () {
-            subcommand(submit, submit_opts);
+            submit(submit_opts);
         });
     submit_subcmd
         ->add_option("course", submit_opts.course)
@@ -27,6 +27,11 @@ int main(int argc, char **argv) {
         ->add_option("sources", submit_opts.sources)
         ->required();
 
-    CLI11_PARSE(app, argc, argv);
+    try {
+        CLI11_PARSE(app, argc, argv);
+    } catch (const mucs_exception& me) {
+        cerr << me.what() << endl;
+    }
+
     return 0;
 }
