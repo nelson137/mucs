@@ -35,25 +35,25 @@ TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
 
 
 TEST_CASE("roster entry has one lab id", "[roster][entry]") {
-    string user = rand_string(6);
-    string id = rand_string(2, chars_lower);
-    auto data = new_config<json>();
-    data["labs"][id] = "mon 00:00:00 - 23:59:59";
     auto& config = Config::get();
+    string user = rand_string(6);
+    string id = rand_string(2, chars_upper);
+    config.lab_ids = { id };
+    json data = json::object();
 
     SECTION("that is unrecognized") {
         string bad_id = id + "_";
-        data["roster"][user] = bad_id;
+        data[user] = bad_id;
         REQUIRE_THROWS_WITH(
-            config.parse(data),
+            data.get<Roster>(),
             error_id_unrecognized(config.filename, user, bad_id)
         );
     }
 
     SECTION("that is recognized") {
-        data["roster"][user] = id;
+        data[user] = id;
         try {
-            config.parse(data);
+            data.get<Roster>();
             SUCCEED("Successfully created Roster object");
         } catch (const mucs_exception& me) {
             FAIL(me.what());
@@ -65,14 +65,13 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
 TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
     auto& config = Config::get();
     string user = rand_string(6);
-    string id = rand_string(2, chars_lower);
+    string id = rand_string(2, chars_upper);
     config.lab_ids = { id };
-    json data = {};
+    json data = json::object();
 
     SECTION("one recognized, other unrecognized") {
         string bad_id = id + '_';
-        string all_ids = id + ',' + bad_id;
-        data[user] = all_ids;
+        data[user] = id + ',' + bad_id;
         REQUIRE_THROWS_WITH(
             data.get<Roster>(),
             error_id_unrecognized(config.filename, user, bad_id)
@@ -80,8 +79,7 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
     }
 
     SECTION("all recognized") {
-        string all_ids = id + "," + id;
-        data[user] = all_ids;
+        data[user] = id + "," + id;
         try {
             data.get<Roster>();
             SUCCEED("Successfully created Roster object");
@@ -96,7 +94,7 @@ TEST_CASE("serialize roster", "[roster][serialize]") {
     string user = rand_string(6);
     string id = rand_string(2, chars_upper);
     Config::get().lab_ids = { id };
-    json data = {};
+    json data = json::object();
 
     SECTION("with one id") {
         data[user] = id;
