@@ -31,11 +31,7 @@ TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
 TEST_CASE("config file exists and has valid json", "[config][config-file]") {
     temp_file tf{};
     tf << new_config<json>().dump();
-    try {
-        Config::get().parse_file(tf.name);
-    } catch (const mucs_exception& me) {
-        FAIL(me.what());
-    }
+    REQUIRE_NOTHROW(Config::get().parse_file(tf.name));
 }
 
 
@@ -85,12 +81,7 @@ TEST_CASE("value for key admin_hash has incorrect type",
 
 TEST_CASE("config is valid", "[config]") {
     auto data = new_config<json>();
-    try {
-        Config::get().parse(data);
-        SUCCEED("Successfully created Config object");
-    } catch (const mucs_exception& me) {
-        FAIL(me.what());
-    }
+    REQUIRE_NOTHROW(Config::get().parse(data));
 }
 
 

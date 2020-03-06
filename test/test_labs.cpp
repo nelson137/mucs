@@ -50,12 +50,7 @@ TEST_CASE("labs entry has incorrect format", "[labs][entry]") {
 TEST_CASE("labs is valid", "[labs][entry]") {
     string key = rand_string(1, chars_upper);
     json data = { {key, "mon 00:00:00 - 23:59:59"} };
-    try {
-        data.get<LabSessions>();
-        SUCCEED("Successfully created LabSessions object");
-    } catch (const mucs_exception& me) {
-        FAIL(me.what());
-    }
+    REQUIRE_NOTHROW(data.get<LabSessions>());
 }
 
 

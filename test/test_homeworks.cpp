@@ -60,12 +60,7 @@ TEST_CASE("deserialized homeworks entries are in sorted order",
 TEST_CASE("homeworks is valid", "[homeworks][entry]") {
     string key = "hw" + to_string(rand_int(9));
     json data = { {key, "1970-01-01 00:00:00"} };
-    try {
-        data.get<Homeworks>();
-        SUCCEED("Successfully created Homeworks object");
-    } catch (const mucs_exception& me) {
-        FAIL(me.what());
-    }
+    REQUIRE_NOTHROW(data.get<Homeworks>());
 }
 
 

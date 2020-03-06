@@ -52,12 +52,7 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
 
     SECTION("that is recognized") {
         data[user] = id;
-        try {
-            data.get<Roster>();
-            SUCCEED("Successfully created Roster object");
-        } catch (const mucs_exception& me) {
-            FAIL(me.what());
-        }
+        REQUIRE_NOTHROW(data.get<Roster>());
     }
 }
 
@@ -80,12 +75,7 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
 
     SECTION("all recognized") {
         data[user] = id + "," + id;
-        try {
-            data.get<Roster>();
-            SUCCEED("Successfully created Roster object");
-        } catch (const mucs_exception& me) {
-            FAIL(me.what());
-        }
+        REQUIRE_NOTHROW(data.get<Roster>());
     }
 }
 
