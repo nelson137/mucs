@@ -3,7 +3,7 @@
 
 void from_json(const json& j, Roster& roster) {
     auto& config = Config::get();
-    string user_orig, user, lab_ids, id;
+    string user_orig, user, lab_ids;
     for (auto& entry : j.items()) {
         if (entry.value().type() != json::value_t::string)
             throw Config::error(
@@ -16,8 +16,7 @@ void from_json(const json& j, Roster& roster) {
 
         lab_ids = entry.value().get<string>();
 
-        for (auto&& id_orig : string_split(lab_ids, ",")) {
-            id = id_orig;
+        for (string id : string_split(lab_ids, ",")) {
             // Normalize lab ids (uppercase)
             stl_transform(id, ::toupper);
             if (not stl_contains(config.lab_ids, id))
