@@ -1,4 +1,4 @@
-#include "submit.hpp"
+#include "mucs.hpp"
 
 
 void submit_summary(
@@ -24,23 +24,23 @@ void submit_summary(
 }
 
 
-void submit(SubmitOptions& opts) {
-    auto& config = Config::get().parse_file(Path(CONFIG_DIR) / opts.course);
+void Mucs::submit() {
+    this->init();
 
     string user = get_user();
-    if (not config.roster.count(user))
+    if (not this->config.roster.count(user))
         throw mucs_exception("User not in course:", user);
 
-    LabSesh lab = config.get_lab(user);
-    string assignment = config.get_assignment(opts.assignment_type);
+    LabSesh lab = this->config.get_lab(user);
+    string assignment = this->config.get_assignment(this->assignment_type);
 
-    submit_summary(opts.course, lab, assignment, user, opts.sources);
+    submit_summary(this->course, lab, assignment, user, this->sources);
 
     if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
     Path assignment_d =
-        Path(SUBMISSIONS_ROOT) / opts.course / lab / assignment;
+        Path(SUBMISSIONS_ROOT) / this->course / lab / assignment;
 
     string now_str = format_datetime(NOW, DATETIME_EXT_FMT);
     Path submit_d_rel = Path(".submissions") / user + now_str;
@@ -61,7 +61,7 @@ void submit(SubmitOptions& opts) {
     Exec::Args ea = {
         "/usr/bin/install", "-C", "-m", "440", "-t", submit_d.str()
     };
-    stl_extend<vector<string>>(ea, opts.sources);
+    stl_extend<vector<string>>(ea, this->sources);
     Exec::Ret ret = Exec::execute(ea);
 
     if (ret.code != 0 && ret.err.size()) {

@@ -1,40 +1,33 @@
 #include "config.hpp"
 
 
-Config::Config() {
+Config Config::parse(const json& root) {
+    Config config;
+
+    get_to_required(root, "course_id",   "string", config.course_id);
+    get_to_required(root, "admin_hash",  "string", config.admin_hash);
+    get_to_required(root, "homeworks",   "object", config.homeworks);
+    get_to_required(root, "current_lab", "string", config.current_lab);
+    get_to_required(root, "labs",        "object", config.lab_sessions);
+    get_to_required(root, "roster",      "object", config.roster);
+
+    /**
+     * for user,labs in roster:
+     *   for l in labs:
+     *     if l not in lab_sessions:
+     *       raise Exception
+     */
+    for (const auto& roster_e : config.roster)
+        for (const string& lab : roster_e.second)
+            if (config.lab_sessions.find(lab) == config.lab_sessions.end())
+                throw Config::error(
+                    "Lab id not recognized", {"roster", roster_e.first});
+
+    return config;
 }
 
 
-Config& Config::get() {
-    static Config instance;
-    return instance;
-}
-
-
-mucs_exception Config::error(
-    const string& msg,
-    const initializer_list<string>& keys
-) {
-    ostringstream ret;
-    ret << msg << ": " << Config::get().filename;
-    for (const auto& k : keys)
-        ret << "[\"" << k << "\"]";
-    return ret.str();
-}
-
-
-Config& Config::parse(const json& root) {
-    get_to_required(root, "course_id",   "string", this->course_id);
-    get_to_required(root, "admin_hash",  "string", this->admin_hash);
-    get_to_required(root, "homeworks",   "object", this->homeworks);
-    get_to_required(root, "current_lab", "string", this->current_lab);
-    get_to_required(root, "labs",        "object", this->lab_sessions);
-    get_to_required(root, "roster",      "object", this->roster);
-    return *this;
-}
-
-
-Config& Config::parse_file(const Path& p) {
+Config Config::parse_file(const Path& p) {
     const string& filename = p.str();
 
     if (not p.exists())
@@ -43,7 +36,7 @@ Config& Config::parse_file(const Path& p) {
         throw mucs_exception(
             "Config path must be a regular file: " + filename);
 
-    auto data = json::object();
+    json data = json::object();
     ifstream fs(filename);
 
     try {
@@ -54,8 +47,21 @@ Config& Config::parse_file(const Path& p) {
         throw mucs_exception("Invalid json: " + filename);
     }
 
-    this->filename = filename;
-    return this->parse(data);
+    Config config = Config::parse(data);
+    config.filename = filename;
+    return config;
+}
+
+
+mucs_exception Config::error(
+    const string& msg,
+    const initializer_list<string>& keys
+) {
+    ostringstream ret;
+    ret << msg << ": {filename}";
+    for (const auto& k : keys)
+        ret << "[\"" << k << "\"]";
+    return ret.str();
 }
 
 

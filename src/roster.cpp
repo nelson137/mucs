@@ -2,7 +2,6 @@
 
 
 void from_json(const json& j, Roster& roster) {
-    auto& config = Config::get();
     string user_orig, user, lab_ids;
     for (auto& entry : j.items()) {
         if (entry.value().type() != json::value_t::string)
@@ -19,9 +18,6 @@ void from_json(const json& j, Roster& roster) {
         for (string id : string_split(lab_ids, ",")) {
             // Normalize lab ids (uppercase)
             stl_transform(id, ::toupper);
-            if (not stl_contains(config.lab_ids, id))
-                throw Config::error(
-                    "Lab id not recognized", {"roster", user_orig});
             roster[user].push_back(id);
         }
     }

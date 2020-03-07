@@ -2,47 +2,43 @@
 
 
 TEST_CASE("config has no key labs", "[config][labs]") {
-    auto data = new_config<json>();
+    json data = new_config_data();
     data.erase("labs");
-    auto& config = Config::get();
     REQUIRE_THROWS_WITH(
-        config.parse(data),
-        error_prop(config.filename, "labs", "object")
+        Config::parse(data),
+        error_prop("labs", "object")
     );
 }
 
 
 TEST_CASE("value for key labs has incorrect type", "[config][labs]") {
-    auto data = new_config<json>({ {"labs", rand_int(9)} });
-    auto& config = Config::get();
+    json data = new_config_data({ {"labs", rand_int(9)} });
     REQUIRE_THROWS_WITH(
-        config.parse(data),
-        error_prop(config.filename, "labs", "object")
+        Config::parse(data),
+        error_prop("labs", "object")
     );
 }
 
 
 TEST_CASE("labs entry has incorrect type", "[labs][entry]") {
-    auto& config = new_config<Config&>();
     string key = rand_string(1, chars_upper);
     json data = { {key, rand_int(9)} };
     REQUIRE_THROWS_WITH(
         data.get<LabSessions>(),
-        "Lab entries must be of type string: " +
-            config.filename + "[\"labs\"][\"" + key + "\"]"
+        "Lab entries must be of type string: " \
+            "{filename}[\"labs\"][\"" + key + "\"]"
     );
 }
 
 
 TEST_CASE("labs entry has incorrect format", "[labs][entry]") {
-    auto& config = new_config<Config&>();
     string key = rand_string(1, chars_upper);
     json data = { {key, rand_string()} };
     REQUIRE_THROWS_WITH(
         data.get<LabSessions>(),
         "Lab entries must be in the format " \
-            "\"<weekday> <start_time> - <end_time>\": " + config.filename +
-            "[\"labs\"][\"" + key + "\"]"
+            "\"<weekday> <start_time> - <end_time>\": " \
+            "{filename}[\"labs\"][\"" + key + "\"]"
     );
 }
 

@@ -89,7 +89,6 @@ void from_json(const json& j, LabSesh& ls) {
 
 
 void from_json(const json& j, LabSessions& lab_sessions) {
-    auto& config = Config::get();
     string id;
     for (auto it=j.begin(); it!=j.end(); it++) {
         id = it.key();
@@ -98,7 +97,6 @@ void from_json(const json& j, LabSessions& lab_sessions) {
 
         lab_sessions[id] = LabSesh(id);
         it.value().get_to(lab_sessions[id]);
-        config.lab_ids.push_back(id);
     }
 }
 

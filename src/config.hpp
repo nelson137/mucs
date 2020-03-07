@@ -119,12 +119,8 @@ struct Roster : public map<string, vector<string>> {
  ************************************************/
 
 
-class Config {
+struct Config {
 
-private:
-    Config();
-
-public:
     string filename;
 
     string course_id;
@@ -132,14 +128,14 @@ public:
     string admin_hash;
 
     LabSessions lab_sessions;
-    vector<string> lab_ids;
     string current_lab;
 
     Homeworks homeworks;
 
     Roster roster;
 
-    static Config& get();
+    static Config parse(const json& root);
+    static Config parse_file(const Path& p);
 
     static mucs_exception error(
         const string& msg,
@@ -158,13 +154,6 @@ public:
                 "Config requires key \"" + key + "\" with type " + type);
         parent[key].get_to(dest);
     }
-
-    // Make sure no copies can be made
-    Config(const Config&) = delete;
-    void operator=(const Config&) = delete;
-
-    Config& parse(const json& root);
-    Config& parse_file(const Path& p);
 
     string get_assignment(const string& type) const;
     string get_current_lab() const;

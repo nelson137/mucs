@@ -1,5 +1,5 @@
-#ifndef SUBMIT_HPP
-#define SUBMIT_HPP
+#ifndef MUCS_HPP
+#define MUCS_HPP
 
 
 #include <chrono>
@@ -19,24 +19,28 @@ using namespace std;
 using namespace chrono;
 
 
-struct SubmitOptions {
+struct Mucs {
 
     string course;
     string assignment_type;
     vector<string> sources;
+
+    Config config;
+
+    void init();
+
+    void submit();
 
 };
 
 
 void submit_summary(
     const string& course,
-    const string& lab,
+    const LabSesh& lab,
     const string& assignment,
     const string& user,
     const vector<string>& sources
 );
-
-void submit(SubmitOptions& opts);
 
 
 #endif
