@@ -16,6 +16,7 @@ SCRIPTS      := $(wildcard bin/mucs-*)
 CFLAGS       := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
 LDFLAGS      := -Llibmucs/build
 LDLIBS       := -lmucs
+DEFINES      :=
 
 define can-find-exe
 $(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
@@ -38,9 +39,13 @@ endif
 
 TESTING      := $(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|$(TEST_TARGET)|coverage' && echo yes)
 
+ifeq ($(TESTING),yes)
+DEFINES += -DMUCS_TEST
+endif
+
 define local-mucs-root
 ifeq ($(findstring MUCS_ROOT_X,$(DEFINES)),)
-DATA_CONFIG := -DMUCS_ROOT_X='$(shell pwd)/test_root'
+DEFINES += -DMUCS_ROOT_X='$(shell pwd)/test_root'
 endif
 endef
 
@@ -83,7 +88,7 @@ ifneq ($(LCOV)$(GENHTML),)
 	$(eval COVFLAGS := --coverage -O0)
 endif
 endif
-	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $(DATA_CONFIG) $< -o $@
+	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $(DEFINES) $< -o $@
 
 install: $(TARGET)
 	mkdir -p $(DEST)/{bin,config.d,submissions}
