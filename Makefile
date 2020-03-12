@@ -39,7 +39,9 @@ endif
 TESTING      := $(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|$(TEST_TARGET)|coverage' && echo yes)
 
 define local-mucs-root
-$(eval DATA_CONFIG := -DMUCS_ROOT_X='$(shell pwd)/test_root')
+ifeq ($(findstring MUCS_ROOT_X,$(DEFINES)),)
+DATA_CONFIG := -DMUCS_ROOT_X='$(shell pwd)/test_root'
+endif
 endef
 
 
@@ -73,10 +75,10 @@ $(TEST_TARGET): libmucs $(ALL_OBJS)
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
 ifeq ($(MUCS_ROOT),local)
-	$(call local-mucs-root)
+	$(eval $(call local-mucs-root))
 endif
 ifeq ($(TESTING),yes)
-	$(call local-mucs-root)
+	$(eval $(call local-mucs-root))
 ifneq ($(LCOV)$(GENHTML),)
 	$(eval COVFLAGS := --coverage -O0)
 endif
