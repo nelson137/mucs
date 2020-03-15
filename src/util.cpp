@@ -3,6 +3,11 @@
 
 system_clock::time_point NOW;
 
+#ifdef MUCS_TEST
+string TEST_USER;
+string TEST_PROMPT_YESNO;
+#endif
+
 
 system_clock::time_point current_time() {
     time_t now_t = system_clock::to_time_t(NOW);
@@ -58,7 +63,11 @@ int get_term_width() {
 
 
 string get_user() {
+#ifdef MUCS_TEST
+    return TEST_USER;
+#else
     return getpwuid(getuid())->pw_name;
+#endif
 }
 
 
@@ -105,11 +114,15 @@ int parse_weekday(const string& w_str) {
 
 
 bool prompt_yesno(const string& prompt) {
+    string response;
+#ifdef MUCS_TEST
+    response = TEST_PROMPT_YESNO;
+#else
     if (prompt.size())
         cout << prompt;
-    string response;
     cin >> response;
     cout << endl;
+#endif
     stl_transform(response, ::tolower);
     return string_strip(response) == "y";
 }
