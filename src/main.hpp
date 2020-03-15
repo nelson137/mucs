@@ -2,6 +2,8 @@
 #define MAIN_HPP
 
 
+#ifndef MUCS_TEST
+
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -15,6 +17,8 @@
 
 using namespace chrono;
 using namespace std;
+
+#endif
 
 
 #endif

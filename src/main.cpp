@@ -1,6 +1,8 @@
 #include "main.hpp"
 
 
+#ifndef MUCS_TEST
+
 int main(int argc, char **argv) {
     NOW = system_clock::now();
 
@@ -37,3 +39,5 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
+#endif
