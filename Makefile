@@ -16,10 +16,24 @@ SCRIPTS      := $(wildcard bin/mucs-*)
 CFLAGS       := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
 LDFLAGS      := -Llibmucs/build
 LDLIBS       := -lmucs
+COVFLAGS     :=
 DEFINES      :=
 
 define can-find-exe
 $(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
+endef
+
+# Return a non-empty string if any element of $2 is found in $1
+# Read as: $1 contains any of $2
+define contains-any-of
+$(strip $(foreach t,$2,$(if $(filter $t,$1),$t)))
+endef
+
+# Setup flags for local mucs root
+define local-mucs-root
+ifeq ($(findstring MUCS_ROOT_X,$(DEFINES)),)
+DEFINES += -DMUCS_ROOT_X='$(shell pwd)/test_root'
+endif
 endef
 
 CXX          := g++ -Iinclude -Ilibmucs/include
@@ -37,17 +51,19 @@ ifeq ($(call can-find-exe,genhtml),yes)
 GENHTML      := genhtml --legend --function-coverage --demangle-cpp
 endif
 
-TESTING      := $(shell echo $(MAKECMDGOALS) | grep -Ewq 'test|$(TEST_TARGET)|coverage' && echo yes)
+ifeq ($(MUCS_ROOT),local)
+$(eval $(call local-mucs-root))
+endif
 
-ifeq ($(TESTING),yes)
+# Setup flags for testing
+ifneq ($(call contains-any-of,$(MAKECMDGOALS),test $(TEST_TARGET) coverage),)
 DEFINES += -DMUCS_TEST
+$(eval $(call local-mucs-root))
+ifneq ($(LCOV)$(GENHTML),)
+COVFLAGS := --coverage -O0
 endif
-
-define local-mucs-root
-ifeq ($(findstring MUCS_ROOT_X,$(DEFINES)),)
-DEFINES += -DMUCS_ROOT_X='$(shell pwd)/test_root'
+else
 endif
-endef
 
 
 main: $(TARGET)
@@ -79,15 +95,6 @@ $(TEST_TARGET): libmucs $(ALL_OBJS)
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
-ifeq ($(MUCS_ROOT),local)
-	$(eval $(call local-mucs-root))
-endif
-ifeq ($(TESTING),yes)
-	$(eval $(call local-mucs-root))
-ifneq ($(LCOV)$(GENHTML),)
-	$(eval COVFLAGS := --coverage -O0)
-endif
-endif
 	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $(DEFINES) $< -o $@
 
 install: $(TARGET)
