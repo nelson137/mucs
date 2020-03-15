@@ -15,8 +15,8 @@
 #include "path.hpp"
 #include "util.hpp"
 
-using namespace std;
 using namespace chrono;
+using namespace std;
 
 
 struct Mucs {

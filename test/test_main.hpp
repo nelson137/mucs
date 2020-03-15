@@ -9,8 +9,8 @@
 
 #include "../src/util.hpp"
 
-using namespace std;
 using namespace chrono;
+using namespace std;
 
 
 #endif
