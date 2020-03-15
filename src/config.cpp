@@ -27,7 +27,7 @@ Config Config::parse(const json& root) {
 }
 
 
-Config Config::parse_file(const Path& p) {
+Config Config::parse_file(const IPath& p) {
     const string& filename = p.str();
 
     if (not p.exists())
@@ -36,14 +36,10 @@ Config Config::parse_file(const Path& p) {
         throw mucs_exception(
             "Config path must be a regular file: " + filename);
 
-    json data = json::object();
-    ifstream fs(filename);
-
+    json data;
     try {
-        fs >> data;
-        fs.close();
+        data = json::parse(p.read());
     } catch (const json::parse_error& pe) {
-        fs.close();
         throw mucs_exception("Invalid json: " + filename);
     }
 

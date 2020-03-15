@@ -57,8 +57,17 @@ Path& Path::operator/=(const Path& other) {
 }
 
 
-ostream& operator<<(ostream& os, const Path& p) {
-    return os << p.m_path;
+string Path::read() const {
+    ifstream is(this->m_path);
+    try {
+        stringstream buf;
+        buf << is.rdbuf();
+        is.close();
+        return buf.str();
+    } catch (const exception& e) {
+        is.close();
+        throw;
+    }
 }
 
 
@@ -82,7 +91,7 @@ bool Path::is_file() const {
 }
 
 
-bool Path::link_to(const Path& target) const {
+bool Path::link_to(const IPath& target) const {
     return symlink(target.str().c_str(), this->m_path.c_str()) == 0;
 }
 
@@ -157,4 +166,27 @@ int Path::rm_recurse() const {
         }
     }
     return this->rm();
+}
+
+
+MockPath::MockPath() : Mock<IPath>() {
+    When(Method((*this), exists)).Return(true);
+    When(Method((*this), is_file)).Return(true);
+    When(Method((*this), is_dir)).Return(false);
+}
+
+
+MockPath::MockPath(const string& p) : MockPath() {
+    When(Method((*this), str)).Return(p);
+}
+
+
+MockPath& MockPath::operator<<(const string& s) {
+    When(Method((*this), read)).Return(s);
+    return *this;
+}
+
+
+MockPath& MockPath::operator<<(const json& j) {
+    return this->operator<<(j.dump());
 }

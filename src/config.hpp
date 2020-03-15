@@ -23,8 +23,8 @@
 #include "path.hpp"
 #include "util.hpp"
 
-using namespace std;
 using namespace chrono;
+using namespace std;
 using json = nlohmann::json;
 
 
@@ -135,7 +135,7 @@ struct Config {
     Roster roster;
 
     static Config parse(const json& root);
-    static Config parse_file(const Path& p);
+    static Config parse_file(const IPath& p);
 
     static mucs_exception error(
         const string& msg,

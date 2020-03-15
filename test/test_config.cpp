@@ -4,7 +4,7 @@
 TEST_CASE("config file doesn't exist", "[config][config-file]") {
     string fn = rand_string();
     REQUIRE_THROWS_WITH(
-        Config::parse_file(fn),
+        Config::parse_file(Path(fn)),
         "Config file does not exist: " + fn
     );
 }
@@ -13,25 +13,29 @@ TEST_CASE("config file doesn't exist", "[config][config-file]") {
 TEST_CASE("config path is a directory", "[config][config-file]") {
     string fn = "/tmp";
     REQUIRE_THROWS_WITH(
-        Config::parse_file(fn),
+        Config::parse_file(Path(fn)),
         "Config path must be a regular file: " + fn
     );
 }
 
 
 TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
-    temp_file tf{};
+    string fn = rand_string();
+
+    MockPath mp(fn);
+    mp << rand_string();
+
     REQUIRE_THROWS_WITH(
-        Config::parse_file(tf.name),
-        "Invalid json: " + tf.name
+        Config::parse_file(mp.get()),
+        "Invalid json: " + fn
     );
 }
 
 
 TEST_CASE("config file exists and has valid json", "[config][config-file]") {
-    temp_file tf{};
-    tf << new_config_data().dump();
-    REQUIRE_NOTHROW(Config::parse_file(tf.name));
+    MockPath mp(rand_string());
+    mp << new_config_data();
+    REQUIRE_NOTHROW(Config::parse_file(mp.get()));
 }
 
 
