@@ -2,7 +2,6 @@
 #define MUCS_HPP
 
 
-#include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,7 +14,6 @@
 #include "path.hpp"
 #include "util.hpp"
 
-using namespace chrono;
 using namespace std;
 
 
@@ -24,10 +22,6 @@ struct Mucs {
     string course;
     string assignment_type;
     vector<string> sources;
-
-    Config config;
-
-    void init();
 
     void submit();
 
@@ -41,6 +35,8 @@ void submit_summary(
     const string& user,
     const vector<string>& sources
 );
+
+function<void()> mucs_callback(Mucs& mucs, void(Mucs::*subcmd)());
 
 
 #endif

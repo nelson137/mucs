@@ -25,16 +25,22 @@ void submit_summary(
 
 
 void Mucs::submit() {
-    this->init();
+    Config config = Config::parse_file(Path(CONFIG_DIR) / this->course);
 
     string user = get_user();
-    if (not this->config.roster.count(user))
+    if (not config.roster.count(user))
         throw mucs_exception("User not in course:", user);
 
-    LabSesh lab = this->config.get_lab(user);
-    string assignment = this->config.get_assignment(this->assignment_type);
+    LabSesh lab = config.get_lab(user);
+    string assignment = config.get_assignment(this->assignment_type);
 
-    submit_summary(this->course, lab, assignment, user, this->sources);
+    submit_summary(
+        this->course,
+        lab,
+        assignment,
+        user,
+        this->sources
+    );
 
     if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false)
         throw mucs_exception("Submission cancelled");

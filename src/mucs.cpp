@@ -1,6 +1,6 @@
 #include "mucs.hpp"
 
 
-void Mucs::init() {
-    this->config = Config::parse_file(Path(CONFIG_DIR) / this->course);
+function<void()> mucs_callback(Mucs& mucs, void(Mucs::*subcmd)()) {
+    return bind(mem_fn(subcmd), ref(mucs));
 }
