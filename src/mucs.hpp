@@ -10,8 +10,8 @@
 
 #include "config.hpp"
 #include "consts.hpp"
-#include "exec.hpp"
 #include "path.hpp"
+#include "proc.hpp"
 #include "util.hpp"
 
 using namespace std;

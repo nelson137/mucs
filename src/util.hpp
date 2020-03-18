@@ -24,7 +24,7 @@
 #include "mucs/except.hpp"
 
 #include "consts.hpp"
-#include "exec.hpp"
+#include "proc.hpp"
 
 using namespace chrono;
 using namespace std;
@@ -92,12 +92,6 @@ ostream& prefix_zeros(ostream& os) {
 template<typename Container, typename T>
 bool stl_contains(const Container& c, const T& val) {
     return ::find(c.begin(), c.end(), val) != c.end();
-}
-
-
-template<typename Container>
-void stl_extend(Container& a, const Container& b) {
-    a.insert(a.end(), b.begin(), b.end());
 }
 
 

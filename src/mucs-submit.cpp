@@ -64,11 +64,11 @@ void Mucs::submit() {
             "Error removing symbolic link:", latest_link.str());
     latest_link.link_to(submit_d_rel);
 
-    Exec::Args ea = {
+    Proc p = {
         "/usr/bin/install", "-C", "-m", "440", "-t", submit_d.str()
     };
-    stl_extend<vector<string>>(ea, this->sources);
-    Exec::Ret ret = Exec::execute(ea);
+    p.extend(this->sources);
+    Proc::Ret ret = p.execute();
 
     if (ret.code != 0 && ret.err.size()) {
         cerr << ret.err;
