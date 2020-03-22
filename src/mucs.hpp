@@ -23,7 +23,9 @@ struct Mucs {
     string assignment_type;
     vector<string> sources;
 
-    void submit();
+    function<void()> invoke(void (Mucs::*subcmd)(const Config&));
+
+    void submit(const Config& config);
 
 };
 
@@ -35,8 +37,6 @@ void submit_summary(
     const string& user,
     const vector<string>& sources
 );
-
-function<void()> mucs_callback(Mucs& mucs, void(Mucs::*subcmd)());
 
 
 #endif

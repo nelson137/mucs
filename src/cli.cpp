@@ -10,7 +10,7 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
 
     CLI::App *submit_subcmd = app
         ->add_subcommand("submit")
-        ->callback(mucs_callback(mucs, &Mucs::submit));
+        ->callback(mucs.invoke(&Mucs::submit));
     submit_subcmd
         ->add_option("course", mucs.course)
         ->required()

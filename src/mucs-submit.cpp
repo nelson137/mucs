@@ -24,9 +24,7 @@ void submit_summary(
 }
 
 
-void Mucs::submit() {
-    Config config = Config::parse_file(Path(CONFIG_DIR) / this->course);
-
+void Mucs::submit(const Config& config) {
     string user = get_user();
     if (not config.roster.count(user))
         throw mucs_exception("User not in course:", user);
