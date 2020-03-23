@@ -1,6 +1,13 @@
 #include "util.hpp"
 
 
+int current_year() {
+    time_t now_t = system_clock::to_time_t(NOW);
+    tm *now = localtime(&now_t);
+    return now->tm_year + 1900;
+}
+
+
 string error_id_unrecognized(const string& user, const string& id) {
     return "Lab id not recognized: {filename}[\"roster\"][\"" + user + "\"]";
 }

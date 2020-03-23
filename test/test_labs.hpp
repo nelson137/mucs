@@ -26,8 +26,8 @@ constexpr bool NOT_ACTIVE = false;
 
 
 template<bool is_today, bool is_active>
-LabSesh rand_labsesh() {
-    LabSesh ls(rand_string(2, chars_lower));
+LabSesh rand_labsesh(const string& id = rand_string(2, chars_upper)) {
+    LabSesh ls(id);
 
     int w = current_weekday();
     if (is_today)
