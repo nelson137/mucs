@@ -8,6 +8,7 @@ void submit_summary(
     const string& user,
     const vector<string>& sources
 ) {
+#ifndef MUCS_TEST
     const string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
 
     cout << w_green(spacer) << endl;
@@ -20,7 +21,7 @@ void submit_summary(
         cout << ' ' << w_bold(s);
     cout << endl;
     cout << w_green(spacer) << endl;
-
+#endif
 }
 
 
