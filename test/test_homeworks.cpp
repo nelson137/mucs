@@ -22,7 +22,7 @@ TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
 
 
 TEST_CASE("homeworks entry has incorrect type", "[homeworks][entry]") {
-    string key = "hw" + to_string(rand_int(9));
+    string key = rand_hw_name();
     json data = { {key, rand_int(9)} };
     REQUIRE_THROWS_WITH(
         data.get<Homeworks>(),
@@ -33,12 +33,11 @@ TEST_CASE("homeworks entry has incorrect type", "[homeworks][entry]") {
 
 
 TEST_CASE("homeworks entry has incorrect format", "[homeworks][entry]") {
-    string key = "hw" + to_string(rand_int(9));
-    string hw = rand_string();
-    json data = { {key, hw} };
+    string key = rand_hw_name();
+    json data = { {key, key} };
     REQUIRE_THROWS_WITH(
         data.get<Homeworks>(),
-        "Invalid datetime: " + hw
+        "Invalid datetime: " + key
     );
 }
 
@@ -55,7 +54,7 @@ TEST_CASE("deserialized homeworks entries are in sorted order",
 
 
 TEST_CASE("homeworks is valid", "[homeworks][entry]") {
-    string key = "hw" + to_string(rand_int(9));
+    string key = rand_hw_name();
     json data = { {key, "1970-01-01 00:00:00"} };
     REQUIRE_NOTHROW(data.get<Homeworks>());
 }

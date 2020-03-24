@@ -21,7 +21,7 @@ TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
 
 
 TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
-    string user = rand_string(6);
+    string user = rand_user();
     json data = { {user, rand_int(9)} };
     REQUIRE_THROWS_WITH(
         data.get<Roster>(),
@@ -32,8 +32,8 @@ TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
 
 
 TEST_CASE("roster entry has one lab id", "[roster][entry]") {
-    string user = rand_string(6, chars_lower);
-    string id = rand_string(2, chars_upper);
+    string user = rand_user();
+    string id = rand_lab_id();
     json data = new_config_data({
         {"labs", { {id, "mon 00:00:00 - 23:59:59"} }},
         {"roster", {}},
@@ -56,8 +56,8 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
 
 
 TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
-    string user = rand_string(6, chars_lower);
-    string id = rand_string(2, chars_upper);
+    string user = rand_user();
+    string id = rand_lab_id();
     json data = new_config_data({
         {"labs", { {id, "mon 00:00:00 - 23:59:59"} }},
         {"roster", {}}
@@ -80,8 +80,8 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
 
 
 TEST_CASE("serialize roster", "[roster][serialize]") {
-    string user = rand_string(6);
-    string id = rand_string(2, chars_upper);
+    string user = rand_user();
+    string id = rand_lab_id();
     json data = json::object();
 
     SECTION("with one id") {

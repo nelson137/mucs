@@ -22,5 +22,33 @@ string error_prop(const string& k, const string& t);
 
 json new_config_data(json j = json::object());
 
+string rand_course();
+
+string rand_filename();
+
+string rand_hw_name();
+
+string rand_lab_id();
+
+string rand_string_digits(int n);
+
+string rand_user();
+
+
+class RandLabSesh {
+
+private:
+    LabSesh ls;
+
+public:
+    RandLabSesh(const string& id = rand_lab_id());
+
+    RandLabSesh& today(bool b = true);
+    RandLabSesh& now(bool b = true);
+
+    const LabSesh& get() const;
+
+};
+
 
 #endif

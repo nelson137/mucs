@@ -2,7 +2,7 @@
 
 
 TEST_CASE("config file doesn't exist", "[config][config-file]") {
-    string fn = rand_string();
+    string fn = rand_filename();
     REQUIRE_THROWS_WITH(
         Config::parse_file(Path(fn)),
         "Config file does not exist: " + fn
@@ -20,10 +20,10 @@ TEST_CASE("config path is a directory", "[config][config-file]") {
 
 
 TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
-    string fn = rand_string();
+    string fn = rand_filename();
 
     MockPath mp(fn);
-    mp << rand_string();
+    mp << ("data_" + rand_string());
 
     REQUIRE_THROWS_WITH(
         Config::parse_file(mp.get()),
@@ -33,7 +33,7 @@ TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
 
 
 TEST_CASE("config file exists and has valid json", "[config][config-file]") {
-    MockPath mp(rand_string());
+    MockPath mp(rand_filename());
     mp << new_config_data();
     REQUIRE_NOTHROW(Config::parse_file(mp.get()));
 }

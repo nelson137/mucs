@@ -2,7 +2,7 @@
 
 
 TEST_CASE("submit user not in course", "[mucs][submit]") {
-    TEST_USER = rand_string();
+    TEST_USER = rand_user();
     REQUIRE_THROWS_WITH(
         Mucs().submit(Config()),
         "User not in course: " + TEST_USER
@@ -11,14 +11,15 @@ TEST_CASE("submit user not in course", "[mucs][submit]") {
 
 
 TEST_CASE("submit lab with one lab session", "[mucs][submit]") {
-    TEST_USER = rand_string();
-    string lab_id = rand_string(3, chars_upper);
+    TEST_USER = rand_user();
+    string lab_id = rand_lab_id();
 
     Config config;
     config.roster.insert({ TEST_USER, {lab_id} });
 
     SECTION("that is not in session") {
-        auto lab = rand_labsesh<TODAY,NOT_ACTIVE>();
+        // TODO: why can't lab be a const&
+        LabSesh lab = RandLabSesh().today().now(false).get();
         config.lab_sessions.insert({ lab_id, lab });
         REQUIRE_THROWS_WITH(
             Mucs().submit(config),
@@ -28,7 +29,9 @@ TEST_CASE("submit lab with one lab session", "[mucs][submit]") {
     }
 
     SECTION("that is in session") {
-        config.lab_sessions.insert({ lab_id, rand_labsesh<TODAY,ACTIVE>() });
+        config.lab_sessions.insert({
+            lab_id, RandLabSesh().today().now().get()
+        });
         REQUIRE_THROWS_WITH(
             Mucs().submit(config),
             "Assignment type not recognized: "
@@ -38,19 +41,19 @@ TEST_CASE("submit lab with one lab session", "[mucs][submit]") {
 
 
 TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
-    TEST_USER = rand_string();
-    string labA = rand_string(3, chars_upper);
-    string labB = rand_string(3, chars_upper);
+    TEST_USER = rand_user();
+    string labA = rand_lab_id();
+    string labB = rand_lab_id();
 
     Config config;
     config.roster.insert({ TEST_USER, {labA, labB} });
 
     SECTION("none are active") {
         config.lab_sessions.insert({
-            labA, rand_labsesh<TODAY,NOT_ACTIVE>(labA)
+            labA, RandLabSesh(labA).today().now(false).get()
         });
         config.lab_sessions.insert({
-            labB, rand_labsesh<TODAY,NOT_ACTIVE>(labB)
+            labB, RandLabSesh(labB).today().now(false).get()
         });
         REQUIRE_THROWS_WITH(
             Mucs().submit(config),
@@ -61,10 +64,10 @@ TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
 
     SECTION("one is active") {
         config.lab_sessions.insert({
-            labA, rand_labsesh<TODAY,NOT_ACTIVE>(labA)
+            labA, RandLabSesh(labA).today().now(false).get()
         });
         config.lab_sessions.insert({
-            labB, rand_labsesh<TODAY,ACTIVE>(labB)
+            labB, RandLabSesh(labB).today().now().get()
         });
         REQUIRE_THROWS_WITH(
             Mucs().submit(config),
@@ -74,10 +77,10 @@ TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
 
     SECTION("all are active") {
         config.lab_sessions.insert({
-            labA, rand_labsesh<TODAY,ACTIVE>(labA)
+            labA, RandLabSesh(labA).today().now().get()
         });
         config.lab_sessions.insert({
-            labB, rand_labsesh<TODAY,ACTIVE>(labB)
+            labB, RandLabSesh(labB).today().now().get()
         });
         REQUIRE_THROWS_WITH(
             Mucs().submit(config),
@@ -88,16 +91,16 @@ TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
 
 
 TEST_CASE("submit homework", "[mucs][submit]") {
-    TEST_USER = rand_string();
+    TEST_USER = rand_user();
     NOW = system_clock::now();
-    string hw_name = rand_string();
-    string lab_id = rand_string();
+    string hw_name = rand_hw_name();
+    string lab_id = rand_lab_id();
     int year = current_year();
 
     Config config;
-    config.course_id = rand_string();
+    config.course_id = rand_course();
     config.roster.insert({ TEST_USER, {lab_id} });
-    config.lab_sessions.insert({ lab_id, rand_labsesh<TODAY,ACTIVE>() });
+    config.lab_sessions.insert({ lab_id, RandLabSesh().today().now().get() });
 
     Mucs mucs;
     mucs.assignment_type = "hw";
@@ -136,12 +139,12 @@ TEST_CASE("attempt to submit non-compiling sources", "[mucs][submit]") {
 
 
 TEST_CASE("submission cancelled by user", "[mucs][submit]") {
-    TEST_USER = rand_string();
-    string lab_id = rand_string(3, chars_upper);
+    TEST_USER = rand_user();
+    string lab_id = rand_lab_id();
 
     Config config;
     config.roster.insert({ TEST_USER, {lab_id} });
-    config.lab_sessions.insert({ lab_id, rand_labsesh<TODAY,ACTIVE>() });
+    config.lab_sessions.insert({ lab_id, RandLabSesh().today().now().get() });
 
     Mucs mucs;
     mucs.assignment_type = "lab";
