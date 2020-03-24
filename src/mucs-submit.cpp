@@ -1,6 +1,17 @@
 #include "mucs.hpp"
 
 
+Proc::Ret try_compile_sources(const vector<string>& sources) {
+#ifdef MUCS_TEST
+    return TEST_SOURCES_COMPILE;
+#else
+    Proc p = {"/usr/local/bin/compile", "-o", "/dev/null"};
+    p.extend(sources);
+    return p.execute();
+#endif
+}
+
+
 void submit_summary(
     const string& course,
     const LabSesh& lab,
@@ -32,6 +43,14 @@ void Mucs::submit(const Config& config) {
 
     LabSesh lab = config.get_lab(user);
     string assignment = config.get_assignment(this->assignment_type);
+
+    const Proc::Ret& compile_ret = try_compile_sources(this->sources);
+    if (compile_ret.code != 0) {
+        cout << w_red("Unable to submit, program does not compile") << endl;
+        if (compile_ret.err.size())
+            cerr << compile_ret.err;
+        return;
+    }
 
     submit_summary(
         this->course,
