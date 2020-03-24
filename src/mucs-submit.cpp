@@ -82,19 +82,8 @@ void Mucs::submit(const Config& config) {
             "Error removing symbolic link:", latest_link.str());
     latest_link.link_to(submit_d_rel);
 
-    Proc p = {
-        "/usr/bin/install", "-C", "-m", "440", "-t", submit_d.str()
-    };
-    p.extend(this->sources);
-    Proc::Ret ret = p.execute();
+    for (const string& src : this->sources)
+        Path(src).copy_into(submit_d, 0440);
 
-    if (ret.code != 0 && ret.err.size()) {
-        cerr << ret.err;
-        cout << endl;
-    }
-
-    if (ret.code == 0)
-        cout << w_green("Submission complete") << endl;
-    else
-        throw mucs_exception("Submission failed");
+    cout << w_green("Submission complete") << endl;
 }

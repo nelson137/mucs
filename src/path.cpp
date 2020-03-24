@@ -76,6 +76,14 @@ string Path::str() const {
 }
 
 
+string Path::basename() const {
+    size_t part = this->m_path.find_last_of('/');
+    return part == string::npos || part == this->m_path.size() - 1
+        ? this->m_path
+        : this->m_path.substr(part + 1);
+}
+
+
 bool Path::exists() const {
     return this->m_stat_ret == 0;
 }
@@ -166,6 +174,30 @@ int Path::rm_recurse() const {
         }
     }
     return this->rm();
+}
+
+
+void Path::copy_into(const Path& dir, mode_t mode) const {
+    if (dir.exists() == false)
+        throw mucs_exception(
+            "Destination directory does not exist:", dir.str());
+
+    if (dir.is_dir() == false)
+        throw mucs_exception(
+            "Destination exists but is not a directory:", dir.str());
+
+    const Path& dest_p = dir / this->basename();
+
+    ifstream src(this->m_path, ios::in | ios::binary);
+    ofstream dest(dest_p.str(), ios::out | ios::binary | ios::trunc);
+
+    dest << src.rdbuf();
+
+    src.close();
+    dest.close();
+
+    if (chmod(dest_p.str().c_str(), mode) < 0)
+        throw mucs_exception("Unable to chmod file:", dest_p.str());
 }
 
 

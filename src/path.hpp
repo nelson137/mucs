@@ -3,7 +3,8 @@
 
 
 #include <fstream>
-#include <ostream>
+#include <ios>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -33,6 +34,8 @@ protected:
 
 public:
     virtual string str() const = 0;
+
+    virtual string basename() const = 0;
 
     virtual bool exists() const = 0;
     virtual bool is_dir() const = 0;
@@ -67,6 +70,8 @@ public:
 
     string str() const;
 
+    string basename() const;
+
     bool exists() const;
     bool is_dir() const;
     bool is_file() const;
@@ -77,6 +82,7 @@ public:
     string read() const;
     int rm() const;
     int rm_recurse() const;
+    void copy_into(const Path& dest_dir, mode_t mode = 0644) const;
 
 };
 
