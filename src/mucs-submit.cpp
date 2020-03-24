@@ -1,7 +1,7 @@
 #include "mucs.hpp"
 
 
-Proc::Ret try_compile_sources(const vector<string>& sources) {
+static Proc::Ret try_compile_sources(const vector<string>& sources) {
 #ifdef MUCS_TEST
     return TEST_SOURCES_COMPILE;
 #else
@@ -12,7 +12,7 @@ Proc::Ret try_compile_sources(const vector<string>& sources) {
 }
 
 
-void submit_summary(
+static void submit_summary(
     const string& course,
     const LabSesh& lab,
     const string& assignment,

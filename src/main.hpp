@@ -1,8 +1,6 @@
-#ifndef MAIN_HPP
+#if !defined(MAIN_HPP) && !defined(MUCS_TEST)
 #define MAIN_HPP
 
-
-#ifndef MUCS_TEST
 
 #include <chrono>
 #include <iostream>
@@ -17,8 +15,6 @@
 
 using namespace chrono;
 using namespace std;
-
-#endif
 
 
 #endif
