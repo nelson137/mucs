@@ -68,13 +68,13 @@ void Mucs::submit(const Config& config) {
 
     string now_str = format_datetime(NOW, DATETIME_EXT_FMT);
     Path submit_d_rel = Path(".submissions") / user + now_str;
-    Path submit_d = assignment_d / submit_d_rel;
+    Path submit_d_abs = assignment_d / submit_d_rel;
 
-    if (submit_d.exists())
+    if (submit_d_abs.exists())
         throw mucs_exception(
             "Attempted successive submissions too quickly, please try again");
-    else
-        submit_d.mkdir_recurse();
+
+    submit_d_abs.mkdir_recurse();
 
     Path latest_link = assignment_d / user;
     if (latest_link.exists() && latest_link.rm() == false)
@@ -83,7 +83,7 @@ void Mucs::submit(const Config& config) {
     latest_link.link_to(submit_d_rel);
 
     for (const string& src : this->sources)
-        Path(src).copy_into(submit_d, 0440);
+        Path(src).copy_into(submit_d_abs, 0440);
 
     cout << w_green("Submission complete") << endl;
 }
