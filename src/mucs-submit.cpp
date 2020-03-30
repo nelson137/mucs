@@ -28,11 +28,11 @@ static void submit_summary(
     const string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
 
     cout << w_green(spacer) << endl;
-    cout << "Course:     " << w_bold(course) << endl;
-    cout << "Lab:        " << w_bold(lab) << endl;
-    cout << "Assignment: " << w_bold(assignment) << endl;
-    cout << "User:       " << w_bold(user) << endl;
-    cout << "Files:     ";
+    cout << "Course     : " << w_bold(course) << endl;
+    cout << "Lab        : " << w_bold(lab) << endl;
+    cout << "Assignment : " << w_bold(assignment) << endl;
+    cout << "User       : " << w_bold(user) << endl;
+    cout << "Files      :";
     for (const auto& s : sources)
         cout << ' ' << w_bold(s);
     cout << endl;
