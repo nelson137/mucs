@@ -196,20 +196,20 @@ void Path::copy_into(const Path& dir, mode_t mode) const {
 
     if (dir.is_dir() == false)
         throw mucs_exception(
-            "Destination exists but is not a directory:", dir.str());
+            "Destination exists but is not a directory:", dir.m_path);
 
     const Path& dest_p = dir / this->basename();
 
     ifstream src(this->m_path, ios::in | ios::binary);
-    ofstream dest(dest_p.str(), ios::out | ios::binary | ios::trunc);
+    ofstream dest(dest_p.m_path, ios::out | ios::binary | ios::trunc);
 
     dest << src.rdbuf();
 
     src.close();
     dest.close();
 
-    if (chmod(dest_p.str().c_str(), mode) < 0)
-        throw mucs_exception("Unable to chmod file:", dest_p.str());
+    if (chmod(dest_p.m_path.c_str(), mode) < 0)
+        throw mucs_exception("Unable to chmod file:", dest_p.m_path);
 }
 
 
