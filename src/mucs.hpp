@@ -21,7 +21,7 @@ struct Mucs {
 
     string course;
     string assignment_type;
-    vector<string> sources;
+    vector<Path> sources;
 
     function<void()> invoke(void (Mucs::*subcmd)(const Config&));
 

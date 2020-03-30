@@ -1,7 +1,7 @@
 #include "mucs.hpp"
 
 
-static Proc::Ret try_compile_sources(const vector<string>& sources) {
+static Proc::Ret try_compile_sources(const vector<Path>& sources) {
 #ifdef MUCS_TEST
     return TEST_SOURCES_COMPILE;
 #else
@@ -17,7 +17,7 @@ static void submit_summary(
     const LabSesh& lab,
     const string& assignment,
     const string& user,
-    const vector<string>& sources
+    const vector<Path>& sources
 ) {
 #ifndef MUCS_TEST
     const string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
@@ -82,8 +82,8 @@ void Mucs::submit(const Config& config) {
             "Error removing symbolic link:", latest_link.str());
     latest_link.link_to(submit_d_rel);
 
-    for (const string& src : this->sources)
-        Path(src).copy_into(submit_d_abs, 0440);
+    for (const Path& src : sources)
+        src.copy_into(submit_d_abs, 0440);
 
     cout << w_green("Submission complete") << endl;
 }

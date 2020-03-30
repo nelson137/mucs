@@ -60,6 +60,8 @@ public:
     Path();
     Path(const string& s);
 
+    operator string() const;
+
     Path  operator+ (const string& s) const;
     Path& operator+=(const string& s);
 
