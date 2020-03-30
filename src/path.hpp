@@ -42,6 +42,8 @@ public:
     virtual bool is_file() const = 0;
     virtual bool is_dir() const = 0;
 
+    virtual void chmod(mode_t mode) const = 0;
+
     virtual bool link_to(const IPath& target) const = 0;
 
     virtual void rm() const = 0;
@@ -52,11 +54,6 @@ public:
      */
 
     virtual string read() const = 0;
-
-    // virtual void copy_into(
-        // const IPath& dir,
-        // mode_t mode = 0644
-    // ) const override = 0;
 
     /**
      * Directories only
@@ -98,6 +95,8 @@ public:
     bool exists() const override;
     bool is_file() const override;
     bool is_dir() const override;
+
+    void chmod(mode_t mode) const override;
 
     bool link_to(const IPath& target) const override;
 

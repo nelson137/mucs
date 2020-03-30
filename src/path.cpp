@@ -100,6 +100,12 @@ bool Path::is_dir() const {
 }
 
 
+void Path::chmod(mode_t mode) const {
+    if (::chmod(this->m_path.c_str(), mode) < 0)
+        throw mucs_exception("Unable to chmod file:", this->m_path);
+}
+
+
 bool Path::link_to(const IPath& target) const {
     if (this->exists())
         this->rm();
@@ -153,8 +159,7 @@ void Path::copy_into(const Path& dir, mode_t mode) const {
     src.close();
     dest.close();
 
-    if (chmod(dest_p.m_path.c_str(), mode) < 0)
-        throw mucs_exception("Unable to chmod file:", dest_p.m_path);
+    dest_p.chmod(mode);
 }
 
 
