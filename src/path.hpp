@@ -32,6 +32,12 @@ protected:
     virtual unique_ptr<struct stat> stat() const = 0;
 
 public:
+    enum {
+        File = 1 << 0,
+        Dir  = 1 << 1,
+        Link = 1 << 2,
+    };
+
     virtual string str() const = 0;
     virtual string basename() const = 0;
 
@@ -39,6 +45,7 @@ public:
     virtual IPath& join(const string& rel_path) = 0;
 
     virtual bool exists() const = 0;
+    virtual int type() const = 0;
     virtual bool is_file() const = 0;
     virtual bool is_dir() const = 0;
 
@@ -60,6 +67,9 @@ public:
      */
 
     virtual vector<string> ls() const = 0;
+    virtual vector<string> ls_base() const = 0;
+
+    virtual void chmod_recurse(mode_t mode, int filter = File|Dir) const = 0;
 
     virtual int mkdir(mode_t mode = 0775) const = 0;
     virtual int mkdir_recurse(mode_t mode = 0775) const = 0;
@@ -93,6 +103,7 @@ public:
     IPath& join(const string& rel_path) override;
 
     bool exists() const override;
+    int type() const override;
     bool is_file() const override;
     bool is_dir() const override;
 
@@ -116,6 +127,9 @@ public:
      */
 
     vector<string> ls() const override;
+    vector<string> ls_base() const override;
+
+    void chmod_recurse(mode_t mode, int filter = File|Dir) const override;
 
     int mkdir(mode_t mode = 0775) const override;
     int mkdir_recurse(mode_t mode = 0775) const override;

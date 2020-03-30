@@ -58,8 +58,10 @@ void Mucs::submit(const Config& config) {
     if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
+    // /.../SUBMIT_DIR
+    Path submit_root = Path(SUBMIT_DIR);
     // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
-    Path assignment_d = Path(SUBMIT_DIR) / this->course / lab / assignment;
+    Path assignment_d = submit_root / this->course / lab / assignment;
 
     string now_str = format_datetime(NOW, DATETIME_EXT_FMT);
     // .submissions/USER.DATE.TIME
@@ -77,6 +79,12 @@ void Mucs::submit(const Config& config) {
 
     for (const Path& src : sources)
         src.copy_into(submit_d_abs, 0440);
+
+    // Fix all directory permissions
+    submit_root.chmod_recurse(0770, Path::Dir);
+
+    // Fix all file permissions
+    submit_root.chmod_recurse(0440, Path::File);
 
     cout << w_green("Submission complete") << endl;
 }

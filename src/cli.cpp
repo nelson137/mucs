@@ -2,7 +2,7 @@
 
 
 unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
-    vector<string> configs_available = Path(CONFIG_DIR).ls();
+    vector<string> configs_available = Path(CONFIG_DIR).ls_base();
 
     auto app = unique_ptr<CLI::App>(new CLI::App);
 

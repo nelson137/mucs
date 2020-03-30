@@ -90,6 +90,15 @@ bool Path::exists() const {
 }
 
 
+int Path::type() const {
+    unique_ptr<struct stat> s = this->stat();
+    return (S_ISREG(s->st_mode) ? Path::File : 0)
+         | (S_ISDIR(s->st_mode) ? Path::Dir  : 0)
+         | (S_ISLNK(s->st_mode) ? Path::Link : 0)
+         ;
+}
+
+
 bool Path::is_file() const {
     return S_ISREG(this->stat()->st_mode);
 }
@@ -164,6 +173,20 @@ void Path::copy_into(const Path& dir, mode_t mode) const {
 
 
 vector<string> Path::ls() const {
+    vector<string> children, children_base = this->ls_base();
+    children.reserve(children_base.size());
+    transform(
+        children_base.begin(), children_base.end(),
+        back_inserter(children),
+        [this] (const string& child) {
+            return join_paths(this->m_path, child);
+        }
+    );
+    return children;
+}
+
+
+vector<string> Path::ls_base() const {
     DIR *dir = opendir(this->m_path.c_str());
     if (dir == nullptr)
         throw mucs_exception("Could not list directory");
@@ -184,6 +207,18 @@ vector<string> Path::ls() const {
 
     closedir(dir);
     return children;
+}
+
+
+void Path::chmod_recurse(mode_t mode, int filter) const {
+    if (filter & Path::Dir)
+        this->chmod(mode);
+    for (const Path& child : this->ls()) {
+        if (filter & child.type())
+            child.chmod(mode);
+        if (child.is_dir())
+            child.chmod_recurse(mode, filter);
+    }
 }
 
 
