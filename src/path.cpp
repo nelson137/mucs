@@ -174,21 +174,17 @@ int Path::mkdir_recurse() const {
 }
 
 
-int Path::rm() const {
-    return ::remove(this->m_path.c_str()) == 0;
+void Path::rm() const {
+    if (::remove(this->m_path.c_str()) < 0)
+        throw mucs_exception("Failed to remove file:", this->m_path);
 }
 
 
-int Path::rm_recurse() const {
-    if (this->is_dir()) {
-        int ret;
-        for (const string& child : this->ls()) {
-            ret = (*this / child).rm_recurse();
-            if (ret < 0)
-                return ret;
-        }
-    }
-    return this->rm();
+void Path::rm_recurse() const {
+    if (this->is_dir())
+        for (const string& child : this->ls())
+            (*this / child).rm_recurse();
+    this->rm();
 }
 
 

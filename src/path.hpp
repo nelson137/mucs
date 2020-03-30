@@ -47,8 +47,8 @@ public:
     virtual int mkdir() const = 0;
     virtual int mkdir_recurse() const = 0;
     virtual string read() const = 0;
-    virtual int rm() const = 0;
-    virtual int rm_recurse() const = 0;
+    virtual void rm() const = 0;
+    virtual void rm_recurse() const = 0;
 
 };
 
@@ -87,8 +87,8 @@ public:
     int mkdir() const;
     int mkdir_recurse() const;
     string read() const;
-    int rm() const;
-    int rm_recurse() const;
+    void rm() const;
+    void rm_recurse() const;
     void copy_into(const Path& dir, mode_t mode = 0644) const;
 
 };
