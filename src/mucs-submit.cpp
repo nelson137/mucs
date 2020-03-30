@@ -76,11 +76,7 @@ void Mucs::submit(const Config& config) {
 
     submit_d_abs.mkdir_recurse();
 
-    Path latest_link = assignment_d / user;
-    if (latest_link.exists() && latest_link.rm() == false)
-        throw mucs_exception(
-            "Error removing symbolic link:", latest_link.str());
-    latest_link.link_to(submit_d_rel);
+    (assignment_d / user).link_to(submit_d_rel);
 
     for (const Path& src : sources)
         src.copy_into(submit_d_abs, 0440);

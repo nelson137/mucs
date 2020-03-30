@@ -115,6 +115,8 @@ bool Path::is_file() const {
 
 
 bool Path::link_to(const IPath& target) const {
+    if (this->exists())
+        this->rm();
     return symlink(target.str().c_str(), this->m_path.c_str()) == 0;
 }
 
