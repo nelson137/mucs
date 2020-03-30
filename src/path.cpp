@@ -105,7 +105,8 @@ IPath& Path::join(const string& rel_path) {
 
 
 bool Path::exists() const {
-    return this->m_stat_ret == 0;
+    struct stat s;
+    return ::stat(this->m_path.c_str(), &s) == 0;
 }
 
 
