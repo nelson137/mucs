@@ -49,23 +49,30 @@ void Mucs::submit(const Config& config) {
     LabSesh lab = config.get_lab(user);
     string assignment = config.get_assignment(this->assignment_type);
 
+    // Make sure sources compile
     if (try_compile_sources(this->sources) == false)
         throw mucs_exception("Unable to submit, program does not compile");
 
+    // Show user a summary of their submission and prompt for confirmation
     submit_summary(this->course, lab, assignment, user, this->sources);
     if (prompt_yesno("Are you sure you want to submit [Y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
+    // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
     Path assignment_d = Path(SUBMIT_DIR) / this->course / lab / assignment;
 
     string now_str = format_datetime(NOW, DATETIME_EXT_FMT);
+    // .submissions/USER.DATE.TIME
     Path submit_d_rel = Path(".submissions") / user + now_str;
 
+    // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT/.submissions/USER.DATE.TIME
     Path submit_d_abs = assignment_d / submit_d_rel;
     if (submit_d_abs.exists())
         throw mucs_exception(
             "Attempted successive submissions too quickly, please try again");
 
+    // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT:
+    //   USER -> .submissions/USER.DATE.TIME
     (assignment_d / user).link_to(submit_d_rel);
 
     for (const Path& src : sources)
