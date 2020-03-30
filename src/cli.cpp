@@ -23,5 +23,5 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
         ->add_option("sources", mucs.sources)
         ->required();
 
-    return move(app);
+    return app;
 }
