@@ -28,37 +28,38 @@ Path::operator string() const {
 }
 
 
-Path Path::operator+(const string& s) const {
-    return Path(this->m_path + s);
+Path operator+(const Path& p, const string& ext) {
+    Path other(p.m_path + ext);
+    return other;
 }
 
 
-Path& Path::operator+=(const string& s) {
-    this->m_path += s;
-    this->stat();
-    return *this;
+Path& operator+=(Path& p, const string& ext) {
+    p.append(ext);
+    return p;
 }
 
 
-Path Path::operator/(const string& rel_path) const {
-    return Path(join_paths(this->m_path, rel_path));
+Path operator/(const Path& p, const string& rel_path) {
+    Path other(p.m_path);
+    other.join(rel_path);
+    return other;
 }
 
 
-Path Path::operator/(const Path& other) const {
-    return this->operator/(other.m_path);
+Path operator/(const Path& a, const Path& b) {
+    return a / b.m_path;
 }
 
 
-Path& Path::operator/=(const string& rel_path) {
-    this->m_path = join_paths(this->m_path, rel_path);
-    this->stat();
-    return *this;
+Path& operator/=(Path& p, const string& rel_path) {
+    p.join(rel_path);
+    return p;
 }
 
 
-Path& Path::operator/=(const Path& other) {
-    return this->operator/=(other.m_path);
+Path& operator/=(Path& a, const Path& b) {
+    return a /= b.m_path;
 }
 
 
@@ -86,6 +87,20 @@ string Path::basename() const {
     return part == string::npos || part == this->m_path.size() - 1
         ? this->m_path
         : this->m_path.substr(part + 1);
+}
+
+
+IPath& Path::append(const string& ext) {
+    this->m_path += ext;
+    this->stat();
+    return *this;
+}
+
+
+IPath& Path::join(const string& rel_path) {
+    this->m_path = join_paths(this->m_path, rel_path);
+    this->stat();
+    return *this;
 }
 
 
@@ -172,8 +187,8 @@ int Path::rm() const {
 int Path::rm_recurse() const {
     if (this->is_dir()) {
         int ret;
-        for (auto& child : this->ls()) {
-            ret = this->operator/(child).rm_recurse();
+        for (const string& child : this->ls()) {
+            ret = (*this / child).rm_recurse();
             if (ret < 0)
                 return ret;
         }

@@ -37,6 +37,9 @@ public:
 
     virtual string basename() const = 0;
 
+    virtual IPath& append(const string& ext) = 0;
+    virtual IPath& join(const string& rel_path) = 0;
+
     virtual bool exists() const = 0;
     virtual bool is_dir() const = 0;
     virtual bool is_file() const = 0;
@@ -62,17 +65,20 @@ public:
 
     operator string() const;
 
-    Path  operator+ (const string& s) const;
-    Path& operator+=(const string& s);
+    friend Path  operator+ (const Path& p, const string& ext);
+    friend Path& operator+=(      Path& p, const string& ext);
 
-    Path  operator/ (const string& rel_path) const;
-    Path  operator/ (const   Path&    other) const;
-    Path& operator/=(const string& rel_path);
-    Path& operator/=(const   Path&    other);
+    friend Path  operator/ (const Path& p, const string& rel_path);
+    friend Path  operator/ (const Path& a, const   Path&        b);
+    friend Path& operator/=(      Path& p, const string& rel_path);
+    friend Path& operator/=(      Path& a, const   Path&        b);
 
     string str() const;
 
     string basename() const;
+
+    IPath& append(const string& ext);
+    IPath& join(const string& rel_path);
 
     bool exists() const;
     bool is_dir() const;
@@ -84,7 +90,7 @@ public:
     string read() const;
     int rm() const;
     int rm_recurse() const;
-    void copy_into(const Path& dest_dir, mode_t mode = 0644) const;
+    void copy_into(const Path& dir, mode_t mode = 0644) const;
 
 };
 
