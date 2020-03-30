@@ -192,8 +192,7 @@ void Path::rm_recurse() const {
 
 void Path::copy_into(const Path& dir, mode_t mode) const {
     if (dir.exists() == false)
-        throw mucs_exception(
-            "Destination directory does not exist:", dir.str());
+        dir.mkdir_recurse();
 
     if (dir.is_dir() == false)
         throw mucs_exception(

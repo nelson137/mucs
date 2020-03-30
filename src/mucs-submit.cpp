@@ -74,8 +74,6 @@ void Mucs::submit(const Config& config) {
         throw mucs_exception(
             "Attempted successive submissions too quickly, please try again");
 
-    submit_d_abs.mkdir_recurse();
-
     (assignment_d / user).link_to(submit_d_rel);
 
     for (const Path& src : sources)
