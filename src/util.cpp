@@ -4,9 +4,9 @@
 system_clock::time_point NOW;
 
 #ifdef MUCS_TEST
-string    TEST_PROMPT_YESNO;
-Proc::Ret TEST_SOURCES_COMPILE;
-string    TEST_USER;
+string TEST_PROMPT_YESNO;
+bool   TEST_SOURCES_COMPILE;
+string TEST_USER;
 #endif
 
 

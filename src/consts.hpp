@@ -16,7 +16,7 @@ using namespace std;
 #  define MUCS_ROOT "/group/cs1050"
 #endif
 
-#define SUBMISSIONS_ROOT (MUCS_ROOT "/submissions")
+#define SUBMIT_DIR (MUCS_ROOT "/submissions")
 #define CONFIG_DIR (MUCS_ROOT "/config.d")
 
 #define DATETIME_FMT     "%Y-%m-%d %H:%M:%S"

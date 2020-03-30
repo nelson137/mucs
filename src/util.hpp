@@ -34,9 +34,9 @@ using json = nlohmann::json;
 extern system_clock::time_point NOW;
 
 #ifdef MUCS_TEST
-extern string    TEST_PROMPT_YESNO;
-extern Proc::Ret TEST_SOURCES_COMPILE;
-extern string    TEST_USER;
+extern string TEST_PROMPT_YESNO;
+extern bool   TEST_SOURCES_COMPILE;
+extern string TEST_USER;
 #endif
 
 

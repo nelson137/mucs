@@ -59,20 +59,6 @@ Path& operator/=(Path& a, const Path& b) {
 }
 
 
-string Path::read() const {
-    ifstream is(this->m_path);
-    try {
-        stringstream buf;
-        buf << is.rdbuf();
-        is.close();
-        return buf.str();
-    } catch (const exception& e) {
-        is.close();
-        throw;
-    }
-}
-
-
 string Path::str() const {
     return this->m_path;
 }
@@ -104,13 +90,13 @@ bool Path::exists() const {
 }
 
 
-bool Path::is_dir() const {
-    return S_ISDIR(this->stat()->st_mode);
+bool Path::is_file() const {
+    return S_ISREG(this->stat()->st_mode);
 }
 
 
-bool Path::is_file() const {
-    return S_ISREG(this->stat()->st_mode);
+bool Path::is_dir() const {
+    return S_ISDIR(this->stat()->st_mode);
 }
 
 
@@ -118,6 +104,57 @@ bool Path::link_to(const IPath& target) const {
     if (this->exists())
         this->rm();
     return symlink(target.str().c_str(), this->m_path.c_str()) == 0;
+}
+
+
+void Path::rm() const {
+    if (::remove(this->m_path.c_str()) < 0)
+        throw mucs_exception("Failed to remove file:", this->m_path);
+}
+
+
+void Path::rm_recurse() const {
+    if (this->is_dir())
+        for (const string& child : this->ls())
+            (*this / child).rm_recurse();
+    this->rm();
+}
+
+
+string Path::read() const {
+    ifstream is(this->m_path);
+    try {
+        stringstream buf;
+        buf << is.rdbuf();
+        is.close();
+        return buf.str();
+    } catch (const exception& e) {
+        is.close();
+        throw;
+    }
+}
+
+
+void Path::copy_into(const Path& dir, mode_t mode) const {
+    if (dir.exists() == false)
+        dir.mkdir_recurse();
+
+    if (dir.is_dir() == false)
+        throw mucs_exception(
+            "Destination exists but is not a directory:", dir.m_path);
+
+    const Path& dest_p = dir / this->basename();
+
+    ifstream src(this->m_path, ios::in | ios::binary);
+    ofstream dest(dest_p.m_path, ios::out | ios::binary | ios::trunc);
+
+    dest << src.rdbuf();
+
+    src.close();
+    dest.close();
+
+    if (chmod(dest_p.m_path.c_str(), mode) < 0)
+        throw mucs_exception("Unable to chmod file:", dest_p.m_path);
 }
 
 
@@ -173,43 +210,6 @@ int Path::mkdir_recurse() const {
     }
 
     return 0;
-}
-
-
-void Path::rm() const {
-    if (::remove(this->m_path.c_str()) < 0)
-        throw mucs_exception("Failed to remove file:", this->m_path);
-}
-
-
-void Path::rm_recurse() const {
-    if (this->is_dir())
-        for (const string& child : this->ls())
-            (*this / child).rm_recurse();
-    this->rm();
-}
-
-
-void Path::copy_into(const Path& dir, mode_t mode) const {
-    if (dir.exists() == false)
-        dir.mkdir_recurse();
-
-    if (dir.is_dir() == false)
-        throw mucs_exception(
-            "Destination exists but is not a directory:", dir.m_path);
-
-    const Path& dest_p = dir / this->basename();
-
-    ifstream src(this->m_path, ios::in | ios::binary);
-    ofstream dest(dest_p.m_path, ios::out | ios::binary | ios::trunc);
-
-    dest << src.rdbuf();
-
-    src.close();
-    dest.close();
-
-    if (chmod(dest_p.m_path.c_str(), mode) < 0)
-        throw mucs_exception("Unable to chmod file:", dest_p.m_path);
 }
 
 

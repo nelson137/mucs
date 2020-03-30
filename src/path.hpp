@@ -33,22 +33,39 @@ protected:
 
 public:
     virtual string str() const = 0;
-
     virtual string basename() const = 0;
 
     virtual IPath& append(const string& ext) = 0;
     virtual IPath& join(const string& rel_path) = 0;
 
     virtual bool exists() const = 0;
-    virtual bool is_dir() const = 0;
     virtual bool is_file() const = 0;
+    virtual bool is_dir() const = 0;
+
     virtual bool link_to(const IPath& target) const = 0;
-    virtual vector<string> ls() const = 0;
-    virtual int mkdir() const = 0;
-    virtual int mkdir_recurse() const = 0;
-    virtual string read() const = 0;
+
     virtual void rm() const = 0;
     virtual void rm_recurse() const = 0;
+
+    /**
+     * Files only
+     */
+
+    virtual string read() const = 0;
+
+    // virtual void copy_into(
+        // const IPath& dir,
+        // mode_t mode = 0644
+    // ) const override = 0;
+
+    /**
+     * Directories only
+     */
+
+    virtual vector<string> ls() const = 0;
+
+    virtual int mkdir() const = 0;
+    virtual int mkdir_recurse() const = 0;
 
 };
 
@@ -72,24 +89,37 @@ public:
     friend Path& operator/=(      Path& p, const string& rel_path);
     friend Path& operator/=(      Path& a, const   Path&        b);
 
-    string str() const;
+    string str() const override;
+    string basename() const override;
 
-    string basename() const;
+    IPath& append(const string& ext) override;
+    IPath& join(const string& rel_path) override;
 
-    IPath& append(const string& ext);
-    IPath& join(const string& rel_path);
+    bool exists() const override;
+    bool is_file() const override;
+    bool is_dir() const override;
 
-    bool exists() const;
-    bool is_dir() const;
-    bool is_file() const;
-    bool link_to(const IPath& target) const;
-    vector<string> ls() const;
-    int mkdir() const;
-    int mkdir_recurse() const;
-    string read() const;
-    void rm() const;
-    void rm_recurse() const;
+    bool link_to(const IPath& target) const override;
+
+    void rm() const override;
+    void rm_recurse() const override;
+
+    /**
+     * Files only
+     */
+
+    string read() const override;
+
     void copy_into(const Path& dir, mode_t mode = 0644) const;
+
+    /**
+     * Directories only
+     */
+
+    vector<string> ls() const override;
+
+    int mkdir() const override;
+    int mkdir_recurse() const override;
 
 };
 
