@@ -3,7 +3,7 @@
 
 unique_ptr<struct stat> Path::stat() const {
     unique_ptr<struct stat> s(new struct stat);
-    if (::stat(this->m_path.c_str(), s.get()) < 0)
+    if (::lstat(this->m_path.c_str(), s.get()) < 0)
         throw mucs_exception("Failed to stat file:", this->m_path);
     return s;
 }
@@ -86,7 +86,7 @@ IPath& Path::join(const string& rel_path) {
 
 bool Path::exists() const {
     struct stat s;
-    return ::stat(this->m_path.c_str(), &s) == 0;
+    return ::lstat(this->m_path.c_str(), &s) == 0;
 }
 
 
@@ -187,12 +187,12 @@ vector<string> Path::ls() const {
 }
 
 
-int Path::mkdir() const {
-    return ::mkdir(this->m_path.c_str(), 0775);
+int Path::mkdir(mode_t mode) const {
+    return ::mkdir(this->m_path.c_str(), mode);
 }
 
 
-int Path::mkdir_recurse() const {
+int Path::mkdir_recurse(mode_t mode) const {
     string p = this->m_path;
 
     // Trim leading and trailing slashes
@@ -209,7 +209,7 @@ int Path::mkdir_recurse() const {
             if (not cur.is_dir())
                 return -1;
         } else {
-            if (cur.mkdir() < 0)
+            if (cur.mkdir(mode) < 0)
                 return -1;
         }
     }

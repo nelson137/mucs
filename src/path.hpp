@@ -61,8 +61,8 @@ public:
 
     virtual vector<string> ls() const = 0;
 
-    virtual int mkdir() const = 0;
-    virtual int mkdir_recurse() const = 0;
+    virtual int mkdir(mode_t mode = 0775) const = 0;
+    virtual int mkdir_recurse(mode_t mode = 0775) const = 0;
 
 };
 
@@ -117,8 +117,8 @@ public:
 
     vector<string> ls() const override;
 
-    int mkdir() const override;
-    int mkdir_recurse() const override;
+    int mkdir(mode_t mode = 0775) const override;
+    int mkdir_recurse(mode_t mode = 0775) const override;
 
 };
 
