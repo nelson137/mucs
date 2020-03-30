@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <ios>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -27,10 +28,8 @@ class IPath {
 
 protected:
     string m_path;
-    int m_stat_ret;
-    struct stat m_stat;
 
-    virtual void stat() = 0;
+    virtual unique_ptr<struct stat> stat() const = 0;
 
 public:
     virtual string str() const = 0;
@@ -56,11 +55,11 @@ public:
 
 class Path : public IPath {
 
-private:
-    void stat();
+protected:
+    unique_ptr<struct stat> stat() const;
 
 public:
-    Path();
+    Path() = default;
     Path(const string& s);
 
     operator string() const;

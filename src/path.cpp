@@ -1,25 +1,21 @@
 #include "path.hpp"
 
 
-void Path::stat() {
-    this->m_stat_ret = ::stat(this->m_path.c_str(), &this->m_stat);
+unique_ptr<struct stat> Path::stat() const {
+    unique_ptr<struct stat> s(new struct stat);
+    if (::stat(this->m_path.c_str(), s.get()) < 0)
+        throw mucs_exception("Failed to stat file:", this->m_path);
+    return s;
 }
 
 
-Path::Path() {
-    memset(&this->m_stat, 0, sizeof(this->m_stat));
-}
-
-
-Path::Path(const string& s) : Path() {
+Path::Path(const string& s) {
     this->m_path = s;
 
     // Trim trailing slashes
     size_t end_path = s.find_last_not_of('/');
     if (end_path != string::npos)
         this->m_path.erase(end_path+1);
-
-    this->stat();
 }
 
 
@@ -92,14 +88,12 @@ string Path::basename() const {
 
 IPath& Path::append(const string& ext) {
     this->m_path += ext;
-    this->stat();
     return *this;
 }
 
 
 IPath& Path::join(const string& rel_path) {
     this->m_path = join_paths(this->m_path, rel_path);
-    this->stat();
     return *this;
 }
 
@@ -111,12 +105,12 @@ bool Path::exists() const {
 
 
 bool Path::is_dir() const {
-    return S_ISDIR(this->m_stat.st_mode);
+    return S_ISDIR(this->stat()->st_mode);
 }
 
 
 bool Path::is_file() const {
-    return S_ISREG(this->m_stat.st_mode);
+    return S_ISREG(this->stat()->st_mode);
 }
 
 
