@@ -12,7 +12,7 @@ ALL_OBJS  := $(OBJS) $(TEST_OBJS)
 
 SCRIPTS   := $(wildcard bin/mucs-*)
 
-CFLAGS    := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
+CFLAGS    := -std=c++11 -g -pedantic -Wall -Werror -Wno-noexcept-type
 LDFLAGS   := -Llibmucs/build
 LDLIBS    := -lmucs
 COVFLAGS  :=
