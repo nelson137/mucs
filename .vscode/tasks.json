@@ -13,7 +13,7 @@
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
             },
-            "args": ["MUCS_ROOT=local"],
+            "args": ["-j", "MUCS_ROOT=local"],
             "group": "build",
             "problemMatcher": ["$gcc"],
             "presentation": {
@@ -31,7 +31,7 @@
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
             },
-            "args": ["test"],
+            "args": ["-j", "test"],
             "group": "build",
             "problemMatcher": ["$gcc"],
             "presentation": {
