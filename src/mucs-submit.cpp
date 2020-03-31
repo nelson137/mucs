@@ -5,7 +5,7 @@ static bool try_compile_sources(const vector<Path>& sources) {
 #ifdef MUCS_TEST
     return TEST_SOURCES_COMPILE;
 #else
-    Proc p = {"/usr/local/bin/compile", "-o", "/dev/null"};
+    Proc p = {COMPILE_SCRIPT, "-o", "/dev/null"};
     p.extend(sources);
 
     Proc::Ret ret = p.execute();

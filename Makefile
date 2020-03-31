@@ -30,8 +30,8 @@ endef
 
 # Setup flags for local mucs root
 define local-mucs-root
-ifeq ($(findstring MUCS_ROOT_X,$(DEFINES)),)
-DEFINES += -DMUCS_ROOT_X='$(shell pwd)/test_root'
+ifeq ($(findstring _MUCS_ROOT_LOCAL,$(DEFINES)),)
+DEFINES += -D_MUCS_ROOT_LOCAL
 endif
 endef
 

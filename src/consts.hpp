@@ -6,14 +6,13 @@
 
 using namespace std;
 
-#define STRINGIZE(x) #x
-#define STR_VALUE(x) STRINGIZE(x)
 
-
-#ifdef MUCS_ROOT_X
-#  define MUCS_ROOT STR_VALUE(MUCS_ROOT_X)
+#ifdef _MUCS_ROOT_LOCAL
+#  define MUCS_ROOT "test_root"
+#  define COMPILE_SCRIPT "scripts/compile"
 #else
 #  define MUCS_ROOT "/group/cs1050"
+#  define COMPILE_SCRIPT "/usr/local/bin/compile"
 #endif
 
 #define SUBMIT_DIR (MUCS_ROOT "/submissions")
