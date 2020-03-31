@@ -13,6 +13,7 @@
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
             },
+            "args": ["MUCS_ROOT=local"],
             "group": "build",
             "problemMatcher": ["$gcc"],
             "presentation": {
@@ -66,7 +67,7 @@
             "windows": {
                 "command": ".\\a.out"
             },
-            "args": ["submit", "1050", "lab", "todo"],
+            "args": ["submit", "1050", "lab", "t.c"],
             "group": "build",
             "problemMatcher": ["$gcc"],
             "presentation": {

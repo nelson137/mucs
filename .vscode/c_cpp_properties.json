@@ -1,17 +1,49 @@
 {
     "version": 4,
     "env": {
+        "MUCS_ROOT": "local",
         "mucsIncludePaths": [
             "${workspaceFolder}/include",
             "${workspaceFolder}/src",
             "${workspaceFolder}/test",
             "${workspaceFolder}/libmucs/include"
         ],
-        "CXX": [
-            "C:\\cygwin64\\bin\\g++.exe"
+        "mucsCompilerArgs": [
+            "-g",
+            "-c",
+            "-pedantic",
+            "-Wall",
+            "-Werror",
+            "-Wno-noexcept-type",
+            "-D_XOPEN_SOURCE=700"
         ]
     },
     "configurations": [
+        {
+            "name": "Linux",
+            "compilerPath": "/usr/bin/g++",
+            "compilerArgs": [
+                "${mucsCompilerArgs}"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "cppStandard": "c++11",
+            "includePath": [
+                "${mucsIncludePaths}",
+                "/usr/include",
+                "/usr/include/c++/7"
+            ],
+            "defines": [
+                "_XOPEN_SOURCE=700",
+                "_MUCS_ROOT_LOCAL"
+            ],
+            "browse": {
+                "path": [
+                    "${mucsIncludePaths}",
+                    "/usr/include",
+                    "/usr/include/c++/7"
+                ]
+            }
+        },
         {
             "name": "Win32",
             "intelliSenseMode": "gcc-x64",
@@ -25,8 +57,7 @@
             "defines": [
                 "_XOPEN_SOURCE=500"
             ],
-            "compilerPath": "${CXX}",
-            "cStandard": "c11",
+            "compilerPath": "C:\\cygwin64\\bin\\g++.exe",
             "cppStandard": "c++11",
             "browse": {
                 "path": [
@@ -35,13 +66,8 @@
                 "limitSymbolsToIncludedHeaders": true
             },
             "compilerArgs": [
-                "-g",
-                "-c",
-                "-pedantic",
-                "-Wall",
-                "-Werror",
-                "-Wno-noexcept-type",
-                "-D_XOPEN_SOURCE=700",
+                "${mucsCompilerArgs}",
+                "_MUCS_ROOT_LOCAL",
                 "-U__STRICT_ANSI__",
                 "-m64"
             ]
