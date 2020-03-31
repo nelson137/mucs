@@ -25,7 +25,8 @@ static void submit_summary(
     const vector<Path>& sources
 ) {
 #ifndef MUCS_TEST
-    const string spacer = string(get_term_width() * TERM_WIDTH_COEFF, '=');
+    int w = get_term_width() * TERM_WIDTH_COEFF;
+    const string spacer = string(min(w, 80), '=');
 
     cout << w_green(spacer) << endl;
     cout << "Course     : " << w_bold(course) << endl;

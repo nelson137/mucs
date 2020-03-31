@@ -2,6 +2,7 @@
 #define MUCS_HPP
 
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
