@@ -7,6 +7,7 @@
 #include <deque>
 #include <iomanip>
 #include <iostream>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -108,13 +109,15 @@ ContainerIt stl_find_if(const Container& container, const UnaryOp& op) {
 
 template<typename Container>
 string stl_join(const Container& c, const string& delim = ",") {
-    ostringstream ss;
-    if (c.size())
-        ss << c[0];
-    if (c.size() > 1)
-        for (auto i=c.begin()+1; i!=c.end(); i++)
-            ss << delim << *i;
-    return ss.str();
+    if (c.size() == 0)
+        return "";
+    return accumulate<typename Container::const_iterator,string>(
+        c.cbegin() + 1, c.cend(),
+        c.front(),
+        [&] (const string& a, const string& b) -> string {
+            return a + delim + b;
+        }
+    );
 }
 
 
