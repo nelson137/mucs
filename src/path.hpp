@@ -73,8 +73,8 @@ public:
 
     virtual void chmod_recurse(mode_t mode, int filter = File|Dir) const = 0;
 
-    virtual int mkdir(mode_t mode = 0775) const = 0;
-    virtual int mkdir_recurse(mode_t mode = 0775) const = 0;
+    virtual void mkdir(mode_t mode = 0775) const = 0;
+    virtual void mkdir_recurse(mode_t mode = 0775) const = 0;
 
 };
 
@@ -133,8 +133,8 @@ public:
 
     void chmod_recurse(mode_t mode, int filter = File|Dir) const override;
 
-    int mkdir(mode_t mode = 0775) const override;
-    int mkdir_recurse(mode_t mode = 0775) const override;
+    void mkdir(mode_t mode = 0775) const override;
+    void mkdir_recurse(mode_t mode = 0775) const override;
 
 };
 

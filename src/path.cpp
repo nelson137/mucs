@@ -222,34 +222,32 @@ void Path::chmod_recurse(mode_t mode, int filter) const {
 }
 
 
-int Path::mkdir(mode_t mode) const {
-    return ::mkdir(this->m_path.c_str(), mode);
+void Path::mkdir(mode_t mode) const {
+    if (::mkdir(this->m_path.c_str(), mode) < 0)
+        throw mucs_exception("Failed to make directory:", this->m_path);
 }
 
 
-int Path::mkdir_recurse(mode_t mode) const {
+void Path::mkdir_recurse(mode_t mode) const {
     string p = this->m_path;
 
-    // Trim leading and trailing slashes
-    size_t begin = p.find_first_not_of('/');
-    size_t end = p.find_last_not_of('/');
-    if (begin == string::npos || end == string::npos)
-        return -1;
-    p = p.substr(begin, end-begin+1);
+    if (p.empty())
+        throw mucs_exception("Path is invalid:", p);
 
-    Path cur("/");
-    for (auto& c : string_split(p, "/")) {
-        cur /= c;
+    vector<string> components = string_split(p, "/");
+    auto b = components.begin();
+
+    Path cur(b->empty() ? "/" : *b);
+    for (auto it=b+1; it!=components.end(); it++) {
+        cur /= *it;
         if (cur.exists()) {
-            if (not cur.is_dir())
-                return -1;
+            if (cur.is_dir() == false)
+                throw mucs_exception(
+                    "File exists but is not a directory:", cur.m_path);
         } else {
-            if (cur.mkdir(mode) < 0)
-                return -1;
+            cur.mkdir(mode);
         }
     }
-
-    return 0;
 }
 
 
