@@ -16,6 +16,8 @@
 
 #include "mucs/except.hpp"
 
+#include "path.hpp"
+
 using namespace std;
 
 

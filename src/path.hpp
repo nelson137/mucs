@@ -23,6 +23,8 @@
 using namespace fakeit;
 using namespace std;
 
+using json = nlohmann::json;
+
 
 class IPath {
 
