@@ -74,6 +74,9 @@ void Mucs::submit(const Config& config) {
         throw mucs_exception(
             "Attempted successive submissions too quickly, please try again");
 
+    // Make sure submit directory exists
+    submit_d_abs.mkdir_recurse(0770);
+
     // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT:
     //   USER -> .submissions/USER.DATE.TIME
     (assignment_d / user).link_to(submit_d_rel);
