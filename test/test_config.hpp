@@ -9,7 +9,6 @@
 #include "json.hpp"
 
 #include "mucs/except.hpp"
-#include "mucs/temp_file.hpp"
 
 #include "util.hpp"
 
