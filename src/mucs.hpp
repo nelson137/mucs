@@ -29,6 +29,15 @@ struct Mucs {
     string assignment_type;
     vector<Path> sources;
 
+    enum DumpFlags {
+        DumpHomeworks = 1 << 0,
+        DumpLabs      = 1 << 1,
+        DumpRoster    = 1 << 2,
+        DumpCurrents  = 1 << 3,
+    };
+
+    int dump_flags = 0;
+
     // Subcommand invocation
 
     void invoke(void (Mucs::*subcmd)());
@@ -46,6 +55,10 @@ struct Mucs {
     virtual void submit_summary(const LabSesh& lab, const string& assignment);
 
     void submit();
+
+    // Admin subcommand
+
+    void admin_dump();
 
 };
 

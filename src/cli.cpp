@@ -8,6 +8,8 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
 
     app->require_subcommand();
 
+    // Submit subcommand
+
     CLI::App *submit_subcmd = app
         ->add_subcommand("submit")
         ->callback(mucs.get_invoke(&Mucs::submit));
@@ -22,6 +24,36 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
     submit_subcmd
         ->add_option("sources", mucs.sources)
         ->required();
+
+    // Admin subcommand
+
+    CLI::App *admin_subcmd = app
+        ->add_subcommand("admin")
+        ->require_subcommand();
+
+    // Admin Dump subcommand
+
+    CLI::App *admin_dump_subcmd = admin_subcmd
+        ->add_subcommand("dump")
+        ->callback(mucs.get_invoke(&Mucs::admin_dump));
+
+    admin_dump_subcmd
+        ->add_option("course", mucs.course)
+        ->required()
+        ->check(CLI::IsMember(configs_available));
+
+    admin_dump_subcmd->add_flag_callback("-c,--current-assignments", [&] () {
+        mucs.dump_flags |= Mucs::DumpCurrents;
+    });
+    admin_dump_subcmd->add_flag_callback("-l,--labs", [&] () {
+        mucs.dump_flags |= Mucs::DumpLabs;
+    });
+    admin_dump_subcmd->add_flag_callback("-r,--roster", [&] () {
+        mucs.dump_flags |= Mucs::DumpRoster;
+    });
+    admin_dump_subcmd->add_flag_callback("-w,--homeworks", [&] () {
+        mucs.dump_flags |= Mucs::DumpHomeworks;
+    });
 
     return app;
 }

@@ -2,11 +2,14 @@
 #define UTIL_HPP
 
 
+#include <algorithm>
 #include <chrono>
 #include <ctime>
 #include <deque>
 #include <iomanip>
+#include <ios>
 #include <iostream>
+#include <list>
 #include <numeric>
 #include <sstream>
 #include <string>
@@ -35,6 +38,13 @@ using json = nlohmann::json;
 extern system_clock::time_point NOW;
 
 
+struct Tabular {
+
+    virtual list<vector<string>> to_table() const = 0;
+
+};
+
+
 system_clock::time_point current_time();
 
 int current_weekday();
@@ -56,6 +66,8 @@ system_clock::time_point parse_datetime(const string& dt_str);
 system_clock::time_point parse_time(const string& t_str);
 
 int parse_weekday(const string& w_str);
+
+void print_table(const list<vector<string>>& table, const string& delim = "  ");
 
 vector<string> string_split(const string& s, const string& delim);
 

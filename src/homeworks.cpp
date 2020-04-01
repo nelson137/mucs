@@ -9,6 +9,23 @@ bool Hw::compare::operator()(
 }
 
 
+list<vector<string>> Homeworks::to_table() const {
+    list<vector<string>> table;
+    for (const pair<string,Hw>& hw : *this) {
+        // Create row
+        vector<string> row;
+        row.reserve(2);
+        // Column 1
+        row.push_back(hw.first);
+        // Column 2
+        row.push_back(format_datetime(hw.second.duedate, DATETIME_FMT));
+        // Append row
+        table.push_back(move(row));
+    }
+    return table;
+}
+
+
 void from_json(const json& j, Hw& hw) {
     hw.duedate = parse_datetime(j.get<string>());
 }

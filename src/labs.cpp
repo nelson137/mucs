@@ -51,6 +51,29 @@ string LabSesh::format(string fmt) const {
 }
 
 
+list<vector<string>> LabSessions::to_table() const {
+    list<vector<string>> table;
+    for (auto it=this->begin(); it!=this->end(); it++) {
+        // Create row
+        vector<string> row;
+        row.reserve(3);
+        // Column 1
+        row.push_back(it->first);
+        // Column 2
+        row.push_back(format_weekday(it->second.weekday));
+        // Column 3
+        stringstream time_range;
+        time_range << format_datetime(it->second.start, TIME_FMT)
+                   << " - "
+                   << format_datetime(it->second.end, TIME_FMT);
+        row.push_back(time_range.str());
+        // Append row
+        table.push_back(move(row));
+    }
+    return table;
+}
+
+
 ostream& operator<<(ostream& os, const LabSesh& ls) {
     return os << ls.id;
 }

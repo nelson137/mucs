@@ -104,6 +104,34 @@ int parse_weekday(const string& w_str) {
 }
 
 
+void print_table(const list<vector<string>>& table, const string& delim) {
+    if (table.empty())
+        return;
+
+    int n_cols = table.front().size();
+    vector<int> widths;
+    widths.reserve(n_cols);
+
+    for (int i=0; i<n_cols; i++) {
+        widths.push_back(
+            max_element(
+                table.cbegin(), table.cend(),
+                // Must capture `i` by reference to get most up-to-date value
+                [&i] (const vector<string>& a, const vector<string>& b) {
+                    return a[i].size() < b[i].size();
+                }
+            )->at(i).size()
+        );
+    }
+
+    for (const vector<string>& row : table) {
+        for (int i=0; i<n_cols; i++)
+            cout << setw(widths[i]) << setfill(' ') << left << row[i] << delim;
+        cout << endl;
+    }
+}
+
+
 vector<string> string_split(const string& s, const string& delim) {
     vector<string> tokens;
     size_t pos = 0;

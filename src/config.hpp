@@ -8,6 +8,7 @@
 #include <ctime>
 #include <fstream>
 #include <initializer_list>
+#include <list>
 #include <map>
 #include <set>
 #include <sstream>
@@ -51,9 +52,11 @@ struct Hw {
 };
 
 
-struct Homeworks : public set<pair<string,Hw>, Hw::compare> {
+struct Homeworks : public set<pair<string,Hw>, Hw::compare>, public Tabular {
 
     using set<pair<string,Hw>, Hw::compare>::set;
+
+    list<vector<string>> to_table() const override;
 
     friend void from_json(const json& j, Homeworks& homeworks);
     friend void to_json(json& j, const Homeworks& homeworks);
@@ -89,9 +92,11 @@ struct LabSesh {
 };
 
 
-struct LabSessions : public map<string, LabSesh> {
+struct LabSessions : public map<string, LabSesh>, public Tabular {
 
     using map<string, LabSesh>::map;
+
+    list<vector<string>> to_table() const override;
 
     friend void from_json(const json& j, LabSessions& lab_sessions);
     friend void to_json(json& j, const LabSessions& lab_sessions);
@@ -104,9 +109,11 @@ struct LabSessions : public map<string, LabSesh> {
  ************************************************/
 
 
-struct Roster : public map<string, vector<string>> {
+struct Roster : public map<string, vector<string>>, public Tabular {
 
     using map<string, vector<string>>::map;
+
+    list<vector<string>> to_table() const override;
 
     friend void from_json(const json& j, Roster& roster);
     friend void to_json(json& j, const Roster& roster);
