@@ -34,12 +34,6 @@ using json = nlohmann::json;
 
 extern system_clock::time_point NOW;
 
-#ifdef MUCS_TEST
-extern string TEST_PROMPT_YESNO;
-extern bool   TEST_SOURCES_COMPILE;
-extern string TEST_USER;
-#endif
-
 
 system_clock::time_point current_time();
 
@@ -62,8 +56,6 @@ system_clock::time_point parse_datetime(const string& dt_str);
 system_clock::time_point parse_time(const string& t_str);
 
 int parse_weekday(const string& w_str);
-
-bool prompt_yesno(const string& prompt = "");
 
 vector<string> string_split(const string& s, const string& delim);
 
