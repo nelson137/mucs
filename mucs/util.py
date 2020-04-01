@@ -12,15 +12,10 @@ import sys
 from subprocess import DEVNULL
 from textwrap import TextWrapper
 
-from .consts import *
-from .exc import *
-from .printer import printline
+from mucs.consts import TERM_WIDTH_FACTOR, TIME_FMT, W_RED
+from mucs.printer import printline
 
 # }}}
-
-
-__all__ = ['die', 'get_password', 'get_term_width', 'md5', 'parse_time',
-           'parse_weekday', 'print_table', 'weekday_to_str']
 
 
 def die(*args):

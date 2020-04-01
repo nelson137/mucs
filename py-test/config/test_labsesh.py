@@ -2,7 +2,7 @@ import datetime
 import unittest
 
 from mucs.config import LabSesh
-from test_utils import *
+from test_utils import NOW
 
 
 class TestLabSesh(unittest.TestCase):

@@ -8,9 +8,20 @@ import os
 import re
 from collections import namedtuple
 
-from .consts import *
+from .consts import (
+    BOLD,
+    CONFIG_D,
+    GREEN,
+    HOMEWORK_FMT,
+    HOMEWORK_PRETTY_FMT,
+    RED,
+    RESET,
+    SUBMISSION_D,
+    TIME_PRETTY_FMT,
+    UNBOLD,
+)
 from .exc import MucsError
-from .util import *
+from .util import parse_time, parse_weekday, weekday_to_str
 
 # }}}
 
@@ -96,7 +107,7 @@ class LabSessions(dict):
                     'Lab entries must be of type string',
                     reason=self.parse_obj % letter)
 
-            mo = re.search('(\S+)\s*(\S+)\s*-\s*(\S+)', entry)
+            mo = re.search(r'(\S+)\s*(\S+)\s*-\s*(\S+)', entry)
             if not mo:
                 raise MucsError(
                     'Lab entries must be in the format '

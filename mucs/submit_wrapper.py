@@ -13,9 +13,8 @@ from pathlib import PosixPath
 from stat import S_IRWXG, S_IRWXO, S_IRWXU
 from subprocess import DEVNULL, PIPE
 
-from .consts import *
-from .exc import MucsError
-from .util import *
+from mucs.consts import TEMPDIR_PREFIX
+from mucs.exc import MucsError
 
 # }}}
 
@@ -44,7 +43,7 @@ class SubmitWrapper:
         logfile_nums = [0]
         for fn in os.listdir(self.submit_d):
             try:
-                num = re.search('make.(\d+).log', fn).groups()[0]
+                num = re.search(r'make.(\d+).log', fn).groups()[0]
                 logfile_nums.append(int(num))
             except AttributeError:
                 pass  # re.search() found no match in fn

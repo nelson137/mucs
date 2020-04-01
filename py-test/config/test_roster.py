@@ -2,7 +2,12 @@ import unittest
 
 from mucs.config import Roster
 from mucs.exc import MucsError
-from test_utils import *
+from test_utils import (
+    MockCourseConfig,
+    random_char,
+    random_number,
+    random_string,
+)
 
 
 class TestRoster(unittest.TestCase):

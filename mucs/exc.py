@@ -4,12 +4,9 @@
 
 import re
 
-from .consts import *
+from mucs.consts import W_BOLD, W_RED
 
 # }}}
-
-
-__all__ = ['MucsError']
 
 
 class _ColorError(Exception):

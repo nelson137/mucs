@@ -2,10 +2,16 @@ import datetime
 import unittest
 
 from mucs.config import LabSessions
-from mucs.consts import *
+from mucs.consts import TIME_FMT
 from mucs.exc import MucsError
 from mucs.util import weekday_to_str
-from test_utils import *
+from test_utils import (
+    MockCourseConfig,
+    NOW,
+    random_char,
+    random_number,
+    random_string
+)
 
 
 class TestLabSessions(unittest.TestCase):

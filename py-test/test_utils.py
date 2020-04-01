@@ -20,7 +20,7 @@ def random_char(hex=False):
 
 def random_number(digits=4):
     s = str(random.randint(1, 9))
-    for n in range(digits - 1):
+    for _ in range(digits - 1):
         s += str(random.randint(0, 9))
     return int(s)
 

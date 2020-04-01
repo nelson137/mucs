@@ -7,12 +7,19 @@ import subprocess
 from argparse import ArgumentParser
 from subprocess import DEVNULL, PIPE
 
-from .config import *
-from .consts import *
-from .exc import MucsError
-from .printer import Printer, printline
-from .submit_wrapper import SubmitWrapper
-from .util import *
+from mucs.config import Configs
+from mucs.consts import (
+    CONFIG_D,
+    SUBMISSION_D,
+    W_BOLD,
+    W_GREEN,
+    W_RED,
+    DumpFlags,
+)
+from mucs.exc import MucsError
+from mucs.printer import Printer, printline
+from mucs.submit_wrapper import SubmitWrapper
+from mucs.util import die, get_password, get_term_width, md5, print_table
 
 # }}}
 
@@ -227,17 +234,15 @@ def main():
 
     # Subcommand Admin Update-Password
 
-    parser_admin_update = subparsers_admin.add_parser(
-        'update-password', parents=[admin_subcmd_args])
+    subparsers_admin.add_parser('update-password', parents=[admin_subcmd_args])
 
     # Subcommand Admin Update-Roster
 
-    parser_admin_update = subparsers_admin.add_parser(
-        'update-roster', parents=[admin_subcmd_args])
+    subparsers_admin.add_parser('update-roster', parents=[admin_subcmd_args])
 
     # Subcommand Examples
 
-    parser_examples = subparsers.add_parser('examples', add_help=False)
+    subparsers.add_parser('examples', add_help=False)
 
     # Subcommand Submit
 

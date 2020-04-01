@@ -1,9 +1,9 @@
 import unittest
 
 from mucs.config import Homeworks
-from mucs.consts import *
+from mucs.consts import HOMEWORK_FMT
 from mucs.exc import MucsError
-from test_utils import *
+from test_utils import MockCourseConfig, NOW, random_number, random_string
 
 
 class TestHomeworks(unittest.TestCase):
