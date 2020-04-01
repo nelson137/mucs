@@ -111,7 +111,7 @@ template<typename Container>
 string stl_join(const Container& c, const string& delim = ",") {
     if (c.size() == 0)
         return "";
-    return accumulate<typename Container::const_iterator,string>(
+    return accumulate(
         c.cbegin() + 1, c.cend(),
         c.front(),
         [&] (const string& a, const string& b) -> string {

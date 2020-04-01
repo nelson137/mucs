@@ -183,7 +183,7 @@ TEST_CASE("stl_contains", "[util][stl_contains]") {
 
 
 TEST_CASE("stl_join", "[util][stl_join]") {
-    vector<int> container;
+    vector<string> container;
     string expected;
 
     SECTION("empty container") {
@@ -192,12 +192,12 @@ TEST_CASE("stl_join", "[util][stl_join]") {
 
     SECTION("non-empty container") {
         SECTION("with 1 element") {
-            container = {1};
-            expected = "1";
+            container = {"a"};
+            expected = "a";
         }
         SECTION("with multiple element") {
-            container = {1, 2, 3};
-            expected = "1,2,3";
+            container = {"a", "b", "c"};
+            expected = "a,b,c";
         }
     }
 
