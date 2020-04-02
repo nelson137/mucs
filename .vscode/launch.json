@@ -11,7 +11,7 @@
             "miDebuggerPath": "/usr/bin/gdb",
             "windows": {
                 "program":"${workspaceRoot}\\a.out",
-                "miDebuggerPath": "C:\\cygwin64\\bin\\gdb.exe",
+                "miDebuggerPath": "C:\\cygwin64\\bin\\gdb.exe"
             },
             "externalConsole": false,
             "MIMode": "gdb",
@@ -33,7 +33,7 @@
             "miDebuggerPath": "/usr/bin/gdb",
             "windows": {
                 "program":"${workspaceRoot}\\runtests.exe",
-                "miDebuggerPath": "C:\\cygwin64\\bin\\gdb.exe",
+                "miDebuggerPath": "C:\\cygwin64\\bin\\gdb.exe"
             },
             "externalConsole": false,
             "MIMode": "gdb",
