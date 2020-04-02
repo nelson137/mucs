@@ -23,6 +23,28 @@
                 }
             ],
             "preLaunchTask": "make"
+        },
+        {
+            "name": "C++ Test",
+            "type": "cppdbg",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceRoot}/runtests",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "windows": {
+                "program":"${workspaceRoot}\\runtests.exe",
+                "miDebuggerPath": "C:\\cygwin64\\bin\\gdb.exe",
+            },
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "make test"
         }
     ]
 }
