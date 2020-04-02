@@ -9,8 +9,6 @@
             "${workspaceFolder}/libmucs/include"
         ],
         "mucsCompilerArgs": [
-            "-g",
-            "-c",
             "-pedantic",
             "-Wall",
             "-Werror",
@@ -33,8 +31,7 @@
                 "/usr/include/c++/7"
             ],
             "defines": [
-                "_XOPEN_SOURCE=700",
-                "_MUCS_ROOT_LOCAL"
+                "_XOPEN_SOURCE=700"
             ],
             "browse": {
                 "path": [
