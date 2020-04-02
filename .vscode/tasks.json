@@ -13,6 +13,18 @@
         "showReuseMessage": false,
         "clear": false
     },
+    "inputs": [
+        {
+            "id": "run-args",
+            "type": "pickString",
+            "description": "arguments for the executable",
+            "options": [
+                "submit 1050 lab t.c",
+                "submit 1050 hw t.c",
+                "admin dump 1050"
+            ]
+        }
+    ],
     "tasks": [
         {
             "label": "make",
@@ -50,9 +62,8 @@
         {
             "label": "run",
             "group": "build",
-            "type": "process",
-            "command": "./a.out",
-            "args": ["submit", "1050", "lab", "t.c"],
+            "type": "shell",
+            "command": "./a.out ${input:run-args}",
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": ".\\a.out"
