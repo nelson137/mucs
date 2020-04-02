@@ -5,123 +5,82 @@
             "MUCS_ROOT": "local"
         }
     },
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+    },
     "tasks": [
         {
             "label": "make",
+            "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
+            "args": ["-j", "MUCS_ROOT=local"],
+            "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
-            },
-            "args": ["-j", "MUCS_ROOT=local"],
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
             }
         },
         {
             "label": "make test",
+            "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
+            "args": ["-j", "test"],
+            "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
-            },
-            "args": ["-j", "test"],
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
             }
         },
         {
             "label": "make clean",
+            "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
+            "args": ["clean"],
+            "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
-            },
-            "args": ["clean"],
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
             }
         },
         {
             "label": "run",
+            "group": "build",
             "type": "process",
             "command": "./a.out",
+            "args": ["submit", "1050", "lab", "t.c"],
+            "problemMatcher": ["$gcc"],
             "windows": {
                 "command": ".\\a.out"
-            },
-            "args": ["submit", "1050", "lab", "t.c"],
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
             }
         },
         {
             "label": "runtests",
+            "group": "build",
             "type": "process",
             "command": "./runtests",
+            "problemMatcher": ["$gcc"],
             "windows": {
                 "command": ".\\runtests.exe"
-            },
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
             }
         },
         {
             "label": "make & run",
+            "group": "build",
             "dependsOn": ["make", "run"],
             "dependsOrder": "sequence",
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
+            "problemMatcher": ["$gcc"]
         },
         {
             "label": "make test & runtests",
+            "group": "build",
             "dependsOn": ["make test", "runtests"],
             "dependsOrder": "sequence",
-            "group": "build",
-            "problemMatcher": ["$gcc"],
-            "presentation": {
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
+            "problemMatcher": ["$gcc"]
         }
     ]
 }
