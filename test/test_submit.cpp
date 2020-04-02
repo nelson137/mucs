@@ -112,6 +112,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, try_compile_sources)).Return(true);
+    Fake(Method(spy, submit_summary));
     When(Method(spy, prompt_yesno)).Return(false);
 
     SECTION("when there are no homeworks") {
@@ -158,6 +159,7 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, prompt_yesno)).Return(false);
+    Fake(Method(spy, submit_summary));
     When(Method(spy, try_compile_sources)).Return(true);
 
     REQUIRE_THROWS_WITH(spy.get().submit(), "Submission cancelled");
