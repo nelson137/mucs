@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "picosha2.h"
+
 #include "mucs/except.hpp"
 
 #include "config.hpp"
@@ -57,6 +59,8 @@ struct Mucs {
     void submit();
 
     // Admin subcommand
+
+    virtual void admin_authenticate();
 
     void admin_dump();
 
