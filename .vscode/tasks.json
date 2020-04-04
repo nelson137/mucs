@@ -21,7 +21,8 @@
             "options": [
                 "submit 1050 lab t.c",
                 "submit 1050 hw t.c",
-                "admin dump 1050"
+                "admin 1050 dump",
+                "admin 1050 update-password"
             ]
         }
     ],
