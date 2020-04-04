@@ -24,7 +24,7 @@ DEFINES   += -D_XOPEN_SOURCE=700 -U__STRICT_ANSI__
 endif
 
 define can-find-exe
-$(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
+$(shell which $1 >/dev/null 2>&1 && echo yes)
 endef
 
 # Return a non-empty string if any element of $2 is found in $1

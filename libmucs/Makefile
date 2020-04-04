@@ -10,7 +10,7 @@ CFLAGS += -Wa,-mbig-obj -D_XOPEN_SOURCE=700 -U__STRICT_ANSI__
 endif
 
 define can-find-exe
-$(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
+$(shell which $1 >/dev/null 2>&1 && echo yes)
 endef
 
 CXX  := /usr/bin/g++
