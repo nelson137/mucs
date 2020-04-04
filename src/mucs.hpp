@@ -41,29 +41,29 @@ struct Mucs {
 
     int dump_flags = 0;
 
-    // Subcommand invocation
+    // Subcommand Invocation : mucs.cpp
 
     void invoke(void (Mucs::*subcmd)());
 
     function<void()> get_invoke(void (Mucs::*subcmd)());
 
-    // Util
-
-    virtual bool prompt_yesno(const string& prompt);
-
-    // Submit subcommand
-
-    virtual bool try_compile_sources();
-
-    virtual void submit_summary(const LabSesh& lab, const string& assignment);
-
-    void submit();
-
-    // Admin subcommand
+    // Util : mucs.cpp
 
     virtual void admin_authenticate();
 
-    virtual void update_admin_hash(const string& new_hash);
+    virtual bool prompt_yesno(const string& prompt);
+
+    virtual void submit_summary(const LabSesh& lab, const string& assignment);
+
+    virtual bool try_compile_sources();
+
+    virtual void update_config_admin_hash(const string& new_hash);
+
+    // Submit Subcommand : mucs-submit.cpp
+
+    void submit();
+
+    // Admin Subcommand : mucs-admin.cpp
 
     void admin_dump();
 

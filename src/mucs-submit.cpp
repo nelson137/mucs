@@ -1,35 +1,6 @@
 #include "mucs.hpp"
 
 
-bool Mucs::try_compile_sources() {
-    Proc p = {COMPILE_SCRIPT, "-o", "/dev/null"};
-    p.extend(this->sources);
-
-    Proc::Ret ret = p.execute();
-    if (ret.err.size())
-        cerr << ret.err;
-
-    return ret.code == 0;
-}
-
-
-void Mucs::submit_summary(const LabSesh& lab, const string& assignment) {
-    int w = get_term_width() * TERM_WIDTH_COEFF;
-    const string spacer = string(min(w, 80), '=');
-
-    cout << w_green(spacer) << endl;
-    cout << "Course     : " << w_bold(course) << endl;
-    cout << "Lab        : " << w_bold(lab) << endl;
-    cout << "Assignment : " << w_bold(assignment) << endl;
-    cout << "User       : " << w_bold(this->user) << endl;
-    cout << "Files      :";
-    for (const Path& s : this->sources)
-        cout << ' ' << w_bold(s);
-    cout << endl;
-    cout << w_green(spacer) << endl;
-}
-
-
 void Mucs::submit() {
     if (not config.roster.count(this->user))
         throw mucs_exception("User not in course:", this->user);
