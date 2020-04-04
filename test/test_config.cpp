@@ -79,6 +79,64 @@ TEST_CASE("value for key admin_hash has incorrect type",
 }
 
 
+TEST_CASE("config has no key homeworks", "[config][homeworks]") {
+    json data = new_config_data();
+    data.erase("homeworks");
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("homeworks", "object")
+    );
+}
+
+
+TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
+    json data = new_config_data();
+    data["homeworks"] = rand_int(9);
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("homeworks", "object")
+    );
+}
+
+
+TEST_CASE("config has no key labs", "[config][labs]") {
+    json data = new_config_data();
+    data.erase("labs");
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("labs", "object")
+    );
+}
+
+
+TEST_CASE("value for key labs has incorrect type", "[config][labs]") {
+    json data = new_config_data({ {"labs", rand_int(9)} });
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("labs", "object")
+    );
+}
+
+
+TEST_CASE("config has no key roster", "[config][roster]") {
+    json data = new_config_data();
+    data.erase("roster");
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("roster", "object")
+    );
+}
+
+
+TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
+    json data = new_config_data({ {"roster", rand_int(9)} });
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("roster", "object")
+    );
+}
+
+
 TEST_CASE("config is valid", "[config]") {
     json data = new_config_data();
     REQUIRE_NOTHROW(Config::parse(data));

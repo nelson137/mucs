@@ -5,17 +5,13 @@
 #include <string>
 
 #include "catch.hpp"
-#include "fakeit.hpp"
 #include "json.hpp"
-
-#include "mucs/except.hpp"
 
 #include "util.hpp"
 
 #include "../src/config.hpp"
 #include "../src/path.hpp"
 
-using namespace fakeit;
 using namespace std;
 using Catch::Matchers::Equals;
 using json = nlohmann::json;

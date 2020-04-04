@@ -1,4 +1,4 @@
-#include "test_submit.hpp"
+#include "test_mucs_submit.hpp"
 
 
 TEST_CASE("submit user not in course", "[mucs][submit]") {

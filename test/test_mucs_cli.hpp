@@ -1,5 +1,5 @@
-#ifndef TEST_CLI_HPP
-#define TEST_CLI_HPP
+#ifndef TEST_MUCS_CLI_HPP
+#define TEST_MUCS_CLI_HPP
 
 
 #include "catch.hpp"

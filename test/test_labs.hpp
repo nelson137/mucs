@@ -2,13 +2,10 @@
 #define TEST_LABS_HPP
 
 
-#include <ctime>
-#include <iomanip>
 #include <string>
 
 #include "catch.hpp"
 
-#include "mucs/except.hpp"
 #include "mucs/random.hpp"
 
 #include "util.hpp"

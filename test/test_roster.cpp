@@ -1,25 +1,6 @@
 #include "test_roster.hpp"
 
 
-TEST_CASE("config has no key roster", "[config][roster]") {
-    json data = new_config_data();
-    data.erase("roster");
-    REQUIRE_THROWS_WITH(
-        Config::parse(data),
-        error_prop("roster", "object")
-    );
-}
-
-
-TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
-    json data = new_config_data({ {"roster", rand_int(9)} });
-    REQUIRE_THROWS_WITH(
-        Config::parse(data),
-        error_prop("roster", "object")
-    );
-}
-
-
 TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
     string user = rand_user();
     json data = { {user, rand_int(9)} };

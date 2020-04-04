@@ -1,26 +1,6 @@
 #include "test_homeworks.hpp"
 
 
-TEST_CASE("config has no key homeworks", "[config][homeworks]") {
-    json data = new_config_data();
-    data.erase("homeworks");
-    REQUIRE_THROWS_WITH(
-        Config::parse(data),
-        error_prop("homeworks", "object")
-    );
-}
-
-
-TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
-    json data = new_config_data();
-    data["homeworks"] = rand_int(9);
-    REQUIRE_THROWS_WITH(
-        Config::parse(data),
-        error_prop("homeworks", "object")
-    );
-}
-
-
 TEST_CASE("homeworks entry has incorrect type", "[homeworks][entry]") {
     string key = rand_hw_name();
     json data = { {key, rand_int(9)} };
