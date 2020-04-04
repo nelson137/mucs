@@ -52,27 +52,30 @@ struct Mucs {
 
     // Util : mucs.cpp
 
-    virtual void admin_authenticate();
+    virtual void admin_authenticate() const;
 
-    virtual void dump_currents();
+    virtual void dump_currents() const;
 
-    virtual void dump_homeworks();
+    virtual void dump_homeworks() const;
 
-    virtual void dump_labs();
+    virtual void dump_labs() const;
 
-    virtual void dump_roster();
+    virtual void dump_roster() const;
 
-    virtual string get_user();
+    virtual string get_user() const;
 
-    virtual string prompt_password(const string& prompt);
+    virtual string prompt_password(const string& prompt) const;
 
-    virtual bool prompt_yesno(const string& prompt);
+    virtual bool prompt_yesno(const string& prompt) const;
 
-    virtual void submit_summary(const LabSesh& lab, const string& assignment);
+    virtual void submit_summary(
+        const LabSesh& lab,
+        const string& assignment
+    ) const;
 
-    virtual bool try_compile_sources();
+    virtual bool try_compile_sources() const;
 
-    virtual void update_config_admin_hash(const string& new_hash);
+    virtual void update_config_admin_hash(const string& new_hash) const;
 
     // Submit Subcommand : mucs-submit.cpp
 

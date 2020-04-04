@@ -1,7 +1,7 @@
 #include "mucs.hpp"
 
 
-void Mucs::admin_authenticate() {
+void Mucs::admin_authenticate() const {
     stringstream prompt;
     prompt << "Admin password for " << this->course << ": ";
     string password = this->prompt_password(prompt.str());
@@ -10,7 +10,7 @@ void Mucs::admin_authenticate() {
 }
 
 
-void Mucs::dump_currents() {
+void Mucs::dump_currents() const {
     string hw;
     try {
         hw = this->config.get_current_hw();
@@ -28,33 +28,33 @@ void Mucs::dump_currents() {
 }
 
 
-void Mucs::dump_homeworks() {
+void Mucs::dump_homeworks() const {
     cout << "Homeworks:" << endl;
     print_table(this->config.homeworks.to_table());
     cout << endl;
 }
 
 
-void Mucs::dump_labs() {
+void Mucs::dump_labs() const {
     cout << "Lab Sessions:" << endl;
     print_table(this->config.lab_sessions.to_table());
     cout << endl;
 }
 
 
-void Mucs::dump_roster() {
+void Mucs::dump_roster() const {
     cout << "Roster:" << endl;
     print_table(this->config.roster.to_table());
     cout << endl;
 }
 
 
-string Mucs::get_user() {
+string Mucs::get_user() const {
     return getpwuid(getuid())->pw_name;
 }
 
 
-string Mucs::prompt_password(const string& prompt) {
+string Mucs::prompt_password(const string& prompt) const {
     if (prompt.size())
         cout << prompt;
 
@@ -81,7 +81,7 @@ string Mucs::prompt_password(const string& prompt) {
 }
 
 
-bool Mucs::prompt_yesno(const string& prompt) {
+bool Mucs::prompt_yesno(const string& prompt) const {
     if (prompt.size())
         cout << prompt;
     string response;
@@ -92,7 +92,7 @@ bool Mucs::prompt_yesno(const string& prompt) {
 }
 
 
-void Mucs::submit_summary(const LabSesh& lab, const string& assignment) {
+void Mucs::submit_summary(const LabSesh& lab, const string& assignment) const {
     int w = get_term_width() * TERM_WIDTH_COEFF;
     const string spacer = string(min(w, 80), '=');
 
@@ -109,7 +109,7 @@ void Mucs::submit_summary(const LabSesh& lab, const string& assignment) {
 }
 
 
-bool Mucs::try_compile_sources() {
+bool Mucs::try_compile_sources() const {
     Proc p = {COMPILE_SCRIPT, "-o", "/dev/null"};
     p.extend(this->sources);
 
@@ -121,7 +121,7 @@ bool Mucs::try_compile_sources() {
 }
 
 
-void Mucs::update_config_admin_hash(const string& new_hash) {
+void Mucs::update_config_admin_hash(const string& new_hash) const {
     // Generate new config with jq
     Proc p = {
         "/usr/bin/jq", "-M", "--indent", "4",
