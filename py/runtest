@@ -1,9 +1,0 @@
-#!/usr/bin/env python3
-
-import os
-import unittest
-
-here = os.path.dirname(os.path.realpath(__file__))
-tests_dir = os.path.join(here, 'py-test')
-suite = unittest.TestLoader().discover(tests_dir)
-unittest.TextTestRunner().run(suite)
