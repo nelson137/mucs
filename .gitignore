@@ -1,5 +1,6 @@
 a.out
 runtests
+runtests.exe
 .ccls-cache/
 build/
 coverage/
