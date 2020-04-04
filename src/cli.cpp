@@ -4,8 +4,9 @@
 unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
     vector<string> configs_available = Path(CONFIG_DIR).ls_base();
 
-    auto app = unique_ptr<CLI::App>(new CLI::App);
+    // App
 
+    unique_ptr<CLI::App> app(new CLI::App);
     app->require_subcommand();
 
     // Submit subcommand
@@ -31,16 +32,16 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
         ->add_subcommand("admin")
         ->require_subcommand();
 
+    admin_subcmd
+        ->add_option("course", mucs.course)
+        ->required()
+        ->check(CLI::IsMember(configs_available));
+
     // Admin Dump subcommand
 
     CLI::App *admin_dump_subcmd = admin_subcmd
         ->add_subcommand("dump")
         ->callback(mucs.get_invoke(&Mucs::admin_dump));
-
-    admin_dump_subcmd
-        ->add_option("course", mucs.course)
-        ->required()
-        ->check(CLI::IsMember(configs_available));
 
     admin_dump_subcmd->add_flag_callback("-c,--current-assignments", [&] () {
         mucs.dump_flags |= Mucs::DumpCurrents;
@@ -57,14 +58,9 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
 
     // Admin Update Password subcommand
 
-    CLI::App *admin_update_password_subcmd = admin_subcmd
+    admin_subcmd
         ->add_subcommand("update-password")
         ->callback(mucs.get_invoke(&Mucs::admin_update_password));
-
-    admin_update_password_subcmd
-        ->add_option("course", mucs.course)
-        ->required()
-        ->check(CLI::IsMember(configs_available));
 
     return app;
 }
