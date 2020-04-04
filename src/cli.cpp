@@ -55,5 +55,16 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
         mucs.dump_flags |= Mucs::DumpHomeworks;
     });
 
+    // Admin Update Password subcommand
+
+    CLI::App *admin_update_password_subcmd = admin_subcmd
+        ->add_subcommand("update-password")
+        ->callback(mucs.get_invoke(&Mucs::admin_update_password));
+
+    admin_update_password_subcmd
+        ->add_option("course", mucs.course)
+        ->required()
+        ->check(CLI::IsMember(configs_available));
+
     return app;
 }

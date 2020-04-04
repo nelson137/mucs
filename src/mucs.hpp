@@ -63,7 +63,11 @@ struct Mucs {
 
     virtual void admin_authenticate();
 
+    virtual void update_admin_hash(const string& new_hash);
+
     void admin_dump();
+
+    void admin_update_password();
 
 };
 

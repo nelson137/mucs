@@ -10,6 +10,26 @@ void Mucs::admin_authenticate() {
 }
 
 
+void Mucs::update_admin_hash(const string& new_hash) {
+    // Generate new config with jq
+    Proc p = {
+        "/usr/bin/jq", "-M", "--indent", "4",
+        ".admin_hash=\"" + new_hash + "\"",
+        this->config.filename
+    };
+    Proc::Ret ret = p.execute();
+
+    if (ret.code != 0) {
+        cerr << ret.err;
+        throw mucs_exception(
+            "Failed to update admin hash for course:", to_string(this->course));
+    }
+
+    // Write new config to disk
+    ofstream(this->config.filename, ios::out | ios::trunc) << ret.out;
+}
+
+
 void Mucs::admin_dump() {
     this->admin_authenticate();
 
@@ -45,4 +65,19 @@ void Mucs::admin_dump() {
         print_table(this->config.roster.to_table());
         cout << endl;
     }
+}
+
+
+void Mucs::admin_update_password() {
+    this->admin_authenticate();
+
+    stringstream prompt;
+    prompt << "New password for " << this->course << ": ";
+
+    string new_pass = prompt_password(prompt.str());
+
+    if (prompt_password("Confirm new password: ") != new_pass)
+        throw mucs_exception("Passwords do not match");
+
+    this->update_admin_hash(picosha2::hash256_hex_string(new_pass));
 }
