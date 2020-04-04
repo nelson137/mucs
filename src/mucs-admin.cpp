@@ -5,37 +5,19 @@ void Mucs::admin_dump() {
     this->admin_authenticate();
 
     if (this->dump_flags == 0)
-        this->dump_flags = DumpHomeworks | DumpLabs | DumpRoster | DumpCurrents;
+        this->dump_flags = DumpCurrents | DumpHomeworks | DumpLabs | DumpRoster;
 
-    if (this->dump_flags & DumpCurrents) {
-        cout << "Current Assignments:" << endl;
-        string hw, lab;
-        try { hw = this->config.get_current_hw(); }
-        catch (const mucs_exception& me) {}
-        try { lab = this->config.get_current_lab(); }
-        catch (const mucs_exception& me) {}
-        cout << "hw   " << hw << endl;
-        cout << "lab  " << lab << endl;
-        cout << endl;
-    }
+    if (this->dump_flags & DumpCurrents)
+        this->dump_currents();
 
-    if (this->dump_flags & DumpHomeworks) {
-        cout << "Homeworks:" << endl;
-        print_table(this->config.homeworks.to_table());
-        cout << endl;
-    }
+    if (this->dump_flags & DumpHomeworks)
+        this->dump_homeworks();
 
-    if (this->dump_flags & DumpLabs) {
-        cout << "Lab Sessions:" << endl;
-        print_table(this->config.lab_sessions.to_table());
-        cout << endl;
-    }
+    if (this->dump_flags & DumpLabs)
+        this->dump_labs();
 
-    if (this->dump_flags & DumpRoster) {
-        cout << "Roster:" << endl;
-        print_table(this->config.roster.to_table());
-        cout << endl;
-    }
+    if (this->dump_flags & DumpRoster)
+        this->dump_roster();
 }
 
 

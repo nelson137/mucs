@@ -10,6 +10,45 @@ void Mucs::admin_authenticate() {
 }
 
 
+void Mucs::dump_currents() {
+    string hw;
+    try {
+        hw = this->config.get_current_hw();
+    } catch (...) {}
+
+    string lab;
+    try {
+        lab = this->config.get_current_lab();
+    } catch (...) {}
+
+    cout << "Current Assignments:" << endl;
+    cout << "hw   " << hw << endl;
+    cout << "lab  " << lab << endl;
+    cout << endl;
+}
+
+
+void Mucs::dump_homeworks() {
+    cout << "Homeworks:" << endl;
+    print_table(this->config.homeworks.to_table());
+    cout << endl;
+}
+
+
+void Mucs::dump_labs() {
+    cout << "Lab Sessions:" << endl;
+    print_table(this->config.lab_sessions.to_table());
+    cout << endl;
+}
+
+
+void Mucs::dump_roster() {
+    cout << "Roster:" << endl;
+    print_table(this->config.roster.to_table());
+    cout << endl;
+}
+
+
 string Mucs::prompt_password(const string& prompt) {
     if (prompt.size())
         cout << prompt;

@@ -54,6 +54,14 @@ struct Mucs {
 
     virtual void admin_authenticate();
 
+    virtual void dump_currents();
+
+    virtual void dump_homeworks();
+
+    virtual void dump_labs();
+
+    virtual void dump_roster();
+
     virtual string prompt_password(const string& prompt);
 
     virtual bool prompt_yesno(const string& prompt);
