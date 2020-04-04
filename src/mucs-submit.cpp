@@ -8,10 +8,13 @@ void Mucs::submit() {
     LabSesh lab = config.get_lab(this->user);
     string assignment = config.get_assignment(this->assignment_type);
 
-    // Make sure sources exist
-    for (const Path& src : this->sources)
+    // Make sure sources exist and are files
+    for (const Path& src : this->sources) {
         if (src.exists() == false)
             throw mucs_exception("Source file does not exist:", src);
+        if (src.is_dir())
+            throw mucs_exception("Cannot submit directories:", src);
+    }
 
     // Make sure sources compile
     if (this->try_compile_sources() == false)
