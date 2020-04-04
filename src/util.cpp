@@ -57,11 +57,6 @@ int get_term_width() {
 }
 
 
-string get_user() {
-    return getpwuid(getuid())->pw_name;
-}
-
-
 string join_paths(string a, deque<string> parts) {
     string b = parts.front();
     parts.pop_front();

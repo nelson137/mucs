@@ -49,6 +49,11 @@ void Mucs::dump_roster() {
 }
 
 
+string Mucs::get_user() {
+    return getpwuid(getuid())->pw_name;
+}
+
+
 string Mucs::prompt_password(const string& prompt) {
     if (prompt.size())
         cout << prompt;

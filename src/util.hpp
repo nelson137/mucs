@@ -58,8 +58,6 @@ string format_weekday(int weekday);
 
 int get_term_width();
 
-string get_user();
-
 string join_paths(string a, deque<string> parts);
 
 system_clock::time_point parse_datetime(const string& dt_str);

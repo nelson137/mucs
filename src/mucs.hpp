@@ -62,6 +62,8 @@ struct Mucs {
 
     virtual void dump_roster();
 
+    virtual string get_user();
+
     virtual string prompt_password(const string& prompt);
 
     virtual bool prompt_yesno(const string& prompt);
