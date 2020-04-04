@@ -18,6 +18,11 @@ LDLIBS    := -lmucs
 COVFLAGS  :=
 DEFINES   :=
 
+ifneq ($(shell uname -s),Linux)
+CFLAGS    += -Wa,-mbig-obj
+DEFINES   += -D_XOPEN_SOURCE=700 -U__STRICT_ANSI__
+endif
+
 define can-find-exe
 $(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
 endef
@@ -94,7 +99,7 @@ $(TEST_EXE): libmucs $(ALL_OBJS)
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
-	@$(CXX) $(CFLAGS) $(COVFLAGS) -c -MMD $(DEFINES) $< -o $@
+	@$(CXX) -c -MMD $(CFLAGS) $(COVFLAGS) $(DEFINES) $< -o $@
 
 install: $(EXE)
 	mkdir -p $(DEST)/{bin,config.d,submissions}

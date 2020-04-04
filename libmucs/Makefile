@@ -1,13 +1,19 @@
-EXE  := build/libmucs.a
+EXE    := build/libmucs.a
 
-SRCS := $(wildcard src/*.cpp)
-OBJS := $(SRCS:src/%.cpp=build/%.o)
+SRCS   := $(wildcard src/*.cpp)
+OBJS   := $(SRCS:src/%.cpp=build/%.o)
+
+CFLAGS := -std=c++11 -pedantic -Wall -Werror -Iinclude
+
+ifneq ($(shell uname -s),Linux)
+CFLAGS += -Wa,-mbig-obj -D_XOPEN_SOURCE=700 -U__STRICT_ANSI__
+endif
 
 define can-find-exe
 $(shell which $1 2>/dev/null | awk 'NF>1 {print "yes"; exit}')
 endef
 
-CXX  := /usr/bin/g++ -std=c++11 -pedantic -Wall -Werror -Iinclude
+CXX  := /usr/bin/g++
 ifeq ($(call can-find-exe,gccfilter),yes)
 CXX  := gccfilter -c -n -a $(CXX)
 endif
@@ -21,7 +27,7 @@ $(EXE): $(OBJS)
 
 build/%.o: src/%.cpp | build_dir
 	@echo "$< -> $@"
-	@$(CXX) -c -MMD $< -o $@
+	@$(CXX) -c -MMD $(CFLAGS) $< -o $@
 
 clean:
 	rm -rf build
