@@ -45,9 +45,9 @@ void Mucs::admin_update_password() {
     stringstream prompt;
     prompt << "New password for " << this->course << ": ";
 
-    string new_pass = prompt_password(prompt.str());
+    string new_pass = this->prompt_password(prompt.str());
 
-    if (prompt_password("Confirm new password: ") != new_pass)
+    if (this->prompt_password("Confirm new password: ") != new_pass)
         throw mucs_exception("Passwords do not match");
 
     this->update_config_admin_hash(picosha2::hash256_hex_string(new_pass));

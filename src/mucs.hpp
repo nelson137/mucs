@@ -54,6 +54,8 @@ struct Mucs {
 
     virtual void admin_authenticate();
 
+    virtual string prompt_password(const string& prompt);
+
     virtual bool prompt_yesno(const string& prompt);
 
     virtual void submit_summary(const LabSesh& lab, const string& assignment);

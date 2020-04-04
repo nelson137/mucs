@@ -70,8 +70,6 @@ int parse_weekday(const string& w_str);
 
 void print_table(const list<vector<string>>& table, const string& delim = "  ");
 
-string prompt_password(const string& prompt);
-
 vector<string> string_split(const string& s, const string& delim);
 
 string string_strip(string s);
