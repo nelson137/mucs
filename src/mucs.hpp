@@ -48,8 +48,6 @@ struct Mucs {
 
     void invoke(void (Mucs::*subcmd)());
 
-    function<void()> get_invoke(void (Mucs::*subcmd)());
-
     unique_ptr<CLI::App> get_cli();
 
     // Util : mucs.cpp

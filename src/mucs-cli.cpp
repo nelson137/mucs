@@ -8,11 +8,6 @@ void Mucs::invoke(void (Mucs::*subcmd)()) {
 }
 
 
-function<void()> Mucs::get_invoke(void (Mucs::*subcmd)()) {
-    return bind(mem_fn(&Mucs::invoke), ref(*this), subcmd);
-}
-
-
 unique_ptr<CLI::App> Mucs::get_cli() {
     vector<string> configs_available = Path(CONFIG_DIR).ls_base();
 
@@ -21,11 +16,15 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     unique_ptr<CLI::App> app(new CLI::App);
     app->require_subcommand();
 
+    auto invoke_wrapper = [this] (void (Mucs::*subcmd)()) {
+        return bind(mem_fn(&Mucs::invoke), ref(*this), subcmd);
+    };
+
     // Submit subcommand
 
     CLI::App *submit_subcmd = app
         ->add_subcommand("submit")
-        ->callback(this->get_invoke(&Mucs::submit));
+        ->callback(invoke_wrapper(&Mucs::submit));
     submit_subcmd
         ->add_option("course", this->course)
         ->required()
@@ -53,7 +52,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
 
     CLI::App *admin_dump_subcmd = admin_subcmd
         ->add_subcommand("dump")
-        ->callback(this->get_invoke(&Mucs::admin_dump));
+        ->callback(invoke_wrapper(&Mucs::admin_dump));
 
     admin_dump_subcmd->add_flag_callback("-c,--current-assignments", [&] () {
         this->dump_flags |= Mucs::DumpCurrents;
@@ -72,7 +71,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
 
     admin_subcmd
         ->add_subcommand("update-password")
-        ->callback(this->get_invoke(&Mucs::admin_update_password));
+        ->callback(invoke_wrapper(&Mucs::admin_update_password));
 
     return app;
 }
