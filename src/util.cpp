@@ -132,6 +132,33 @@ void print_table(const list<vector<string>>& table, const string& delim) {
 }
 
 
+string prompt_password(const string& prompt) {
+    if (prompt.size())
+        cout << prompt;
+
+    // Get terminal settings
+    termios tty, tty_bak;
+    tcgetattr(STDIN_FILENO, &tty_bak);
+    tty = tty_bak;
+
+    // Setup terminal for password input
+    // https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
+    tty.c_iflag &= ~(BRKINT | ICRNL | IXON);
+    tty.c_oflag &= ~(OPOST);
+    tty.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+    tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+
+    // Read password
+    string password;
+    cin >> password;
+
+    // Restore terminal settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &tty_bak);
+    cout << endl;
+    return password;
+}
+
+
 vector<string> string_split(const string& s, const string& delim) {
     vector<string> tokens;
     size_t pos = 0;

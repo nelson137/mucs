@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <pwd.h>
+#include <termios.h>
 #include <unistd.h>
 
 #include <sys/ioctl.h>
@@ -68,6 +69,8 @@ system_clock::time_point parse_time(const string& t_str);
 int parse_weekday(const string& w_str);
 
 void print_table(const list<vector<string>>& table, const string& delim = "  ");
+
+string prompt_password(const string& prompt);
 
 vector<string> string_split(const string& s, const string& delim);
 

@@ -2,11 +2,10 @@
 
 
 void Mucs::admin_authenticate() {
-    cout << "Admin password for " << this->course << ": ";
-    string response;
-    cin >> response;
-    cout << endl;
-    if (picosha2::hash256_hex_string(response) != this->config.admin_hash)
+    stringstream prompt;
+    prompt << "Admin password for " << this->course << ": ";
+    string password = prompt_password(prompt.str());
+    if (picosha2::hash256_hex_string(password) != this->config.admin_hash)
         throw mucs_exception("Password incorrect");
 }
 
