@@ -1,7 +1,19 @@
-#include "cli.hpp"
+#include "mucs.hpp"
 
 
-unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
+void Mucs::invoke(void (Mucs::*subcmd)()) {
+    this->user = get_user();
+    this->config = Config::parse_file(Path(CONFIG_DIR) / this->course);
+    (this->*subcmd)();
+}
+
+
+function<void()> Mucs::get_invoke(void (Mucs::*subcmd)()) {
+    return bind(mem_fn(&Mucs::invoke), ref(*this), subcmd);
+}
+
+
+unique_ptr<CLI::App> Mucs::get_cli() {
     vector<string> configs_available = Path(CONFIG_DIR).ls_base();
 
     // App
@@ -13,17 +25,17 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
 
     CLI::App *submit_subcmd = app
         ->add_subcommand("submit")
-        ->callback(mucs.get_invoke(&Mucs::submit));
+        ->callback(this->get_invoke(&Mucs::submit));
     submit_subcmd
-        ->add_option("course", mucs.course)
+        ->add_option("course", this->course)
         ->required()
         ->check(CLI::IsMember(configs_available));
     submit_subcmd
-        ->add_option("assignment_type", mucs.assignment_type)
+        ->add_option("assignment_type", this->assignment_type)
         ->required()
         ->check(CLI::IsMember({ "hw", "lab" }));
     submit_subcmd
-        ->add_option("sources", mucs.sources)
+        ->add_option("sources", this->sources)
         ->required();
 
     // Admin subcommand
@@ -33,7 +45,7 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
         ->require_subcommand();
 
     admin_subcmd
-        ->add_option("course", mucs.course)
+        ->add_option("course", this->course)
         ->required()
         ->check(CLI::IsMember(configs_available));
 
@@ -41,26 +53,26 @@ unique_ptr<CLI::App> prepare_cli(Mucs& mucs) {
 
     CLI::App *admin_dump_subcmd = admin_subcmd
         ->add_subcommand("dump")
-        ->callback(mucs.get_invoke(&Mucs::admin_dump));
+        ->callback(this->get_invoke(&Mucs::admin_dump));
 
     admin_dump_subcmd->add_flag_callback("-c,--current-assignments", [&] () {
-        mucs.dump_flags |= Mucs::DumpCurrents;
+        this->dump_flags |= Mucs::DumpCurrents;
     });
     admin_dump_subcmd->add_flag_callback("-l,--labs", [&] () {
-        mucs.dump_flags |= Mucs::DumpLabs;
+        this->dump_flags |= Mucs::DumpLabs;
     });
     admin_dump_subcmd->add_flag_callback("-r,--roster", [&] () {
-        mucs.dump_flags |= Mucs::DumpRoster;
+        this->dump_flags |= Mucs::DumpRoster;
     });
     admin_dump_subcmd->add_flag_callback("-w,--homeworks", [&] () {
-        mucs.dump_flags |= Mucs::DumpHomeworks;
+        this->dump_flags |= Mucs::DumpHomeworks;
     });
 
     // Admin Update Password subcommand
 
     admin_subcmd
         ->add_subcommand("update-password")
-        ->callback(mucs.get_invoke(&Mucs::admin_update_password));
+        ->callback(this->get_invoke(&Mucs::admin_update_password));
 
     return app;
 }

@@ -10,7 +10,6 @@
 
 #include "mucs/except.hpp"
 
-#include "cli.hpp"
 #include "mucs.hpp"
 
 using namespace chrono;

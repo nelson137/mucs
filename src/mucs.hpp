@@ -3,11 +3,14 @@
 
 
 #include <algorithm>
+#include <functional>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include "CLI11.hpp"
 #include "picosha2.h"
 
 #include "mucs/except.hpp"
@@ -41,11 +44,13 @@ struct Mucs {
 
     int dump_flags = 0;
 
-    // Subcommand Invocation : mucs.cpp
+    // CLI : mucs-cli.cpp
 
     void invoke(void (Mucs::*subcmd)());
 
     function<void()> get_invoke(void (Mucs::*subcmd)());
+
+    unique_ptr<CLI::App> get_cli();
 
     // Util : mucs.cpp
 

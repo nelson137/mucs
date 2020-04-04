@@ -1,28 +1,6 @@
 #include "mucs.hpp"
 
 
-/*************************************************
- * Subcommand Invocation
- ************************************************/
-
-
-void Mucs::invoke(void (Mucs::*subcmd)()) {
-    this->user = get_user();
-    this->config = Config::parse_file(Path(CONFIG_DIR) / this->course);
-    (this->*subcmd)();
-}
-
-
-function<void()> Mucs::get_invoke(void (Mucs::*subcmd)()) {
-    return bind(mem_fn(&Mucs::invoke), ref(*this), subcmd);
-}
-
-
-/*************************************************
- * Util
- ************************************************/
-
-
 void Mucs::admin_authenticate() {
     stringstream prompt;
     prompt << "Admin password for " << this->course << ": ";

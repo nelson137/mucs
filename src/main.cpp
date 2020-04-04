@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
     NOW = system_clock::now();
 
     Mucs mucs;
-    unique_ptr<CLI::App> app = prepare_cli(mucs);
+    unique_ptr<CLI::App> app = mucs.get_cli();
 
     try {
         CLI11_PARSE(*app, argc, argv);
