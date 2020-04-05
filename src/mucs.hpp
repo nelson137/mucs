@@ -79,13 +79,13 @@ struct Mucs {
 
     // Submit Subcommand : mucs-submit.cpp
 
-    void submit();
+    virtual void submit();
 
     // Admin Subcommand : mucs-admin.cpp
 
-    void admin_dump();
+    virtual void admin_dump();
 
-    void admin_update_password();
+    virtual void admin_update_password();
 
 };
 
