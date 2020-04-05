@@ -13,8 +13,8 @@
 #include "../src/mucs.hpp"
 #include "../src/util.hpp"
 
-using namespace chrono;
 using namespace std;
+using namespace chrono;
 
 
 #endif

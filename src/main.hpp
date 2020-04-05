@@ -12,8 +12,8 @@
 
 #include "mucs.hpp"
 
-using namespace chrono;
 using namespace std;
+using namespace chrono;
 
 
 #endif

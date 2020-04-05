@@ -24,8 +24,8 @@
 #include "path.hpp"
 #include "util.hpp"
 
-using namespace chrono;
 using namespace std;
+using namespace chrono;
 using json = nlohmann::json;
 
 

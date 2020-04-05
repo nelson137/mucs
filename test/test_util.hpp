@@ -8,6 +8,6 @@
 
 #include "../src/util.hpp"
 
-using namespace chrono;
 using namespace std;
+using namespace chrono;
 using Catch::Matchers::Equals;
