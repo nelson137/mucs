@@ -1,16 +1,20 @@
 #include "test_mucs_cli.hpp"
 
 
-#define MUCS_CLI_PARSE(mucs, args) \
-    mucs.get_cli()->parse(args, true)
+#define MUCS_CLI_PARSE(mucs, args) mucs.get_cli()->parse(args, true)
 
-#define TEST_CLI_SUBCMD_CALLED(subcmd, args)    \
-    do {                                        \
-        Mucs mucs; Mock<Mucs> spy(mucs);        \
-        Fake(Method(spy, subcmd));              \
-        REQUIRE_NOTHROW(                        \
-            MUCS_CLI_PARSE(spy.get(), args)     \
-        );                                      \
+#define TEST_CLI_SUBCMD_CALLED(subcmd, args)              \
+    do {                                                  \
+        Mucs mucs; Mock<Mucs> spy(mucs);                  \
+        Fake(Method(spy, invoke));                        \
+        REQUIRE_NOTHROW(                                  \
+            MUCS_CLI_PARSE(spy.get(), args)               \
+        );                                                \
+        REQUIRE_NOTHROW(                                  \
+            Verify(                                       \
+                Method(spy, invoke).Using(&Mucs::subcmd)  \
+            ).Once()                                      \
+        );                                                \
     } while (0)
 
 #define TEST_CLI_SUBCMD_ERROR(args, error)  \
