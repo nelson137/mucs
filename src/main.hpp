@@ -10,6 +10,7 @@
 
 #include "mucs/except.hpp"
 
+#include "consts.hpp"
 #include "mucs.hpp"
 
 using namespace std;

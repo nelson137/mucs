@@ -34,6 +34,8 @@ TEST_CASE("cli", "[cli]") {
 
 
 TEST_CASE("cli : admin", "[cli][cli-admin]") {
+    CONFIGS_AVAILABLE = {"1050"};
+
     SECTION("no arguments") {
         TEST_CLI_SUBCMD_ERROR(
             "mucs admin 1050",
@@ -52,6 +54,7 @@ TEST_CASE("cli : admin", "[cli][cli-admin]") {
 
 TEST_CASE("cli : submit", "[cli][cli-submit]") {
     SECTION("no arguments") {
+        CONFIGS_AVAILABLE = {};
         TEST_CLI_SUBCMD_ERROR(
             "mucs submit",
             "course is required"
@@ -59,6 +62,7 @@ TEST_CASE("cli : submit", "[cli][cli-submit]") {
     }
 
     SECTION("arguments : course") {
+        CONFIGS_AVAILABLE = {"1050"};
         TEST_CLI_SUBCMD_ERROR(
             "mucs submit 1050",
             "assignment_type is required"
@@ -66,6 +70,7 @@ TEST_CASE("cli : submit", "[cli][cli-submit]") {
     }
 
     SECTION("arguments : course assignment_type") {
+        CONFIGS_AVAILABLE = {"1050"};
         TEST_CLI_SUBCMD_ERROR(
             "mucs submit 1050 hw",
             "sources: At least 1 required"
@@ -73,6 +78,7 @@ TEST_CASE("cli : submit", "[cli][cli-submit]") {
     }
 
     SECTION("arguments : course assignment_type source") {
+        CONFIGS_AVAILABLE = {"1050"};
         TEST_CLI_SUBCMD_CALLED(
             submit,
             "mucs submit 1050 hw hw1.c"

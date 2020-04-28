@@ -9,14 +9,13 @@ void Mucs::invoke(void (Mucs::*subcmd)()) {
 
 
 unique_ptr<CLI::App> Mucs::get_cli() {
-    vector<string> configs_available = Path(CONFIG_DIR).ls_base();
-
     // App
 
     unique_ptr<CLI::App> app(new CLI::App);
     app->require_subcommand();
 
     auto invoke_wrapper = [this] (void (Mucs::*subcmd)()) {
+        // Make sure Mucs::invoke gets a reference to *this -- not a copy
         return bind(mem_fn(&Mucs::invoke), ref(*this), subcmd);
     };
 
@@ -28,7 +27,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     submit_subcmd
         ->add_option("course", this->course)
         ->required()
-        ->check(CLI::IsMember(configs_available));
+        ->check(CLI::IsMember(CONFIGS_AVAILABLE));
     submit_subcmd
         ->add_option("assignment_type", this->assignment_type)
         ->required()
@@ -46,7 +45,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     admin_subcmd
         ->add_option("course", this->course)
         ->required()
-        ->check(CLI::IsMember(configs_available));
+        ->check(CLI::IsMember(CONFIGS_AVAILABLE));
 
     // Admin Dump subcommand
 

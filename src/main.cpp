@@ -5,6 +5,7 @@
 
 int main(int argc, char **argv) {
     NOW = system_clock::now();
+    CONFIGS_AVAILABLE = Path(CONFIG_DIR).ls_base();
 
     Mucs mucs;
     unique_ptr<CLI::App> app = mucs.get_cli();

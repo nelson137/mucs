@@ -3,6 +3,7 @@
 
 
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -29,6 +30,9 @@ static const string FG_BOLD  = "\033[1m";
 static const string FG_GREEN = "\033[32m";
 static const string FG_RED   = "\033[91m";
 static const string FG_RESET = "\033[0m";
+
+
+extern vector<string> CONFIGS_AVAILABLE;
 
 
 #endif
