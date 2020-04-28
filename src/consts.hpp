@@ -26,11 +26,6 @@ using namespace std;
 
 constexpr double TERM_WIDTH_COEFF = .85;
 
-static const string FG_BOLD  = "\033[1m";
-static const string FG_GREEN = "\033[32m";
-static const string FG_RED   = "\033[91m";
-static const string FG_RESET = "\033[0m";
-
 
 extern vector<string> CONFIGS_AVAILABLE;
 

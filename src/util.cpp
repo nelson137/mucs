@@ -168,8 +168,3 @@ tm tm_zero() {
     zero.tm_isdst = -1;
     return zero;
 }
-
-
-string w_bold (const string& s) { return FG_BOLD  + s + FG_RESET; }
-string w_green(const string& s) { return FG_GREEN + s + FG_RESET; }
-string w_red  (const string& s) { return FG_RED   + s + FG_RESET; }

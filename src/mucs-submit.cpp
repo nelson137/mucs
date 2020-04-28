@@ -56,5 +56,5 @@ void Mucs::submit() {
     // Fix all file permissions
     submit_root.chmod_recurse(0440, Path::File);
 
-    cout << w_green("Submission complete") << endl;
+    cout << rang::fg::green << "Submission complete" << rang::fg::reset << endl;
 }

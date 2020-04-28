@@ -12,6 +12,7 @@
 
 #include "CLI11.hpp"
 #include "picosha2.h"
+#include "rang.hpp"
 
 #include "mucs/except.hpp"
 

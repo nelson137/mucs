@@ -96,16 +96,22 @@ void Mucs::submit_summary(const LabSesh& lab, const string& assignment) const {
     int w = get_term_width() * TERM_WIDTH_COEFF;
     const string spacer = string(min(w, 80), '=');
 
-    cout << w_green(spacer) << endl;
-    cout << "Course     : " << w_bold(course) << endl;
-    cout << "Lab        : " << w_bold(lab) << endl;
-    cout << "Assignment : " << w_bold(assignment) << endl;
-    cout << "User       : " << w_bold(this->user) << endl;
+    #define W_GREEN(x) rang::fg::green << x << rang::fg::reset
+    #define W_BOLD(x) rang::style::bold << x << rang::style::reset
+
+    cout << W_GREEN(spacer) << endl;
+    cout << "Course     : " << W_BOLD(course) << endl;
+    cout << "Lab        : " << W_BOLD(lab) << endl;
+    cout << "Assignment : " << W_BOLD(assignment) << endl;
+    cout << "User       : " << W_BOLD(this->user) << endl;
     cout << "Files      :";
     for (const Path& s : this->sources)
-        cout << ' ' << w_bold(s);
+        cout << ' ' << s.str();
     cout << endl;
-    cout << w_green(spacer) << endl;
+    cout << W_GREEN(spacer) << endl;
+
+    #undef W_GREEN
+    #undef W_BOLD
 }
 
 

@@ -130,9 +130,4 @@ void stl_transform(Container& c, UnaryOp op) {
 }
 
 
-string w_bold (const string& s);
-string w_green(const string& s);
-string w_red  (const string& s);
-
-
 #endif
