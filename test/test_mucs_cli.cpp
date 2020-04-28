@@ -3,7 +3,7 @@
 
 #define MUCS_CLI_PARSE(mucs, args) mucs.get_cli()->parse(args, true)
 
-#define TEST_CLI_SUBCMD_CALLED(subcmd, args)              \
+#define TEST_CLI_SUBCMD_CALLED(args, subcmd)              \
     do {                                                  \
         Mucs mucs; Mock<Mucs> spy(mucs);                  \
         Fake(Method(spy, invoke));                        \
@@ -49,8 +49,8 @@ TEST_CASE("cli : admin", "[cli][cli-admin]") {
 
     SECTION("dump") {
         TEST_CLI_SUBCMD_CALLED(
-            admin_dump,
-            "mucs admin 1050 dump"
+            "mucs admin 1050 dump",
+            admin_dump
         );
     }
 }
@@ -84,8 +84,8 @@ TEST_CASE("cli : submit", "[cli][cli-submit]") {
     SECTION("arguments : course assignment_type source") {
         CONFIGS_AVAILABLE = {"1050"};
         TEST_CLI_SUBCMD_CALLED(
-            submit,
-            "mucs submit 1050 hw hw1.c"
+            "mucs submit 1050 hw hw1.c",
+            submit
         );
     }
 }
