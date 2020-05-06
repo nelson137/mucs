@@ -39,3 +39,14 @@ TEST_CASE("serialize lab-assignments", "[lab-assignments][serialize]") {
     string actual = json(data.get<LabAssignments>()).dump();
     REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }
+
+
+TEST_CASE("deserialized lab-assignments entries are in sorted order",
+          "[lab-assignments]") {
+    json data = {
+        {"lab1", "may 0"},
+        {"lab2", "jan 2"}
+    };
+    auto lab_assignments = data.get<LabAssignments>();
+    REQUIRE(lab_assignments.begin()->first == "lab2");
+}
