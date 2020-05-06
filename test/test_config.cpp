@@ -99,21 +99,42 @@ TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
 }
 
 
-TEST_CASE("config has no key labs", "[config][labs]") {
+TEST_CASE("config has no key lab-sessions", "[config][lab-sessions]") {
     json data = new_config_data();
-    data.erase("labs");
+    data.erase("lab-sessions");
     REQUIRE_THROWS_WITH(
         Config::parse(data),
-        error_prop("labs", "object")
+        error_prop("lab-sessions", "object")
     );
 }
 
 
-TEST_CASE("value for key labs has incorrect type", "[config][labs]") {
-    json data = new_config_data({ {"labs", rand_int(9)} });
+TEST_CASE("value for key lab-sessions has incorrect type",
+          "[config][lab-sessions]") {
+    json data = new_config_data({ {"lab-sessions", rand_int(9)} });
     REQUIRE_THROWS_WITH(
         Config::parse(data),
-        error_prop("labs", "object")
+        error_prop("lab-sessions", "object")
+    );
+}
+
+
+TEST_CASE("config has no key lab-assignments", "[config][lab-assignments]") {
+    json data = new_config_data();
+    data.erase("lab-assignments");
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("lab-assignments", "object")
+    );
+}
+
+
+TEST_CASE("value for key lab-assignments has incorrect type",
+          "[config][lab-assignments]") {
+    json data = new_config_data({ {"lab-assignments", rand_int(9)} });
+    REQUIRE_THROWS_WITH(
+        Config::parse(data),
+        error_prop("lab-assignments", "object")
     );
 }
 

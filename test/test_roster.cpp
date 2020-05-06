@@ -14,9 +14,9 @@ TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
 
 TEST_CASE("roster entry has one lab id", "[roster][entry]") {
     string user = rand_user();
-    string id = rand_lab_id();
+    string id = rand_lab_sesh_id();
     json data = new_config_data({
-        {"labs", { {id, "mon 00:00:00 - 23:59:59"} }},
+        {"lab-sessions", { {id, "mon 00:00:00 - 23:59:59"} }},
         {"roster", {}},
     });
 
@@ -38,9 +38,9 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
 
 TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
     string user = rand_user();
-    string id = rand_lab_id();
+    string id = rand_lab_sesh_id();
     json data = new_config_data({
-        {"labs", { {id, "mon 00:00:00 - 23:59:59"} }},
+        {"lab-sessions", { {id, "mon 00:00:00 - 23:59:59"} }},
         {"roster", {}}
     });
 
@@ -62,7 +62,7 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
 
 TEST_CASE("serialize roster", "[roster][serialize]") {
     string user = rand_user();
-    string id = rand_lab_id();
+    string id = rand_lab_sesh_id();
     json data = json::object();
 
     SECTION("with one id") {

@@ -14,7 +14,7 @@ TEST_CASE("submit user not in course", "[mucs][submit]") {
 
 TEST_CASE("submit lab with one lab session", "[mucs][submit]") {
     string user = rand_user();
-    string lab_id = rand_lab_id();
+    string lab_id = rand_lab_sesh_id();
 
     Mucs mucs;
     mucs.user = user;
@@ -45,8 +45,8 @@ TEST_CASE("submit lab with one lab session", "[mucs][submit]") {
 
 TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
     string user = rand_user();
-    string labA = rand_lab_id();
-    string labB = rand_lab_id();
+    string labA = rand_lab_sesh_id();
+    string labB = rand_lab_sesh_id();
 
     Mucs mucs;
     mucs.user = user;
@@ -98,7 +98,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
     string user = rand_user();
     NOW = system_clock::now();
     string hw_name = rand_hw_name();
-    string lab_id = rand_lab_id();
+    string lab_id = rand_lab_sesh_id();
     int year = current_year();
 
     Mucs mucs;
@@ -124,7 +124,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
 
     SECTION("when there is one past-due homework") {
         system_clock::time_point dd =
-            parse_datetime(to_string(year-1) + "-01-01 00:00:00");
+            parse_datetime(to_string(year-1) + "-01-01 00:00:00", HW_FMT);
         mucs.config.homeworks.insert({ hw_name, Hw{hw_name, dd} });
         REQUIRE_THROWS_WITH(
             spy.get().submit(),
@@ -134,7 +134,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
 
     SECTION("when there is one active homework") {
         system_clock::time_point dd =
-            parse_datetime(to_string(year+1) + "-01-01 00:00:00");
+            parse_datetime(to_string(year+1) + "-01-01 00:00:00", HW_FMT);
         mucs.config.homeworks.insert({ hw_name, Hw{hw_name, dd} });
         REQUIRE_THROWS_WITH(mucs.submit(), "Submission cancelled");
     }
@@ -148,14 +148,17 @@ TEST_CASE("attempt to submit non-compiling sources", "[mucs][submit]") {
 
 TEST_CASE("submission cancelled by user", "[mucs][submit]") {
     string user = rand_user();
-    string lab_id = rand_lab_id();
+    string lab_id = rand_lab_sesh_id();
+    string lab_name = rand_lab_asgmt_name();
 
     Mucs mucs;
     mucs.user = user;
     mucs.assignment_type = "lab";
     mucs.config.roster.insert({ user, {lab_id} });
     mucs.config.lab_sessions.insert({
-        lab_id, RandLabSesh().today().now().get() });
+        lab_id, RandLabSesh(lab_id).today().now().get() });
+    mucs.config.lab_assignments.insert({
+        lab_name, RandLabAsgmt(lab_name).this_week().get() });
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, prompt_yesno)).Return(false);

@@ -75,9 +75,12 @@ string join_paths(string a, deque<string> parts) {
 }
 
 
-system_clock::time_point parse_datetime(const string& dt_str) {
+system_clock::time_point parse_datetime(
+    const string& dt_str,
+    const string& fmt
+) {
     tm t = tm_zero();
-    if (strptime(dt_str.c_str(), DATETIME_FMT, &t) == nullptr)
+    if (strptime(dt_str.c_str(), fmt.c_str(), &t) == nullptr)
         throw mucs_exception("Invalid datetime: " + dt_str);
     return system_clock::from_time_t(mktime(&t));
 }
@@ -148,6 +151,13 @@ string string_strip(string s) {
     const size_t begin = s.find_first_not_of(whitespace);
     const size_t end = s.find_last_not_of(whitespace);
     return begin == string::npos ? "" : s.substr(begin, end - begin + 1);
+}
+
+
+void tm_add_days(tm *t, int days) {
+    t->tm_mday += days;
+    t->tm_wday += days;
+    t->tm_yday += days;
 }
 
 

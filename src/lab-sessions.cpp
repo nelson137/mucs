@@ -82,24 +82,24 @@ ostream& operator<<(ostream& os, const LabSesh& ls) {
 void from_json(const json& j, LabSesh& ls) {
     if (j.type() != json::value_t::string)
         throw Config::error(
-            "Lab entries must be of type string", {"labs", ls.id});
+            "Lab sessions must be of type string", {"lab-sessions", ls.id});
 
     auto invalid_lab_spec = [&] () {
         throw Config::error(
-            "Lab entries must be in the format " \
+            "Lab sessions must be in the format " \
                 "\"<weekday> <start_time> - <end_time>\"",
-            {"labs", ls.id});
+            {"lab-sessions", ls.id});
     };
 
-    string lab_spec_str = j.get<string>();
+    string spec = j.get<string>();
 
     // Should be {"<weekday> <start_time> ", " <end_time>"}
-    vector<string> chunks = string_split(lab_spec_str, "-");
+    vector<string> chunks = string_split(spec, "-");
     if (chunks.size() != 2)
         invalid_lab_spec();
 
     // Should be {"<weekday>", "<start_time>", ""}
-    // There will be no third element if lab_spec_str doesn't have spaces
+    // There will be no third element if spec doesn't have spaces
     //   around the dash
     vector<string> wday_start = string_split(chunks[0], " ");
     if (wday_start.size() < 2)

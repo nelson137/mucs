@@ -4,12 +4,12 @@
 Config Config::parse(const json& root) {
     Config config;
 
-    get_to_required(root, "course_id",   "string", config.course_id);
-    get_to_required(root, "admin_hash",  "string", config.admin_hash);
-    get_to_required(root, "homeworks",   "object", config.homeworks);
-    get_to_required(root, "current_lab", "string", config.current_lab);
-    get_to_required(root, "labs",        "object", config.lab_sessions);
-    get_to_required(root, "roster",      "object", config.roster);
+    get_to_required(root, "course_id",       "string", config.course_id);
+    get_to_required(root, "admin_hash",      "string", config.admin_hash);
+    get_to_required(root, "homeworks",       "object", config.homeworks);
+    get_to_required(root, "lab-sessions",    "object", config.lab_sessions);
+    get_to_required(root, "lab-assignments", "object", config.lab_assignments);
+    get_to_required(root, "roster",          "object", config.roster);
 
     /**
      * for user,labs in roster:
@@ -72,7 +72,12 @@ string Config::get_assignment(const string& type) const {
 
 
 string Config::get_current_lab() const {
-    return this->current_lab;
+    for (auto& e : this->lab_assignments)
+        if (e.second.start <= NOW && NOW < e.second.end)
+            return e.first;
+
+    throw mucs_exception(
+        "No open lab assignments for course: " + this->course_id);
 }
 
 
@@ -136,8 +141,11 @@ void from_json(const json& j, Config& c) {
     if (j.count("homeworks") > 0)
         j["homeworks"].get_to(c.homeworks);
 
-    if (j.count("labs") > 0)
-        j["labs"].get_to(c.lab_sessions);
+    if (j.count("lab-sessions") > 0)
+        j["lab-sessions"].get_to(c.lab_sessions);
+
+    if (j.count("lab-assignments") > 0)
+        j["lab-assignments"].get_to(c.lab_assignments);
 
     if (j.count("roster") > 0)
         j["roster"].get_to(c.roster);
@@ -149,8 +157,8 @@ void to_json(json& j, const Config& c) {
         {"course_id", c.course_id},
         {"admin_hash", c.admin_hash},
         {"homeworks", c.homeworks},
-        {"labs", c.lab_sessions},
-        {"current_lab", c.current_lab},
+        {"lab-sessions", c.lab_sessions},
+        {"lab-assignments", c.lab_assignments},
         {"roster", c.roster},
     };
 }

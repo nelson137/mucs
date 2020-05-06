@@ -28,7 +28,9 @@ string rand_filename();
 
 string rand_hw_name();
 
-string rand_lab_id();
+string rand_lab_asgmt_name();
+
+string rand_lab_sesh_id();
 
 string rand_string_digits(int n);
 
@@ -41,12 +43,33 @@ private:
     LabSesh ls;
 
 public:
-    RandLabSesh(const string& id = rand_lab_id());
+    RandLabSesh(const string& id = rand_lab_sesh_id());
 
     RandLabSesh& today(bool b = true);
     RandLabSesh& now(bool b = true);
 
     const LabSesh& get() const;
+
+};
+
+
+class RandLabAsgmt {
+
+private:
+    string name;
+
+    static const vector<string> MONTHS;
+    string month;
+
+    int week_n;
+
+public:
+    RandLabAsgmt(const string& n = rand_lab_asgmt_name());
+
+    RandLabAsgmt& not_this_week();
+    RandLabAsgmt& this_week();
+
+    LabAsgmt get() const;
 
 };
 

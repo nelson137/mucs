@@ -66,9 +66,9 @@ TEST_CASE("parse_datetime", "[util][parse_datetime]") {
     string expected_str;
 
     SECTION("valid") {
-        expected_str = format_datetime(expected, DATETIME_FMT);
+        expected_str = format_datetime(expected, HW_FMT);
 
-        auto parsed_dt = parse_datetime(expected_str);
+        auto parsed_dt = parse_datetime(expected_str, HW_FMT);
         time_t parsed_tt = system_clock::to_time_t(parsed_dt);
         tm *actual = localtime(&parsed_tt);
 
@@ -82,10 +82,10 @@ TEST_CASE("parse_datetime", "[util][parse_datetime]") {
 
     SECTION("invalid") {
         expected.tm_sec = rand_int(-59, 0);
-        expected_str = format_datetime(expected, DATETIME_FMT);
+        expected_str = format_datetime(expected, HW_FMT);
 
         REQUIRE_THROWS_WITH(
-            parse_datetime(expected_str),
+            parse_datetime(expected_str, HW_FMT),
             "Invalid datetime: " + expected_str
         );
     }

@@ -18,7 +18,7 @@ list<vector<string>> Homeworks::to_table() const {
         // Column 1
         row.push_back(hw.first);
         // Column 2
-        row.push_back(format_datetime(hw.second.duedate, DATETIME_FMT));
+        row.push_back(format_datetime(hw.second.duedate, HW_FMT));
         // Append row
         table.push_back(move(row));
     }
@@ -27,7 +27,7 @@ list<vector<string>> Homeworks::to_table() const {
 
 
 void from_json(const json& j, Hw& hw) {
-    hw.duedate = parse_datetime(j.get<string>());
+    hw.duedate = parse_datetime(j.get<string>(), HW_FMT);
 }
 
 
@@ -49,7 +49,7 @@ void from_json(const json& j, Homeworks& homeworks) {
 
 
 void to_json(json& j, const Hw& hw) {
-    j = json(format_datetime(hw.duedate, DATETIME_FMT));
+    j = json(format_datetime(hw.duedate, HW_FMT));
 }
 
 

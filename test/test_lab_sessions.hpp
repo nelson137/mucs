@@ -5,6 +5,7 @@
 #include <string>
 
 #include "catch.hpp"
+#include "json.hpp"
 
 #include "mucs/random.hpp"
 
@@ -13,6 +14,7 @@
 #include "../src/config.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 using Catch::Matchers::Equals;
 
 

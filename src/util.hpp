@@ -60,7 +60,10 @@ int get_term_width();
 
 string join_paths(string a, deque<string> parts);
 
-system_clock::time_point parse_datetime(const string& dt_str);
+system_clock::time_point parse_datetime(
+    const string& dt_str,
+    const string& fmt
+);
 
 system_clock::time_point parse_time(const string& t_str);
 
@@ -71,6 +74,8 @@ void print_table(const list<vector<string>>& table, const string& delim = "  ");
 vector<string> string_split(const string& s, const string& delim);
 
 string string_strip(string s);
+
+void tm_add_days(tm *t, int days);
 
 tm tm_zero();
 

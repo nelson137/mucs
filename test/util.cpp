@@ -28,8 +28,8 @@ json new_config_data(json j) {
     default_val("course_id", rand_string(4));
     default_val("admin_hash", "!");
     default_val("homeworks", json::object());
-    default_val("labs", json::object());
-    default_val("current_lab", "");
+    default_val("lab-sessions", json::object());
+    default_val("lab-assignments", json::object());
     default_val("roster", json::object());
 
     return j;
@@ -51,8 +51,13 @@ string rand_hw_name() {
 }
 
 
-string rand_lab_id() {
-    return "LAB" + rand_string_digits(4);
+string rand_lab_asgmt_name() {
+    return "lab" + rand_string_digits(4);
+}
+
+
+string rand_lab_sesh_id() {
+    return "LAB_" + rand_string(3, chars_upper);
 }
 
 
@@ -70,12 +75,8 @@ string rand_user() {
 }
 
 
-RandLabSesh::RandLabSesh(const string& id) : ls(LabSesh(id)) {
-}
-
-
-const LabSesh& RandLabSesh::get() const {
-    return this->ls;
+RandLabSesh::RandLabSesh(const string& id) {
+    this->ls.id = id;
 }
 
 
@@ -121,4 +122,53 @@ RandLabSesh& RandLabSesh::now(bool now) {
     }
 
     return *this;
+}
+
+
+const LabSesh& RandLabSesh::get() const {
+    return this->ls;
+}
+
+
+const vector<string> RandLabAsgmt::MONTHS = {
+    "jan", "feb", "mar", "apr", "may", "jun",
+    "jul", "aug", "sep", "oct", "nov", "dec"
+};
+
+
+RandLabAsgmt::RandLabAsgmt(const string& n) : name(n) {
+}
+
+
+RandLabAsgmt& RandLabAsgmt::not_this_week() {
+    time_t tt = system_clock::to_time_t(system_clock::now());
+    tm *now = localtime(&tt);
+
+    int dm = rand_int(1, 5) * (now->tm_mon < 6 ? 1 : -1);
+    this->month = RandLabAsgmt::MONTHS[now->tm_mon + dm];
+
+    this->week_n = rand_int(3);
+
+    return *this;
+}
+
+
+RandLabAsgmt& RandLabAsgmt::this_week() {
+    time_t tt = system_clock::to_time_t(NOW);
+    tm *now = localtime(&tt);
+
+    this->month = RandLabAsgmt::MONTHS[now->tm_mon];
+
+    tt += (1 - now->tm_wday) * 24 * 60 * 60;
+    this->week_n = localtime(&tt)->tm_mday / 7;
+
+    return *this;
+}
+
+
+LabAsgmt RandLabAsgmt::get() const {
+    string spec = this->month + " " + to_string(this->week_n);
+    LabAsgmt la = json(spec).get<LabAsgmt>();
+    la.name = this->name;
+    return la;
 }

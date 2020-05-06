@@ -105,6 +105,45 @@ struct LabSessions : public map<string, LabSesh>, public Tabular {
 
 
 /*************************************************
+ * LabAssignments
+ ************************************************/
+
+
+struct LabAsgmt {
+
+    string name;
+    system_clock::time_point start;
+    system_clock::time_point end;
+
+    LabAsgmt();
+    LabAsgmt(const string& n);
+
+    struct compare {
+        bool operator()(
+            const pair<string,LabAsgmt>& a,
+            const pair<string,LabAsgmt>& b
+        ) const;
+    };
+
+    string str() const;
+
+    friend void from_json(const json& j, LabAsgmt& la);
+    friend void to_json(json& j, const LabAsgmt& la);
+
+};
+
+
+struct LabAssignments : public set<pair<string,LabAsgmt>, LabAsgmt::compare> {
+
+    using set<pair<string,LabAsgmt>, LabAsgmt::compare>::set;
+
+    friend void from_json(const json& j, LabAssignments& lab_assignments);
+    friend void to_json(json& j, const LabAssignments& lab_assignments);
+
+};
+
+
+/*************************************************
  * Roster
  ************************************************/
 
@@ -135,7 +174,7 @@ struct Config {
     string admin_hash;
 
     LabSessions lab_sessions;
-    string current_lab;
+    LabAssignments lab_assignments;
 
     Homeworks homeworks;
 
