@@ -32,7 +32,7 @@
             "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
-            "args": ["-j", "MUCS_ROOT=local"],
+            "args": ["-j7", "MUCS_ROOT=local"],
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
@@ -43,7 +43,7 @@
             "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
-            "args": ["-j", "test"],
+            "args": ["-j7", "test"],
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
