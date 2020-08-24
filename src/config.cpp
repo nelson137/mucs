@@ -4,12 +4,18 @@
 Config Config::parse(const json& root) {
     Config config;
 
-    get_to_required(root, "course_id",       "string", config.course_id);
-    get_to_required(root, "admin_hash",      "string", config.admin_hash);
-    get_to_required(root, "homeworks",       "object", config.homeworks);
-    get_to_required(root, "lab-sessions",    "object", config.lab_sessions);
-    get_to_required(root, "lab-assignments", "object", config.lab_assignments);
-    get_to_required(root, "roster",          "object", config.roster);
+    parse_key(root, "course_id", "string", config.course_id,
+        "Config objects require key 'course_id' of type 'string'");
+    parse_key(root, "admin_hash", "string", config.admin_hash,
+        "Config objects require key 'admin_hash' of type 'string'");
+    parse_key(root, "homeworks", "array", config.homeworks,
+        "Config objects require key 'homeworks' of type 'array'");
+    parse_key(root, "lab-sessions", "object", config.lab_sessions,
+        "Config objects require key 'lab-sessions' of type 'object'");
+    parse_key(root, "lab-assignments", "object", config.lab_assignments,
+        "Config objects require key 'lab-assignments' of type 'object'");
+    parse_key(root, "roster", "object", config.roster,
+        "Config objects require key 'roster' of type 'object'");
 
     /**
      * for user,labs in roster:
@@ -82,9 +88,9 @@ string Config::get_current_lab() const {
 
 
 string Config::get_current_hw() const {
-    for (auto& e : this->homeworks)
-        if (NOW < e.second.duedate)
-            return e.first;
+    for (const Hw& hw : this->homeworks)
+        if (NOW < hw.duedate)
+            return hw.name;
 
     throw mucs_exception(
         "No open homework assignments for course: " + this->course_id);

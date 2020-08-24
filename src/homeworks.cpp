@@ -1,24 +1,21 @@
 #include "config.hpp"
 
 
-bool Hw::compare::operator()(
-    const pair<string,Hw>& a,
-    const pair<string,Hw>& b
-) const {
-    return a.second.duedate < b.second.duedate;
+bool Hw::compare::operator()(const Hw& a, const Hw& b) const {
+    return a.duedate < b.duedate;
 }
 
 
 list<vector<string>> Homeworks::to_table() const {
     list<vector<string>> table;
-    for (const pair<string,Hw>& hw : *this) {
+    for (const Hw& hw : *this) {
         // Create row
         vector<string> row;
         row.reserve(2);
         // Column 1
-        row.push_back(hw.first);
+        row.push_back(hw.name);
         // Column 2
-        row.push_back(format_datetime(hw.second.duedate, HW_FMT));
+        row.push_back(format_datetime(hw.duedate, HW_FMT));
         // Append row
         table.push_back(move(row));
     }
@@ -27,34 +24,36 @@ list<vector<string>> Homeworks::to_table() const {
 
 
 void from_json(const json& j, Hw& hw) {
-    hw.duedate = parse_datetime(j.get<string>(), HW_FMT);
+    if (j.is_object() == false)
+        throw "Homework objects must be of type object";
+
+    parse_key(j, "name", "string", hw.name,
+        "Homework objects require key 'name' of type 'string'");
+    // Normalize name (lowercase)
+    stl_transform(hw.name, ::tolower);
+
+    parse_key(j, "duedate", "string", [&] (const json& value) {
+        hw.duedate = parse_datetime(value.get<string>(), HW_FMT);
+    }, "Homework objects require key 'duedate' of type 'string'");
 }
 
 
 void from_json(const json& j, Homeworks& homeworks) {
-    string id;
-    for (auto it=j.begin(); it!=j.end(); it++) {
-        if (it.value().type() != json::value_t::string)
-            throw Config::error(
-                "Homework entries must be of type string",
-                {"homeworks", it.key()});
-
-        id = it.key();
-        // Normalize id (lowercase)
-        stl_transform(id, ::tolower);
-
-        homeworks.insert({ id, it.value().get<Hw>() });
-    }
+    for (const json& hw : j)
+        homeworks.insert(hw.get<Hw>());
 }
 
 
 void to_json(json& j, const Hw& hw) {
-    j = json(format_datetime(hw.duedate, HW_FMT));
+    j = {
+        {"name", hw.name},
+        {"duedate", format_datetime(hw.duedate, HW_FMT)}
+    };
 }
 
 
 void to_json(json& j, const Homeworks& homeworks) {
-    j = json::object();
-    for (auto& hw : homeworks)
-        j[hw.first] = json(hw.second);
+    j = json::array();
+    for (const Hw& hw : homeworks)
+        j.push_back(hw);
 }

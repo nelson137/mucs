@@ -13,8 +13,12 @@ string error_id_unrecognized(const string& user, const string& id) {
 }
 
 
-string error_prop(const string& k, const string& t) {
-    return "Config requires key \"" + k + "\" with type " + t + ": {filename}";
+string error_prop(
+    const string& obj,
+    const string& key,
+    const string& type
+) {
+    return obj + " objects require key '" + key + "' of type '" + type + "'";
 }
 
 
@@ -27,7 +31,7 @@ json new_config_data(json j) {
     default_val("filename", rand_string());
     default_val("course_id", rand_string(4));
     default_val("admin_hash", "!");
-    default_val("homeworks", json::object());
+    default_val("homeworks", json::array());
     default_val("lab-sessions", json::object());
     default_val("lab-assignments", json::object());
     default_val("roster", json::object());

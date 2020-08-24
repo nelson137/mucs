@@ -40,10 +40,7 @@ struct Hw {
     system_clock::time_point duedate;
 
     struct compare {
-        bool operator()(
-            const pair<string,Hw>& a,
-            const pair<string,Hw>& b
-        ) const;
+        bool operator()(const Hw& a, const Hw& b) const;
     };
 
     friend void from_json(const json& j, Hw& hw);
@@ -52,9 +49,9 @@ struct Hw {
 };
 
 
-struct Homeworks : public set<pair<string,Hw>, Hw::compare>, public Tabular {
+struct Homeworks : public set<Hw, Hw::compare>, public Tabular {
 
-    using set<pair<string,Hw>, Hw::compare>::set;
+    using set<Hw, Hw::compare>::set;
 
     list<vector<string>> to_table() const override;
 
@@ -187,19 +184,6 @@ struct Config {
         const string& msg,
         const initializer_list<string>& keys = {}
     );
-
-    template<typename Dest>
-    static void get_to_required(
-        const json& parent,
-        const string& key,
-        const string& type,
-        Dest& dest
-    ) {
-        if (parent.count(key) == 0 || parent[key].type_name() != type)
-            throw Config::error(
-                "Config requires key \"" + key + "\" with type " + type);
-        parent[key].get_to(dest);
-    }
 
     string get_assignment(const string& type) const;
     string get_current_lab() const;

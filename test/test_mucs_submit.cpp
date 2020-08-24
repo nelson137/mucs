@@ -125,7 +125,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
     SECTION("when there is one past-due homework") {
         system_clock::time_point dd =
             parse_datetime(to_string(year-1) + "-01-01 00:00:00", HW_FMT);
-        mucs.config.homeworks.insert({ hw_name, Hw{hw_name, dd} });
+        mucs.config.homeworks.insert({ hw_name, dd });
         REQUIRE_THROWS_WITH(
             spy.get().submit(),
             "No open homework assignments for course: " + mucs.config.course_id
@@ -135,7 +135,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
     SECTION("when there is one active homework") {
         system_clock::time_point dd =
             parse_datetime(to_string(year+1) + "-01-01 00:00:00", HW_FMT);
-        mucs.config.homeworks.insert({ hw_name, Hw{hw_name, dd} });
+        mucs.config.homeworks.insert({ hw_name, dd });
         REQUIRE_THROWS_WITH(mucs.submit(), "Submission cancelled");
     }
 }

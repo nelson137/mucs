@@ -18,7 +18,11 @@ int current_year();
 
 string error_id_unrecognized(const string& user, const string& id);
 
-string error_prop(const string& k, const string& t);
+string error_prop(
+    const string& obj,
+    const string& key,
+    const string& type
+);
 
 json new_config_data(json j = json::object());
 
