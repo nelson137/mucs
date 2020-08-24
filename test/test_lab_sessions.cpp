@@ -1,17 +1,6 @@
 #include "test_lab_sessions.hpp"
 
 
-TEST_CASE("lab-sessions entry has incorrect type", "[lab-sessions][entry]") {
-    string key = rand_lab_sesh_id();
-    json data = { {key, rand_int(9)} };
-    REQUIRE_THROWS_WITH(
-        data.get<LabSessions>(),
-        "Lab sessions must be of type string: " \
-            "{filename}[\"lab-sessions\"][\"" + key + "\"]"
-    );
-}
-
-
 TEST_CASE("lab-sessions entry has incorrect format", "[lab-sessions][entry]") {
     string key = rand_lab_sesh_id();
     json data = { {key, key} };

@@ -1,34 +1,6 @@
 #include "test_homeworks.hpp"
 
 
-TEST_CASE("hw has incorrect type", "[hw]") {
-    string key = rand_hw_name();
-    json data = rand_int(9);
-    REQUIRE_THROWS_WITH(
-        data.get<Hw>(),
-        "Homework objects must be of type object"
-    );
-}
-
-
-TEST_CASE("hw missing key name", "[hw]") {
-    json data = { {"duedate", ""} };
-    REQUIRE_THROWS_WITH(
-        data.get<Hw>(),
-        error_prop("Homework", "name", "string")
-    );
-}
-
-
-TEST_CASE("hw missing key duedate", "[hw]") {
-    json data = { {"name", ""} };
-    REQUIRE_THROWS_WITH(
-        data.get<Hw>(),
-        error_prop("Homework", "duedate", "string")
-    );
-}
-
-
 TEST_CASE("hw duedate has incorrect format", "[hw]") {
     string name = rand_hw_name();
     json data = { {"name", name}, {"duedate", name} };

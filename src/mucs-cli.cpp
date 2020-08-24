@@ -3,7 +3,7 @@
 
 void Mucs::invoke(void (Mucs::*subcmd)()) {
     this->user = this->get_user();
-    this->config = Config::parse_file(Path(CONFIG_DIR) / this->course);
+    this->config = Config(Path(CONFIG_DIR) / this->course);
     (this->*subcmd)();
 }
 

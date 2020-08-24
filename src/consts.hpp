@@ -16,8 +16,9 @@ using namespace std;
 #  define COMPILE_SCRIPT "/usr/local/bin/compile"
 #endif
 
-#define SUBMIT_DIR (MUCS_ROOT "/submissions")
-#define CONFIG_DIR (MUCS_ROOT "/config.d")
+#define SUBMIT_DIR  MUCS_ROOT "/submissions"
+#define CONFIG_DIR  MUCS_ROOT "/config.d"
+#define SCHEMA_PATH CONFIG_DIR "/schema.json"
 
 #define LAB_ASGMT_FMT    "%b"
 #define HW_FMT           "%Y-%m-%d %H:%M:%S"

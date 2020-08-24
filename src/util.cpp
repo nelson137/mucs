@@ -86,25 +86,6 @@ system_clock::time_point parse_datetime(
 }
 
 
-void parse_key(
-    const json& parent,
-    const string& key,
-    const string& type,
-    function<void(const json&)> on_parse,
-    const string& error_message
-) {
-    if (parent.count(key) == 0)
-        throw error_message;
-
-    const json& value = parent[key];
-
-    if (value.type_name() != type)
-        throw error_message;
-
-    on_parse(value);
-}
-
-
 system_clock::time_point parse_time(const string& t_str) {
     tm t = tm_zero();
     if (strptime(t_str.c_str(), TIME_FMT, &t) == nullptr)

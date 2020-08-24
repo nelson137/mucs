@@ -1,6 +1,12 @@
 #include "util.hpp"
 
 
+const char *INVALID_VALUE_TYPE =
+    "Value type not permitted by 'type' constraint";
+const char *MISSING_PROPERTY =
+    "Missing required property '";
+
+
 int current_year() {
     time_t now_t = system_clock::to_time_t(NOW);
     tm *now = localtime(&now_t);

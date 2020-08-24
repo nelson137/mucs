@@ -1,21 +1,40 @@
 #include "config.hpp"
 
 
-Config Config::parse(const json& root) {
-    Config config;
+Config::Config() {
+}
 
-    parse_key(root, "course_id", "string", config.course_id,
-        "Config objects require key 'course_id' of type 'string'");
-    parse_key(root, "admin_hash", "string", config.admin_hash,
-        "Config objects require key 'admin_hash' of type 'string'");
-    parse_key(root, "homeworks", "array", config.homeworks,
-        "Config objects require key 'homeworks' of type 'array'");
-    parse_key(root, "lab-sessions", "object", config.lab_sessions,
-        "Config objects require key 'lab-sessions' of type 'object'");
-    parse_key(root, "lab-assignments", "object", config.lab_assignments,
-        "Config objects require key 'lab-assignments' of type 'object'");
-    parse_key(root, "roster", "object", config.roster,
-        "Config objects require key 'roster' of type 'object'");
+
+Config::Config(const IPath& config_p) {
+    if (not config_p.exists())
+        throw mucs_exception("Config file does not exist: " + config_p.str());
+    if (not config_p.is_file())
+        throw mucs_exception(
+            "Config path must be a regular file: " + config_p.str());
+
+    json data;
+    try {
+        data = json::parse(config_p.read());
+    } catch (const json::parse_error& pe) {
+        throw mucs_exception(
+            "Failed to parse config: " + config_p.str() + "\n" + pe.what());
+    }
+
+    this->parse(data, config_p.str());
+}
+
+
+Config& Config::parse(const json& root, const string& filename) {
+    this->filename = filename;
+
+    this->validate_config(root);
+
+    root["course_id"].get_to(this->course_id);
+    root["admin_hash"].get_to(this->admin_hash);
+    root["homeworks"].get_to(this->homeworks);
+    root["lab-sessions"].get_to(this->lab_sessions);
+    root["lab-assignments"].get_to(this->lab_assignments);
+    root["roster"].get_to(this->roster);
 
     /**
      * for user,labs in roster:
@@ -23,35 +42,58 @@ Config Config::parse(const json& root) {
      *     if l not in lab_sessions:
      *       raise Exception
      */
-    for (const auto& roster_e : config.roster)
-        for (const string& lab : roster_e.second)
-            if (config.lab_sessions.find(lab) == config.lab_sessions.end())
+    for (const auto& entry : this->roster)
+        for (const string& lab : entry.second)
+            if (this->lab_sessions.find(lab) == this->lab_sessions.end())
                 throw Config::error(
-                    "Lab id not recognized", {"roster", roster_e.first});
+                    "Lab id not recognized", {"roster", entry.first});
 
-    return config;
+    return *this;
 }
 
 
-Config Config::parse_file(const IPath& p) {
-    const string& filename = p.str();
+void Config::validate_config(const json& root) const {
+    Path schema_p = Path(SCHEMA_PATH);
 
-    if (not p.exists())
-        throw mucs_exception("Config file does not exist: " + filename);
-    if (not p.is_file())
+    // Make sure schema file exists
+    if (not schema_p.exists())
+        throw mucs_exception("Schema does not exist: " + schema_p.str());
+    if (not schema_p.is_file())
         throw mucs_exception(
-            "Config path must be a regular file: " + filename);
+            "Schema must be a regular file: " + schema_p.str());
 
-    json data;
+    // Deserialize schema
+    json schema_doc;
     try {
-        data = json::parse(p.read());
+        schema_doc = json::parse(schema_p.read());
     } catch (const json::parse_error& pe) {
-        throw mucs_exception("Invalid json: " + filename);
+        throw mucs_exception(
+            "Failed to parse schema: " + schema_p.str() + "\n" + pe.what());
     }
 
-    Config config = Config::parse(data);
-    config.filename = filename;
-    return config;
+    // Create schema object
+    Schema schema;
+    SchemaParser schema_parser(SchemaParser::kDraft7);
+    NlohmannJsonAdapter schema_adapter(schema_doc);
+    schema_parser.populateSchema(schema_adapter, schema);
+
+    // Validate config
+    Validator validator;
+    ValidationResults results;
+    NlohmannJsonAdapter adapter(root);
+    if (not validator.validate(schema, adapter, &results)) {
+        ostringstream msg;
+        ValidationResults::Error e;
+        msg << "Invalid config: " << filename;
+        while (results.numErrors() > 0) {
+            results.popError(e);
+            msg << '\n';
+            for (const string& comp : e.context)
+                msg << comp;
+            msg << ": " << e.description;
+        }
+        throw mucs_exception(msg.str());
+    }
 }
 
 

@@ -87,29 +87,6 @@ string join_paths(string a, string b, String... rest) {
 }
 
 
-void parse_key(
-    const json& parent,
-    const string& key,
-    const string& type,
-    function<void(const json&)> on_parse,
-    const string& error_message
-);
-
-
-template<typename Dest>
-void parse_key(
-    const json& parent,
-    const string& key,
-    const string& type,
-    Dest& dest,
-    const string& error_message
-) {
-    parse_key(parent, key, type, [&] (const json& value) {
-        value.get_to(dest);
-    }, error_message);
-}
-
-
 template<int n = 2, char c = '0'>
 ostream& prefix_char(ostream& os) {
     return os << setw(n) << setfill(c);

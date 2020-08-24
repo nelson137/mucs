@@ -2,12 +2,14 @@
 
 
 TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
+    string fn = rand_filename();
     string user = rand_user();
-    json data = { {user, rand_int(9)} };
+    json data = new_config_data({
+        {"roster", { {user, rand_int(9)} }}
+    });
     REQUIRE_THROWS_WITH(
-        data.get<Roster>(),
-        "Roster entries must be of type string: " \
-            "{filename}[\"roster\"][\"" + user + "\"]"
+        Config().parse(data, fn),
+        StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
 
@@ -24,14 +26,14 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
         string bad_id = id + "_";
         data["roster"][user] = bad_id;
         REQUIRE_THROWS_WITH(
-            Config::parse(data),
+            Config().parse(data),
             error_id_unrecognized(user, bad_id)
         );
     }
 
     SECTION("that is recognized") {
         data["roster"][user] = id;
-        REQUIRE_NOTHROW(Config::parse(data));
+        REQUIRE_NOTHROW(Config().parse(data));
     }
 }
 
@@ -48,14 +50,14 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
         string bad_id = id + '_';
         data["roster"][user] = id + ',' + bad_id;
         REQUIRE_THROWS_WITH(
-            Config::parse(data),
+            Config().parse(data),
             error_id_unrecognized(user, bad_id)
         );
     }
 
     SECTION("all recognized") {
         data["roster"][user] = id + "," + id;
-        REQUIRE_NOTHROW(Config::parse(data));
+        REQUIRE_NOTHROW(Config().parse(data));
     }
 }
 

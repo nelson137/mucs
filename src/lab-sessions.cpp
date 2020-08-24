@@ -80,10 +80,6 @@ ostream& operator<<(ostream& os, const LabSesh& ls) {
 
 
 void from_json(const json& j, LabSesh& ls) {
-    if (j.type() != json::value_t::string)
-        throw Config::error(
-            "Lab sessions must be of type string", {"lab-sessions", ls.id});
-
     auto invalid_lab_spec = [&] () {
         throw Config::error(
             "Lab sessions must be in the format " \

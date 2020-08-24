@@ -14,6 +14,10 @@ using namespace std;
 using json = nlohmann::json;
 
 
+extern const char *INVALID_VALUE_TYPE;
+extern const char *MISSING_PROPERTY;
+
+
 int current_year();
 
 string error_id_unrecognized(const string& user, const string& id);

@@ -24,17 +24,11 @@ list<vector<string>> Homeworks::to_table() const {
 
 
 void from_json(const json& j, Hw& hw) {
-    if (j.is_object() == false)
-        throw "Homework objects must be of type object";
-
-    parse_key(j, "name", "string", hw.name,
-        "Homework objects require key 'name' of type 'string'");
+    hw.name = j.value("name", "");
     // Normalize name (lowercase)
     stl_transform(hw.name, ::tolower);
 
-    parse_key(j, "duedate", "string", [&] (const json& value) {
-        hw.duedate = parse_datetime(value.get<string>(), HW_FMT);
-    }, "Homework objects require key 'duedate' of type 'string'");
+    hw.duedate = parse_datetime(j.value("duedate", ""), HW_FMT);
 }
 
 

@@ -17,6 +17,10 @@
 #include <vector>
 
 #include "json.hpp"
+#include "valijson/adapters/nlohmann_json_adapter.hpp"
+#include "valijson/schema.hpp"
+#include "valijson/schema_parser.hpp"
+#include "valijson/validator.hpp"
 
 #include "mucs/except.hpp"
 
@@ -26,6 +30,8 @@
 
 using namespace std;
 using namespace chrono;
+using namespace valijson;
+using namespace valijson::adapters;
 using json = nlohmann::json;
 
 
@@ -177,8 +183,12 @@ struct Config {
 
     Roster roster;
 
-    static Config parse(const json& root);
-    static Config parse_file(const IPath& p);
+    Config();
+    Config(const IPath& config_p);
+
+    Config& parse(const json& root, const string& filename = "");
+
+    void validate_config(const json& root) const;
 
     static mucs_exception error(
         const string& msg,

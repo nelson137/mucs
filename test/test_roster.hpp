@@ -13,7 +13,9 @@
 #include "../src/config.hpp"
 
 using namespace std;
+using Catch::Matchers::Contains;
 using Catch::Matchers::Equals;
+using Catch::Matchers::StartsWith;
 
 
 #endif

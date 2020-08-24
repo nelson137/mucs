@@ -13,7 +13,9 @@
 #include "../src/path.hpp"
 
 using namespace std;
+using Catch::Matchers::Contains;
 using Catch::Matchers::Equals;
+using Catch::Matchers::StartsWith;
 using json = nlohmann::json;
 
 
