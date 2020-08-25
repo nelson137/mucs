@@ -36,18 +36,6 @@ Config& Config::parse(const json& root, const string& filename) {
     root["lab-assignments"].get_to(this->lab_assignments);
     root["roster"].get_to(this->roster);
 
-    /**
-     * for user,labs in roster:
-     *   for l in labs:
-     *     if l not in lab_sessions:
-     *       raise Exception
-     */
-    for (const auto& entry : this->roster)
-        for (const string& lab : entry.second)
-            if (this->lab_sessions.find(lab) == this->lab_sessions.end())
-                throw Config::error(
-                    "Lab id not recognized", {"roster", entry.first});
-
     return *this;
 }
 
@@ -171,7 +159,12 @@ vector<LabSesh> Config::get_user_labs(const string& user) const {
         user_lab_ids.end(),
         back_inserter(user_labs),
         [&] (const string& id) -> const LabSesh& {
-            return this->lab_sessions.at(id);
+            try {
+                return this->lab_sessions.at(id);
+            } catch (const out_of_range& e) {
+                throw mucs_exception(
+                    "User '" + user + "' has invalid lab: " + id);
+            }
         }
     );
 
