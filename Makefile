@@ -78,7 +78,7 @@ test: $(TEST_EXE)
 
 ifneq ($(LCOV)$(GENHTML),)
 coverage: test
-	./runtests
+	./$(TEST_EXE)
 	@mkdir -p coverage
 	$(LCOV) -b src -d build/src -o coverage/report.info
 	$(GENHTML) coverage/report.info -o coverage

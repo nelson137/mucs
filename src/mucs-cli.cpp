@@ -15,8 +15,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     app->require_subcommand();
 
     auto invoke_wrapper = [this] (void (Mucs::*subcmd)()) {
-        // Make sure Mucs::invoke gets a reference to *this -- not a copy
-        return bind(mem_fn(&Mucs::invoke), ref(*this), subcmd);
+        return bind(mem_fn(&Mucs::invoke), this, subcmd);
     };
 
     // Submit subcommand
