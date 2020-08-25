@@ -8,12 +8,12 @@
 using namespace std;
 
 
-#ifdef _MUCS_ROOT_LOCAL
-#  define MUCS_ROOT "test_root"
-#  define COMPILE_SCRIPT "scripts/compile"
-#else
-#  define MUCS_ROOT "/group/cs1050"
-#  define COMPILE_SCRIPT "/usr/local/bin/compile"
+#ifndef MUCS_ROOT
+#define MUCS_ROOT "/group/cs1050"
+#endif
+
+#ifndef COMPILE_SCRIPT
+#define COMPILE_SCRIPT "/usr/local/bin/compile"
 #endif
 
 #define SUBMIT_DIR  MUCS_ROOT "/submissions"

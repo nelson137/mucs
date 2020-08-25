@@ -36,7 +36,7 @@ endef
 # Setup flags for local mucs root
 define local-mucs-root
 ifeq ($(findstring _MUCS_ROOT_LOCAL,$(DEFINES)),)
-DEFINES += -D_MUCS_ROOT_LOCAL
+DEFINES += -DMUCS_ROOT='"test_root"' -DCOMPILE_SCRIPT='"scripts/compile"'
 endif
 endef
 
