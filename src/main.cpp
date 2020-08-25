@@ -12,8 +12,13 @@ int main(int argc, char **argv) {
 
     try {
         CLI11_PARSE(*app, argc, argv);
-    } catch (const mucs_exception& me) {
-        cerr << me.what() << endl;
+    } catch (const exception& e) {
+        string msg = e.what();
+        size_t pos;
+        while ((pos = msg.find("{filename}")) != string::npos) {
+            msg.replace(pos, 10, mucs.config.filename);
+        }
+        cerr << msg << endl;
     }
 
     return 0;
