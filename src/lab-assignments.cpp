@@ -58,7 +58,7 @@ void from_json(const json& j, LabAsgmt& la) {
     if (chunks.size() != 2)
         invalid_lab_asgmt();
 
-    // t = 00:00:00 on the first day of month chunks[0]
+    // t = 00:00:00 on the first day of the given month
     time_t tt = system_clock::to_time_t(
         parse_datetime(chunks[0], LAB_ASGMT_FMT));
     tm t = *localtime(&tt);
@@ -81,7 +81,7 @@ void from_json(const json& j, LabAsgmt& la) {
     }
 
     la.start = system_clock::from_time_t(mktime(&t));
-    tm_add_days(&t, 4);  // Move forward to friday
+    tm_add_days(&t, 6);  // Move forward to sunday
     la.end = system_clock::from_time_t(mktime(&t));
 }
 
