@@ -73,9 +73,11 @@ Proc::Ret Proc::execute() {
     if (this->v_args.empty())
         throw mucs_exception("Arguments are required to execute");
 
-    string exe = this->v_args.at(0);
-    if (Path(exe).exists() == false)
-        throw mucs_exception("Failed to find executable:", exe);
+    Path exe(this->v_args.at(0));
+    if (not exe.exists())
+        throw mucs_exception("Failed to find executable:", exe.str());
+    if (not exe.is_exe())
+        throw mucs_exception("File is not executable: " + exe.str());
 
     int pipe_out[2] = { -1, -1 };
     int pipe_err[2] = { -1, -1 };

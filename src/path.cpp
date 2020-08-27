@@ -99,6 +99,12 @@ int Path::type() const {
 }
 
 
+bool Path::is_exe() const {
+    unique_ptr<struct stat> s = this->stat();
+    return s->st_mode & S_IXUSR || s->st_mode & S_IXGRP;
+}
+
+
 bool Path::is_file() const {
     return S_ISREG(this->stat()->st_mode);
 }

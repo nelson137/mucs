@@ -48,6 +48,7 @@ public:
 
     virtual bool exists() const = 0;
     virtual int type() const = 0;
+    virtual bool is_exe() const = 0;
     virtual bool is_file() const = 0;
     virtual bool is_dir() const = 0;
 
@@ -106,6 +107,7 @@ public:
 
     bool exists() const override;
     int type() const override;
+    bool is_exe() const override;
     bool is_file() const override;
     bool is_dir() const override;
 
