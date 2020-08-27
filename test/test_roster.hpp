@@ -6,7 +6,7 @@
 
 #include "catch.hpp"
 
-#include "mucs/random.hpp"
+#include "random.hpp"
 
 #include "util.hpp"
 

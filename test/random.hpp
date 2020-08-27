@@ -1,5 +1,5 @@
-#ifndef MUCS_RANDOM_HPP
-#define MUCS_RANDOM_HPP
+#ifndef RANDOM_HPP
+#define RANDOM_HPP
 
 
 #include <ostream>

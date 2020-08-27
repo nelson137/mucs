@@ -5,7 +5,7 @@
 #include "catch.hpp"
 #include "fakeit.hpp"
 
-#include "mucs/random.hpp"
+#include "random.hpp"
 
 #include "../src/mucs.hpp"
 

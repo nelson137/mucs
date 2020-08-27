@@ -1,4 +1,4 @@
-#include "mucs/random.hpp"
+#include "random.hpp"
 
 
 chars_t::chars_t(const string& cs) : _choices(cs) {

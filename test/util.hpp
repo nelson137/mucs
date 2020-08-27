@@ -7,7 +7,7 @@
 #include "date.h"
 #include "json.hpp"
 
-#include "mucs/random.hpp"
+#include "random.hpp"
 
 #include "../src/config.hpp"
 

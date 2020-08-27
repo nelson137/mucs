@@ -7,7 +7,7 @@
 #include "catch.hpp"
 #include "json.hpp"
 
-#include "mucs/random.hpp"
+#include "random.hpp"
 
 #include "util.hpp"
 
