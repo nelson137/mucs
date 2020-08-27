@@ -9,5 +9,5 @@
 #include "../src/util.hpp"
 
 using namespace std;
+using namespace Catch::Matchers;
 using namespace chrono;
-using Catch::Matchers::Equals;

@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "date.h"
 #include "json.hpp"
 
 #include "mucs/except.hpp"
@@ -33,10 +34,11 @@
 
 using namespace std;
 using namespace chrono;
+using namespace date;
 using json = nlohmann::json;
 
 
-extern system_clock::time_point NOW;
+extern sys_seconds NOW;
 
 
 struct Tabular {
@@ -46,38 +48,23 @@ struct Tabular {
 };
 
 
-system_clock::time_point current_time();
+sys_seconds current_datetime();
 
-int current_weekday();
-
-string format_datetime(const tm& t, const string& fmt);
-
-string format_datetime(const system_clock::time_point& tp, const string& fmt);
-
-string format_weekday(int weekday);
+year_month_day get_day(sys_seconds tp = NOW);
 
 int get_term_width();
 
+seconds get_time(sys_seconds tp = NOW);
+
+weekday get_weekday(sys_seconds tp = NOW);
+
 string join_paths(string a, deque<string> parts);
-
-system_clock::time_point parse_datetime(
-    const string& dt_str,
-    const string& fmt
-);
-
-system_clock::time_point parse_time(const string& t_str);
-
-int parse_weekday(const string& w_str);
 
 void print_table(const list<vector<string>>& table, const string& delim = "  ");
 
 vector<string> string_split(const string& s, const string& delim);
 
 string string_strip(string s);
-
-void tm_add_days(tm *t, int days);
-
-tm tm_zero();
 
 
 template<typename... String>

@@ -13,7 +13,7 @@
 #include "../src/config.hpp"
 
 using namespace std;
-using Catch::Matchers::Equals;
+using namespace Catch::Matchers;
 
 
 #endif

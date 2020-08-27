@@ -16,7 +16,7 @@ bool LabAsgmt::compare::operator()(
     const pair<string,LabAsgmt>& b
 ) const {
     // Sort `a` before `b` iff:
-    //   a and ends then b starts and ends
+    //   a starts and ends then b starts and ends
     //   overlapping but offset, a starts first
     //   b is inside of a
     // Otherwise sort `b` before `a`
@@ -30,13 +30,10 @@ bool LabAsgmt::compare::operator()(
 
 
 string LabAsgmt::str() const {
-    time_t tt = system_clock::to_time_t(this->start);
-    tm *t = localtime(&tt);
-
     ostringstream spec;
-    spec << format_datetime(this->start, LAB_ASGMT_FMT)
+    spec << format("%b", this->start)
          << " "
-         << ((int) t->tm_mday / 7);
+         << year_month_weekday(this->start).index();
     return spec.str();
 }
 
@@ -53,36 +50,19 @@ void from_json(const json& j, LabAsgmt& la) {
             {"lab-assignments", la.name});
     };
 
-    // Should be {"<month>", "<week-of-month>"}
-    vector<string> chunks = string_split(j.get<string>(), " ");
-    if (chunks.size() != 2)
+    month_day md;
+    istringstream(j.get<string>()) >> parse(LAB_ASGMT_FMT, md);
+    if (not md.ok())
         invalid_lab_asgmt();
 
-    // t = 00:00:00 on the first day of the given month
-    time_t tt = system_clock::to_time_t(
-        parse_datetime(chunks[0], LAB_ASGMT_FMT));
-    tm t = *localtime(&tt);
-    // t.tm_year = this year
-    tt = system_clock::to_time_t(NOW);
-    t.tm_year = localtime(&tt)->tm_year;
+    auto week = (unsigned) md.day();
+    auto today = get_day();
 
-    // If the first day of the month isn't a monday
-    if (t.tm_wday != 1)
-        // Move forward to the next monday
-        tm_add_days(&t, (8 - t.tm_wday) % 7);
-
-    try {
-        // Move forward to the monday of the chunks[1]'th week
-        tm_add_days(&t, stoi(chunks[1]) * 7);
-    } catch (const invalid_argument& e) {
+    la.start = year_month_day(today.year()/md.month()/Monday[week]);
+    if (not la.start.ok())
         invalid_lab_asgmt();
-    } catch (const out_of_range& e) {
-        invalid_lab_asgmt();
-    }
 
-    la.start = system_clock::from_time_t(mktime(&t));
-    tm_add_days(&t, 6);  // Move forward to sunday
-    la.end = system_clock::from_time_t(mktime(&t));
+    la.end = today.year()/md.month()/(la.start.day() + days(6));
 }
 
 

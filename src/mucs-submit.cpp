@@ -30,7 +30,7 @@ void Mucs::submit() {
     // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
     Path assignment_d = submit_root / this->course / lab / assignment;
 
-    string now_str = format_datetime(NOW, DATETIME_EXT_FMT);
+    string now_str = format(DATETIME_EXT_FMT, NOW);
     // .submissions/USER.DATE.TIME
     Path submit_d_rel = Path(".submissions") / this->user + now_str;
 

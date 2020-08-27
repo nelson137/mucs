@@ -17,9 +17,9 @@ LabSesh::operator string() const {
 
 
 bool LabSesh::is_active() const {
-    if (current_weekday() != this->weekday)
+    if (get_weekday() != this->wd)
         return false;
-    system_clock::time_point now = current_time();
+    seconds now = get_time();
     return this->start <= now && now < this->end;
 }
 
@@ -30,14 +30,14 @@ string LabSesh::format(string fmt) const {
     map<string,string> repl = {
         {"{id}", this->id},
 
-        {"{weekday}", format_weekday(this->weekday)},
-        {"{weekday_n}", to_string(this->weekday)},
+        {"{weekday}", ::format("%A", this->wd)},
+        {"{weekday_n}", to_string(this->wd.c_encoding())},
 
-        {"{start}", format_datetime(this->start, TIME_FMT)},
-        {"{start_p}", format_datetime(this->start, fmt_t_pretty)},
+        {"{start}", ::format(TIME_FMT, this->start)},
+        {"{start_p}", ::format(fmt_t_pretty, this->start)},
 
-        {"{end}", format_datetime(this->end, TIME_FMT)},
-        {"{end_p}", format_datetime(this->end, fmt_t_pretty)}
+        {"{end}", ::format(TIME_FMT, this->end)},
+        {"{end_p}", ::format(fmt_t_pretty, this->end)}
     };
 
     size_t i;
@@ -60,12 +60,12 @@ list<vector<string>> LabSessions::to_table() const {
         // Column 1
         row.push_back(it->first);
         // Column 2
-        row.push_back(format_weekday(it->second.weekday));
+        row.push_back(::format("%A", it->second.wd));
         // Column 3
         stringstream time_range;
-        time_range << format_datetime(it->second.start, TIME_FMT)
+        time_range << ::format(TIME_FMT, it->second.start)
                    << " - "
-                   << format_datetime(it->second.end, TIME_FMT);
+                   << ::format(TIME_FMT, it->second.end);
         row.push_back(time_range.str());
         // Append row
         table.push_back(move(row));
@@ -101,9 +101,25 @@ void from_json(const json& j, LabSesh& ls) {
     if (wday_start.size() < 2)
         invalid_lab_spec();
 
-    ls.weekday = parse_weekday(wday_start[0]);
-    ls.start = parse_time(wday_start[1]);
-    ls.end = parse_time(chunks[1]);
+    istringstream(string_strip(wday_start[0])) >> parse("%a", ls.wd);
+    if (not ls.wd.ok())
+        throw Config::error(
+            "Lab session weekday is invalid (first char must be capitalized)",
+            {"lab-sessions", ls.id});
+
+    istringstream start_iss(string_strip(wday_start[1]));
+    start_iss >> parse(TIME_FMT, ls.start);
+    if (not start_iss.good())
+        throw Config::error(
+            "Lab session start time is invalid",
+            {"lab-sessions", ls.id});
+
+    istringstream end_iss(string_strip(chunks[1]));
+    end_iss >> parse(TIME_FMT, ls.end);
+    if (not end_iss.good())
+        throw Config::error(
+            "Lab session end time is invalid",
+            {"lab-sessions", ls.id});
 }
 
 

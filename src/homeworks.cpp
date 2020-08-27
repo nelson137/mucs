@@ -15,7 +15,7 @@ list<vector<string>> Homeworks::to_table() const {
         // Column 1
         row.push_back(hw.name);
         // Column 2
-        row.push_back(format_datetime(hw.duedate, HW_FMT));
+        row.push_back(format(HW_FMT, hw.duedate));
         // Append row
         table.push_back(move(row));
     }
@@ -24,11 +24,15 @@ list<vector<string>> Homeworks::to_table() const {
 
 
 void from_json(const json& j, Hw& hw) {
-    hw.name = j.value("name", "");
+    string name = j.value("name", "");
+    hw.name = name;
     // Normalize name (lowercase)
     stl_transform(hw.name, ::tolower);
 
-    hw.duedate = parse_datetime(j.value("duedate", ""), HW_FMT);
+    istringstream iss(j.value("duedate", ""));
+    iss >> date::parse(HW_FMT, hw.duedate);
+    if (not iss.good())
+        throw Config::error("Invalid duedate", {"homeworks", name});
 }
 
 
@@ -41,7 +45,7 @@ void from_json(const json& j, Homeworks& homeworks) {
 void to_json(json& j, const Hw& hw) {
     j = {
         {"name", hw.name},
-        {"duedate", format_datetime(hw.duedate, HW_FMT)}
+        {"duedate", format(HW_FMT, hw.duedate)}
     };
 }
 

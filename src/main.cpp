@@ -4,7 +4,7 @@
 #ifndef MUCS_TEST
 
 int main(int argc, char **argv) {
-    NOW = system_clock::now();
+    NOW = current_datetime();
     CONFIGS_AVAILABLE = Path(CONFIG_DIR).ls_base();
 
     Mucs mucs;

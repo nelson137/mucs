@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "date.h"
 #include "json.hpp"
 #include "valijson/adapters/nlohmann_json_adapter.hpp"
 #include "valijson/schema.hpp"
@@ -31,6 +32,7 @@
 
 using namespace std;
 using namespace chrono;
+using namespace date;
 using namespace valijson;
 using namespace valijson::adapters;
 using json = nlohmann::json;
@@ -44,7 +46,7 @@ using json = nlohmann::json;
 struct Hw {
 
     string name;
-    system_clock::time_point duedate;
+    sys_seconds duedate;
 
     struct compare {
         bool operator()(const Hw& a, const Hw& b) const;
@@ -76,9 +78,9 @@ struct Homeworks : public set<Hw, Hw::compare>, public Tabular {
 struct LabSesh {
 
     string id;
-    int weekday;
-    system_clock::time_point start;
-    system_clock::time_point end;
+    weekday wd;
+    seconds start;
+    seconds end;
 
     LabSesh();
     LabSesh(const string& i);
@@ -116,8 +118,8 @@ struct LabSessions : public map<string, LabSesh>, public Tabular {
 struct LabAsgmt {
 
     string name;
-    system_clock::time_point start;
-    system_clock::time_point end;
+    year_month_day start;
+    year_month_day end;
 
     LabAsgmt();
     LabAsgmt(const string& n);

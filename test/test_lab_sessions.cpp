@@ -15,14 +15,14 @@ TEST_CASE("lab-sessions entry has incorrect format", "[lab-sessions][entry]") {
 
 TEST_CASE("lab-sessions is valid", "[lab-sessions][entry]") {
     string key = rand_lab_sesh_id();
-    json data = { {key, "mon 00:00:00 - 23:59:59"} };
+    json data = { {key, "Mon 00:00:00 - 23:59:59"} };
     REQUIRE_NOTHROW(data.get<LabSessions>());
 }
 
 
 TEST_CASE("serialize lab-sessions", "[lab-sessions][serialize]") {
     string key = rand_lab_sesh_id();
-    json data = { {key, "monday 00:00:00 - 23:59:59"} };
+    json data = { {key, "Monday 00:00:00 - 23:59:59"} };
     string expected = data.dump();
     string actual = json(data.get<LabSessions>()).dump();
     REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
@@ -37,21 +37,21 @@ TEST_CASE("is_active returns false when: weekday incorrect, time incorrect",
 
 
 TEST_CASE("is_active returns false when: weekday incorrect, time correct",
-          "[lab-sessions][is_active]") {
+          "[lab-sesh][is_active]") {
     const LabSesh& ls = RandLabSesh().today(false).now().get();
     REQUIRE(ls.is_active() == false);
 }
 
 
 TEST_CASE("is_active returns false when: weekday correct, time incorrect",
-          "[lab-sessions][is_active]") {
+          "[lab-sesh][is_active]") {
     const LabSesh& ls = RandLabSesh().today().now(false).get();
     REQUIRE(ls.is_active() == false);
 }
 
 
 TEST_CASE("is_active returns true when: weekday correct, time correct",
-          "[lab-sessions][is_active]") {
+          "[lab-sesh][is_active]") {
     const LabSesh& ls = RandLabSesh().today().now().get();
     REQUIRE(ls.is_active() == true);
 }

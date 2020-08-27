@@ -16,49 +16,40 @@ TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
 
 TEST_CASE("roster entry has one lab id", "[roster][entry]") {
     string user = rand_user();
-    string id = rand_lab_sesh_id();
+    vector<string> expected_ids = { rand_lab_sesh_id() };
     json data = new_config_data({
-        {"lab-sessions", { {id, "mon 00:00:00 - 23:59:59"} }},
-        {"roster", {}},
+        {"lab-sessions", { {expected_ids[0], "Mon 00:00:00 - 23:59:59"} }},
+        {"roster", { {user, expected_ids[0]} }},
     });
 
-    SECTION("that is unrecognized") {
-        string bad_id = id + "_";
-        data["roster"][user] = bad_id;
-        REQUIRE_THROWS_WITH(
-            Config().parse(data),
-            error_id_unrecognized(user, bad_id)
-        );
-    }
+    Config config = Config().parse(data);
 
-    SECTION("that is recognized") {
-        data["roster"][user] = id;
-        REQUIRE_NOTHROW(Config().parse(data));
-    }
+    REQUIRE(config.roster.count(user) == 1);
+    auto actual_ids = config.roster.at(user);
+    REQUIRE_THAT(actual_ids, Vector::EqualsMatcher<string>(expected_ids));
 }
 
 
 TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
     string user = rand_user();
-    string id = rand_lab_sesh_id();
+    vector<string> expected_ids = {
+        rand_lab_sesh_id(), rand_lab_sesh_id(), "", rand_lab_sesh_id()
+    };
+    ostringstream ids;
+    ids << expected_ids[0];
+    for (auto it=begin(expected_ids)+1; it!=end(expected_ids); it++)
+        ids << ',' << *it;
+
     json data = new_config_data({
-        {"lab-sessions", { {id, "mon 00:00:00 - 23:59:59"} }},
-        {"roster", {}}
+        {"lab-sessions", { {expected_ids[1], "Mon 00:00:00 - 23:59:59"} }},
+        {"roster", { {user, ids.str()} }}
     });
 
-    SECTION("one recognized, other unrecognized") {
-        string bad_id = id + '_';
-        data["roster"][user] = id + ',' + bad_id;
-        REQUIRE_THROWS_WITH(
-            Config().parse(data),
-            error_id_unrecognized(user, bad_id)
-        );
-    }
+    Config config = Config().parse(data);
 
-    SECTION("all recognized") {
-        data["roster"][user] = id + "," + id;
-        REQUIRE_NOTHROW(Config().parse(data));
-    }
+    REQUIRE(config.roster.count(user) == 1);
+    auto actual_ids = config.roster.at(user);
+    REQUIRE_THAT(actual_ids, Vector::EqualsMatcher<string>(expected_ids));
 }
 
 

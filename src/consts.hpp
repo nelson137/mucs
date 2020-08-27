@@ -20,7 +20,7 @@ using namespace std;
 #define CONFIG_DIR  MUCS_ROOT "/config.d"
 #define SCHEMA_PATH CONFIG_DIR "/schema.json"
 
-#define LAB_ASGMT_FMT    "%b"
+#define LAB_ASGMT_FMT    "%b %d"
 #define HW_FMT           "%Y-%m-%d %H:%M:%S"
 #define DATETIME_EXT_FMT ".%Y-%m-%d.%H:%M:%S"
 #define TIME_FMT         "%H:%M:%S"

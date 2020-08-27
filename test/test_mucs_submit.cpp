@@ -96,10 +96,9 @@ TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
 
 TEST_CASE("submit homework", "[mucs][submit]") {
     string user = rand_user();
-    NOW = system_clock::now();
     string hw_name = rand_hw_name();
     string lab_id = rand_lab_sesh_id();
-    int year = current_year();
+    auto today = get_day();
 
     Mucs mucs;
     mucs.user = user;
@@ -123,8 +122,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
     }
 
     SECTION("when there is one past-due homework") {
-        system_clock::time_point dd =
-            parse_datetime(to_string(year-1) + "-01-01 00:00:00", HW_FMT);
+        sys_seconds dd{};
         mucs.config.homeworks.insert({ hw_name, dd });
         REQUIRE_THROWS_WITH(
             spy.get().submit(),
@@ -133,8 +131,8 @@ TEST_CASE("submit homework", "[mucs][submit]") {
     }
 
     SECTION("when there is one active homework") {
-        system_clock::time_point dd =
-            parse_datetime(to_string(year+1) + "-01-01 00:00:00", HW_FMT);
+        sys_seconds dd{};
+        dd += years((int) today.year() - 1970 + 3);
         mucs.config.homeworks.insert({ hw_name, dd });
         REQUIRE_THROWS_WITH(mucs.submit(), "Submission cancelled");
     }

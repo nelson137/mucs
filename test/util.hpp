@@ -4,6 +4,7 @@
 
 #include <string>
 
+#include "date.h"
 #include "json.hpp"
 
 #include "mucs/random.hpp"
@@ -11,22 +12,13 @@
 #include "../src/config.hpp"
 
 using namespace std;
+using namespace date;
 using json = nlohmann::json;
 
 
-extern const char *INVALID_VALUE_TYPE;
-extern const char *MISSING_PROPERTY;
+#define INVALID_VALUE_TYPE "Value type not permitted by 'type' constraint"
+#define MISSING_PROPERTY   "Missing required property '"
 
-
-int current_year();
-
-string error_id_unrecognized(const string& user, const string& id);
-
-string error_prop(
-    const string& obj,
-    const string& key,
-    const string& type
-);
 
 json new_config_data(json j = json::object());
 
@@ -66,16 +58,12 @@ class RandLabAsgmt {
 private:
     string name;
 
-    static const vector<string> MONTHS;
-    string month;
-
-    int week_n;
+    year_month_weekday ymwd;
 
 public:
     RandLabAsgmt(const string& n = rand_lab_asgmt_name());
 
-    RandLabAsgmt& not_this_week();
-    RandLabAsgmt& this_week();
+    RandLabAsgmt& this_week(bool this_week = true);
 
     LabAsgmt get() const;
 

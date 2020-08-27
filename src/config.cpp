@@ -108,8 +108,9 @@ string Config::get_assignment(const string& type) const {
 
 
 string Config::get_current_lab() const {
+    auto today = get_day();
     for (auto& e : this->lab_assignments)
-        if (e.second.start <= NOW && NOW < e.second.end)
+        if (e.second.start <= today && today < e.second.end)
             return e.first;
 
     throw mucs_exception(

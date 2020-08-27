@@ -1,52 +1,19 @@
 #include "util.hpp"
 
 
-system_clock::time_point NOW;
+sys_seconds NOW;
 
 
-system_clock::time_point current_time() {
-    time_t now_t = system_clock::to_time_t(NOW);
-    tm *now = localtime(&now_t);
-
-    tm t = tm_zero();
-    t.tm_hour = now->tm_hour;
-    t.tm_min = now->tm_min;
-    t.tm_sec = now->tm_sec;
-
-    return system_clock::from_time_t(mktime(&t));
+sys_seconds current_datetime() {
+    time_t now_tt = time(nullptr);
+    system_clock::time_point now_tp = system_clock::from_time_t(now_tt);
+    seconds utc_offset(localtime(&now_tt)->tm_gmtoff);
+    return floor<seconds>(now_tp) + utc_offset;
 }
 
 
-int current_weekday() {
-    time_t now = system_clock::to_time_t(NOW);
-    return localtime(&now)->tm_wday;
-}
-
-
-string format_datetime(const tm& t, const string& fmt) {
-    size_t size = sizeof(char) * 32;
-    char *buf = new char[size];
-    while (strftime(buf, size, fmt.c_str(), &t) == 0) {
-        delete[] buf;
-        size *= 2;
-        buf = new char[size];
-    }
-    string ret(buf);
-    delete[] buf;
-    return ret;
-}
-
-
-string format_datetime(const system_clock::time_point& tp, const string& fmt) {
-    time_t tt = system_clock::to_time_t(tp);
-    return format_datetime(*localtime(&tt), fmt);
-}
-
-
-string format_weekday(int weekday) {
-    tm t;
-    t.tm_wday = weekday;
-    return format_datetime(t, "%A");
+year_month_day get_day(sys_seconds tp) {
+    return floor<days>(tp);
 }
 
 
@@ -54,6 +21,16 @@ int get_term_width() {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     return w.ws_col;
+}
+
+
+seconds get_time(sys_seconds tp) {
+    return tp - floor<days>(tp);
+}
+
+
+weekday get_weekday(sys_seconds tp) {
+    return year_month_weekday(get_day(tp)).weekday();
 }
 
 
@@ -72,33 +49,6 @@ string join_paths(string a, deque<string> parts) {
     return parts.size()
         ? join_paths(a + b, parts)
         : a + b;
-}
-
-
-system_clock::time_point parse_datetime(
-    const string& dt_str,
-    const string& fmt
-) {
-    tm t = tm_zero();
-    if (strptime(dt_str.c_str(), fmt.c_str(), &t) == nullptr)
-        throw mucs_exception("Invalid datetime: " + dt_str);
-    return system_clock::from_time_t(mktime(&t));
-}
-
-
-system_clock::time_point parse_time(const string& t_str) {
-    tm t = tm_zero();
-    if (strptime(t_str.c_str(), TIME_FMT, &t) == nullptr)
-        throw mucs_exception("Invalid time: " + t_str);
-    return system_clock::from_time_t(mktime(&t));
-}
-
-
-int parse_weekday(const string& w_str) {
-    tm t;
-    if (strptime(w_str.c_str(), "%a", &t) == nullptr)
-        throw mucs_exception("Invalid weekday: " + w_str);
-    return t.tm_wday;
 }
 
 
@@ -151,30 +101,4 @@ string string_strip(string s) {
     const size_t begin = s.find_first_not_of(whitespace);
     const size_t end = s.find_last_not_of(whitespace);
     return begin == string::npos ? "" : s.substr(begin, end - begin + 1);
-}
-
-
-void tm_add_days(tm *t, int days) {
-    t->tm_mday += days;
-    t->tm_wday += days;
-    t->tm_yday += days;
-}
-
-
-tm tm_zero() {
-    tm zero;
-    // Date
-    zero.tm_year = 70;
-    zero.tm_mon = 0;
-    zero.tm_mday = 1;
-    // Time
-    zero.tm_hour = 0;
-    zero.tm_min = 0;
-    zero.tm_sec = 0;
-    zero.tm_gmtoff = 0;
-    // Calendar
-    zero.tm_yday = 0;
-    zero.tm_wday = 0;
-    zero.tm_isdst = -1;
-    return zero;
 }

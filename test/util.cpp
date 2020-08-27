@@ -1,33 +1,6 @@
 #include "util.hpp"
 
 
-const char *INVALID_VALUE_TYPE =
-    "Value type not permitted by 'type' constraint";
-const char *MISSING_PROPERTY =
-    "Missing required property '";
-
-
-int current_year() {
-    time_t now_t = system_clock::to_time_t(NOW);
-    tm *now = localtime(&now_t);
-    return now->tm_year + 1900;
-}
-
-
-string error_id_unrecognized(const string& user, const string& id) {
-    return "Lab id not recognized: {filename}[\"roster\"][\"" + user + "\"]";
-}
-
-
-string error_prop(
-    const string& obj,
-    const string& key,
-    const string& type
-) {
-    return obj + " objects require key '" + key + "' of type '" + type + "'";
-}
-
-
 json new_config_data(json j) {
     auto default_val = [&] (const string& key, const json& val) {
         if (j.count(key) == 0)
@@ -67,7 +40,7 @@ string rand_lab_asgmt_name() {
 
 
 string rand_lab_sesh_id() {
-    return "LAB_" + rand_string(3, chars_upper);
+    return rand_string(3, chars_upper);
 }
 
 
@@ -91,43 +64,29 @@ RandLabSesh::RandLabSesh(const string& id) {
 
 
 RandLabSesh& RandLabSesh::today(bool today) {
-    int weekday = current_weekday();
-    int offset = rand_int(1, 7);
-    this->ls.weekday = today ? weekday : ((weekday+offset) % 7);
+    this->ls.wd = today ? get_weekday() : weekday(rand_int(7));
     return *this;
 }
 
 
 RandLabSesh& RandLabSesh::now(bool now) {
-    static tm tm_0 =
-        { 0,  0,  0, 1, 0, 70, 0, 0, 0};
-    static tm tm_2 =
-        { 0,  0,  2, 1, 0, 70, 0, 0, 0};
-    static tm tm_22 =
-        { 0,  0, 22, 1, 0, 70, 0, 0, 0};
-    static tm tm_midnight =
-        {59, 59, 23, 1, 0, 70, 0, 0, 0};
+    // Beginning and end of day
+    constexpr seconds bod = seconds(0);
+    constexpr seconds eod = days(1) - seconds(1);
 
-    static const system_clock::time_point tp_0 =
-        system_clock::from_time_t(mktime(&tm_0));
-    static const system_clock::time_point tp_2 =
-        system_clock::from_time_t(mktime(&tm_2));
-    static const system_clock::time_point tp_22 =
-        system_clock::from_time_t(mktime(&tm_22));
-    static const system_clock::time_point tp_midnight =
-        system_clock::from_time_t(mktime(&tm_midnight));
+    // Current time of day
+    time_of_day<seconds> tod = make_time(get_time());
 
     if (now) {
-        this->ls.start = tp_0;
-        this->ls.end = tp_midnight;
+        this->ls.start = bod;
+        this->ls.end = eod;
     } else {
-        time_t now = time(nullptr);
-        if (localtime(&now)->tm_hour <= 12) {
-            this->ls.start = tp_22;
-            this->ls.end = tp_midnight;
+        if (tod.hours() < hours(12)) {
+            this->ls.start = hours(rand_int(12, 24));
+            this->ls.end = eod;
         } else {
-            this->ls.start = tp_0;
-            this->ls.end = tp_2;
+            this->ls.start = bod;
+            this->ls.end = hours(rand_int(12));
         }
     }
 
@@ -140,45 +99,24 @@ const LabSesh& RandLabSesh::get() const {
 }
 
 
-const vector<string> RandLabAsgmt::MONTHS = {
-    "jan", "feb", "mar", "apr", "may", "jun",
-    "jul", "aug", "sep", "oct", "nov", "dec"
-};
-
-
-RandLabAsgmt::RandLabAsgmt(const string& n) : name(n) {
+RandLabAsgmt::RandLabAsgmt(const string& n) : name(n), ymwd(get_day()) {
 }
 
 
-RandLabAsgmt& RandLabAsgmt::not_this_week() {
-    time_t tt = system_clock::to_time_t(system_clock::now());
-    tm *now = localtime(&tt);
-
-    int dm = rand_int(1, 5) * (now->tm_mon < 6 ? 1 : -1);
-    this->month = RandLabAsgmt::MONTHS[now->tm_mon + dm];
-
-    this->week_n = rand_int(3);
-
-    return *this;
-}
-
-
-RandLabAsgmt& RandLabAsgmt::this_week() {
-    time_t tt = system_clock::to_time_t(NOW);
-    tm *now = localtime(&tt);
-
-    this->month = RandLabAsgmt::MONTHS[now->tm_mon];
-
-    tt += (1 - now->tm_wday) * 24 * 60 * 60;
-    this->week_n = localtime(&tt)->tm_mday / 7;
-
+RandLabAsgmt& RandLabAsgmt::this_week(bool this_week) {
+    if (not this_week) {
+        int dm = rand_int(1, 5) * (get_day().month() < month(6) ? 1 : -1);
+        this->ymwd += months(dm);
+    }
     return *this;
 }
 
 
 LabAsgmt RandLabAsgmt::get() const {
-    string spec = this->month + " " + to_string(this->week_n);
-    LabAsgmt la = json(spec).get<LabAsgmt>();
+    year_month_day ymd(this->ymwd);
+    ostringstream value;
+    value << this->ymwd.month() << ' ' << this->ymwd.index();
+    auto la = json(value.str()).get<LabAsgmt>();
     la.name = this->name;
     return la;
 }

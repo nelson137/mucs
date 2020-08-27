@@ -2,7 +2,7 @@
 
 
 int main(int argc, char *argv[]) {
-    NOW = system_clock::now();
+    NOW = current_datetime();
 
     return Catch::Session().run(argc, argv);
 }

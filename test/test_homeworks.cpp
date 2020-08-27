@@ -6,7 +6,7 @@ TEST_CASE("hw duedate has incorrect format", "[hw]") {
     json data = { {"name", name}, {"duedate", name} };
     REQUIRE_THROWS_WITH(
         data.get<Hw>(),
-        "Invalid datetime: " + name
+        "Invalid duedate: {filename}[\"homeworks\"][\"" + name + "\"]"
     );
 }
 

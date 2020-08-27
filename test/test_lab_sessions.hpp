@@ -14,8 +14,8 @@
 #include "../src/config.hpp"
 
 using namespace std;
+using namespace Catch::Matchers;
 using json = nlohmann::json;
-using Catch::Matchers::Equals;
 
 
 #endif
