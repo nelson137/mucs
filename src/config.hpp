@@ -24,7 +24,7 @@
 #include "valijson/schema_parser.hpp"
 #include "valijson/validator.hpp"
 
-#include "mucs/except.hpp"
+#include "except.hpp"
 
 #include "consts.hpp"
 #include "path.hpp"

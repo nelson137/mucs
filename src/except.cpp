@@ -1,4 +1,4 @@
-#include "mucs/except.hpp"
+#include "except.hpp"
 
 
 const char *mucs_exception::what() const noexcept {

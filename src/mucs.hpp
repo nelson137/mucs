@@ -14,7 +14,7 @@
 #include "picosha2.h"
 #include "rang.hpp"
 
-#include "mucs/except.hpp"
+#include "except.hpp"
 
 #include "config.hpp"
 #include "consts.hpp"

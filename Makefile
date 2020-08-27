@@ -13,8 +13,6 @@ ALL_OBJS  := $(OBJS) $(TEST_OBJS)
 SCRIPTS   := $(wildcard bin/mucs-*)
 
 CFLAGS    := -std=c++11 -g -pedantic -Wall -Werror -Wno-noexcept-type
-LDFLAGS   := -Llibmucs/build
-LDLIBS    := -lmucs
 COVFLAGS  :=
 DEFINES   :=
 
@@ -40,7 +38,7 @@ DEFINES += -DMUCS_ROOT='"test_root"' -DCOMPILE_SCRIPT='"scripts/compile"'
 endif
 endef
 
-CXX       := g++ -Iinclude -Ilibmucs/include
+CXX       := g++ -Iinclude
 ifeq ($(call can-find-exe,gccfilter),yes)
 CXX       := gccfilter -c -n -a $(CXX)
 endif
@@ -85,17 +83,13 @@ coverage: test
 .PHONY: coverage
 endif
 
-libmucs:
-	@$(MAKE) -C libmucs
-.PHONY: libmucs
-
-$(EXE): libmucs $(OBJS)
+$(EXE): $(OBJS)
 	@echo "build/src/*.o -> $@"
-	@$(CXX) $(LDFLAGS) $(OBJS) -o $@ $(LDLIBS)
+	@$(CXX) $(OBJS) -o $@
 
-$(TEST_EXE): libmucs $(ALL_OBJS)
+$(TEST_EXE): $(ALL_OBJS)
 	@echo "build/**/*.o -> $@"
-	@$(CXX) $(LDFLAGS) $(ALL_OBJS) -o $@ $(LDLIBS) -lgcov
+	@$(CXX) $(ALL_OBJS) -o $@ -lgcov
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
@@ -110,7 +104,6 @@ install: $(EXE)
 .PHONY: install
 
 clean:
-	@$(MAKE) -C libmucs clean
 	rm -rf $(EXE) $(TEST_EXE) build coverage
 .PHONY: clean
 

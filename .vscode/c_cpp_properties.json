@@ -5,8 +5,7 @@
         "mucsIncludePaths": [
             "${workspaceFolder}/include",
             "${workspaceFolder}/src",
-            "${workspaceFolder}/test",
-            "${workspaceFolder}/libmucs/include"
+            "${workspaceFolder}/test"
         ],
         "mucsCompilerArgs": [
             "-pedantic",

@@ -14,7 +14,7 @@
 
 #include <sys/wait.h>
 
-#include "mucs/except.hpp"
+#include "except.hpp"
 
 #include "path.hpp"
 

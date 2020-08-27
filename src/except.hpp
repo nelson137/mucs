@@ -1,5 +1,5 @@
-#ifndef MUCS_EXCEPT_HPP
-#define MUCS_EXCEPT_HPP
+#ifndef EXCEPT_HPP
+#define EXCEPT_HPP
 
 
 #include <algorithm>

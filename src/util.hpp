@@ -27,7 +27,7 @@
 #include "date.h"
 #include "json.hpp"
 
-#include "mucs/except.hpp"
+#include "except.hpp"
 
 #include "consts.hpp"
 #include "proc.hpp"
