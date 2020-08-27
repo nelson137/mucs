@@ -48,6 +48,9 @@ struct Hw {
     string name;
     sys_seconds duedate;
 
+    Hw();
+    Hw(string n, sys_seconds dd);
+
     struct compare {
         bool operator()(const Hw& a, const Hw& b) const;
     };
@@ -84,6 +87,7 @@ struct LabSesh {
 
     LabSesh();
     LabSesh(const string& i);
+    LabSesh(string id, weekday w, seconds s, seconds e);
 
     operator string() const;
     friend ostream& operator<<(ostream& os, const LabSesh& ls);
@@ -123,6 +127,7 @@ struct LabAsgmt {
 
     LabAsgmt();
     LabAsgmt(const string& n);
+    LabAsgmt(const string& n, year_month_day s, year_month_day e);
 
     struct compare {
         bool operator()(

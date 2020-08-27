@@ -11,6 +11,11 @@ LabAsgmt::LabAsgmt(const string& n) : name(n) {
 }
 
 
+LabAsgmt::LabAsgmt(const string& n, year_month_day s, year_month_day e)
+        : name(n), start(s), end(e) {
+}
+
+
 bool LabAsgmt::compare::operator()(
     const pair<string,LabAsgmt>& a,
     const pair<string,LabAsgmt>& b

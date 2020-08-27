@@ -11,6 +11,11 @@ LabSesh::LabSesh(const string& i) : id(i) {
 }
 
 
+LabSesh::LabSesh(string id, weekday w, seconds s, seconds e)
+        : id(id), wd(w), start(s), end(e) {
+}
+
+
 LabSesh::operator string() const {
     return this->id;
 }

@@ -1,6 +1,14 @@
 #include "config.hpp"
 
 
+Hw::Hw() {
+}
+
+
+Hw::Hw(string n, sys_seconds dd) : name(n), duedate(dd) {
+}
+
+
 bool Hw::compare::operator()(const Hw& a, const Hw& b) const {
     return a.duedate < b.duedate;
 }

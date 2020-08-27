@@ -20,9 +20,15 @@ TEST_CASE("hw is valid", "[hw]") {
 
 TEST_CASE("serialize hw", "[homeworks][serialize]") {
     string name = rand_hw_name();
-    json data = { {"name", name}, {"duedate", "1970-01-01 00:00:00"} };
-    string expected = data.dump();
-    string actual = json(data.get<Hw>()).dump();
+
+    json j;
+    j["name"] = name;
+    j["duedate"] = "1970-01-01 00:00:00";
+    string expected = j.dump();
+
+    Hw hw(name, sys_seconds{});
+    string actual = json(hw).dump();
+
     REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }
 

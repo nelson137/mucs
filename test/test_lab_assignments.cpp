@@ -21,10 +21,16 @@ TEST_CASE("lab-assignments is valid", "[lab-assignments][entry]") {
 
 
 TEST_CASE("serialize lab-assignments", "[lab-assignments][serialize]") {
-    string key = rand_lab_asgmt_name();
-    json data = { {key, "Feb 1"} };
-    string expected = data.dump();
-    string actual = json(data.get<LabAssignments>()).dump();
+    string name = rand_lab_asgmt_name();
+    year_month_day start(year(2020)/February/Monday[1]);
+    year_month_day end = start.year()/start.month()/(start.day() + days(6));
+
+    string expected = json({ {name, "Feb 1"} }).dump();
+
+    LabAssignments las;
+    las.insert({ name, LabAsgmt(name, start, end) });
+    string actual = json(las).dump();
+
     REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }
 

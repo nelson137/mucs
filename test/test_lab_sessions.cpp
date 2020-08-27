@@ -21,10 +21,15 @@ TEST_CASE("lab-sessions is valid", "[lab-sessions][entry]") {
 
 
 TEST_CASE("serialize lab-sessions", "[lab-sessions][serialize]") {
-    string key = rand_lab_sesh_id();
-    json data = { {key, "Monday 00:00:00 - 23:59:59"} };
-    string expected = data.dump();
-    string actual = json(data.get<LabSessions>()).dump();
+    string id = rand_lab_sesh_id();
+
+    string expected = json({ {id, "Monday 00:00:00 - 23:59:59"} }).dump();
+
+    LabSesh ls(id, Monday, seconds(0), days(1) - seconds(1));
+    LabSessions sessions;
+    sessions.insert({ id, ls });
+    string actual = json(sessions).dump();
+
     REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }
 

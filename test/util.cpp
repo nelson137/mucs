@@ -64,7 +64,8 @@ RandLabSesh::RandLabSesh(const string& id) {
 
 
 RandLabSesh& RandLabSesh::today(bool today) {
-    this->ls.wd = today ? get_weekday() : weekday(rand_int(7));
+    weekday w = get_weekday();
+    this->ls.wd = today ? w : w + days(rand_int(1, 7));
     return *this;
 }
 
@@ -86,7 +87,7 @@ RandLabSesh& RandLabSesh::now(bool now) {
             this->ls.end = eod;
         } else {
             this->ls.start = bod;
-            this->ls.end = hours(rand_int(12));
+            this->ls.end = hours(rand_int(1, 12));
         }
     }
 
