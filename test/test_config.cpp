@@ -23,7 +23,7 @@ TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
     string fn = rand_filename();
 
     MockPath mp(fn);
-    mp << ("data_" + rand_string());
+    mp << "data_" << rand_string();
 
     REQUIRE_THROWS_WITH(
         Config(mp.get()),
@@ -34,7 +34,7 @@ TEST_CASE("config file exists and has invalid json", "[config][config-file]") {
 
 TEST_CASE("config file exists and has valid json", "[config][config-file]") {
     MockPath mp(rand_filename());
-    mp << new_config_data();
+    mp << new_config_data().dump();
     REQUIRE_NOTHROW(Config(mp.get()));
 }
 

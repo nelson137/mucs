@@ -269,12 +269,13 @@ MockPath::MockPath(const string& p) : MockPath() {
 }
 
 
-MockPath& MockPath::operator<<(const string& s) {
-    When(Method((*this), read)).Return(s);
-    return *this;
+IPath& MockPath::get() {
+    When(Method((*this), read)).Return(this->data.str());
+    return Mock<IPath>::get();
 }
 
 
-MockPath& MockPath::operator<<(const json& j) {
-    return this->operator<<(j.dump());
+MockPath& MockPath::operator<<(string s) {
+    this->data << s;
+    return *this;
 }

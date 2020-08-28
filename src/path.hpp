@@ -143,11 +143,14 @@ public:
 
 struct MockPath : public Mock<IPath> {
 
+    ostringstream data;
+
     MockPath();
     MockPath(const string& p);
 
-    MockPath& operator<<(const string& s);
-    MockPath& operator<<(const json& j);
+    IPath& get();
+
+    MockPath& operator<<(string s);
 
 };
 
