@@ -258,24 +258,24 @@ void Path::mkdir_recurse(mode_t mode) const {
 
 
 MockPath::MockPath() : Mock<IPath>() {
-    When(Method((*this), exists)).Return(true);
-    When(Method((*this), is_file)).Return(true);
-    When(Method((*this), is_dir)).Return(false);
+    When(Method((*this), exists)).AlwaysReturn(true);
+    When(Method((*this), is_file)).AlwaysReturn(true);
+    When(Method((*this), is_dir)).AlwaysReturn(false);
 }
 
 
 MockPath::MockPath(const string& p) : MockPath() {
-    When(Method((*this), str)).Return(p);
+    When(Method((*this), str)).AlwaysReturn(p);
 }
 
 
 IPath& MockPath::get() {
-    When(Method((*this), read)).Return(this->data.str());
+    When(Method((*this), read)).AlwaysReturn(this->data.str());
     return Mock<IPath>::get();
 }
 
 
-MockPath& MockPath::operator<<(string s) {
-    this->data << s;
+MockPath& MockPath::operator<<(const string& data) {
+    this->data << data;
     return *this;
 }

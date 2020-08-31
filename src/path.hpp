@@ -150,7 +150,7 @@ struct MockPath : public Mock<IPath> {
 
     IPath& get();
 
-    MockPath& operator<<(string s);
+    MockPath& operator<<(const string& data);
 
 };
 
