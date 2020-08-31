@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
             msg.replace(pos, 10, mucs.config.filename);
         }
         cerr << msg << endl;
+        return 1;
     }
 
     return 0;
