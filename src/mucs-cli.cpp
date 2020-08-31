@@ -4,6 +4,7 @@
 void Mucs::invoke(void (Mucs::*subcmd)()) {
     this->user = this->get_user();
     this->config = Config(Path(CONFIG_DIR) / this->course);
+    this->config.validate().parse();
     (this->*subcmd)();
 }
 

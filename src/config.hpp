@@ -178,6 +178,8 @@ struct Roster : public map<string, vector<string>>, public Tabular {
 
 struct Config {
 
+    json j_root;
+
     string filename;
 
     string course_id;
@@ -193,10 +195,10 @@ struct Config {
 
     Config();
     Config(const IPath& config_p);
+    Config(json root, string fn = "");
 
-    Config& parse(const json& root, const string& filename = "");
-
-    void validate_config(const json& root) const;
+    Config& parse();
+    Config& validate();
 
     static mucs_exception error(
         const string& msg,

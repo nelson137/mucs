@@ -8,7 +8,7 @@ TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
         {"roster", { {user, rand_int(9)} }}
     });
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
@@ -22,7 +22,7 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
         {"roster", { {user, expected_ids[0]} }},
     });
 
-    Config config = Config().parse(data);
+    Config config = Config(data).parse();
 
     REQUIRE(config.roster.count(user) == 1);
     auto actual_ids = config.roster.at(user);
@@ -45,7 +45,7 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
         {"roster", { {user, ids.str()} }}
     });
 
-    Config config = Config().parse(data);
+    Config config = Config(data).parse();
 
     REQUIRE(config.roster.count(user) == 1);
     auto actual_ids = config.roster.at(user);

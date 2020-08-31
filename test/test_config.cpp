@@ -44,7 +44,7 @@ TEST_CASE("config has no key course_id", "[config][course_id]") {
     json data = new_config_data();
     data.erase("course_id");
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(MISSING_PROPERTY)
     );
 }
@@ -55,7 +55,7 @@ TEST_CASE("value for key course_id has incorrect type",
     string fn = rand_filename();
     json data = new_config_data({ {"course_id", rand_int(9)} });
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
@@ -66,7 +66,7 @@ TEST_CASE("config has no key admin_hash", "[config][admin_hash]") {
     json data = new_config_data();
     data.erase("admin_hash");
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(MISSING_PROPERTY)
     );
 }
@@ -77,7 +77,7 @@ TEST_CASE("value for key admin_hash has incorrect type",
     string fn = rand_filename();
     json data = new_config_data({ {"admin_hash", rand_int(9)} });
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
@@ -88,7 +88,7 @@ TEST_CASE("config has no key homeworks", "[config][homeworks]") {
     json data = new_config_data();
     data.erase("homeworks");
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(MISSING_PROPERTY)
     );
 }
@@ -99,7 +99,7 @@ TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
     json data = new_config_data();
     data["homeworks"] = rand_int(9);
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
@@ -110,7 +110,7 @@ TEST_CASE("config has no key lab-sessions", "[config][lab-sessions]") {
     json data = new_config_data();
     data.erase("lab-sessions");
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(MISSING_PROPERTY)
     );
 }
@@ -121,7 +121,7 @@ TEST_CASE("value for key lab-sessions has incorrect type",
     string fn = rand_filename();
     json data = new_config_data({ {"lab-sessions", rand_int(9)} });
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
@@ -132,7 +132,7 @@ TEST_CASE("config has no key lab-assignments", "[config][lab-assignments]") {
     json data = new_config_data();
     data.erase("lab-assignments");
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(MISSING_PROPERTY)
     );
 }
@@ -143,7 +143,7 @@ TEST_CASE("value for key lab-assignments has incorrect type",
     string fn = rand_filename();
     json data = new_config_data({ {"lab-assignments", rand_int(9)} });
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
@@ -154,7 +154,7 @@ TEST_CASE("config has no key roster", "[config][roster]") {
     json data = new_config_data();
     data.erase("roster");
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(MISSING_PROPERTY)
     );
 }
@@ -164,7 +164,7 @@ TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
     string fn = rand_filename();
     json data = new_config_data({ {"roster", rand_int(9)} });
     REQUIRE_THROWS_WITH(
-        Config().parse(data, fn),
+        Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
     );
 }
@@ -172,7 +172,7 @@ TEST_CASE("value for key roster has incorrect type", "[config][roster]") {
 
 TEST_CASE("config is valid", "[config]") {
     json data = new_config_data();
-    REQUIRE_NOTHROW(Config().parse(data));
+    REQUIRE_NOTHROW(Config(data).parse());
 }
 
 

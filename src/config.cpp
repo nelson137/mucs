@@ -5,42 +5,39 @@ Config::Config() {
 }
 
 
-Config::Config(const IPath& config_p) {
+Config::Config(const IPath& config_p) : filename(config_p.str()) {
     if (not config_p.exists())
         throw mucs_exception("Config file does not exist: " + config_p.str());
     if (not config_p.is_file())
         throw mucs_exception(
             "Config path must be a regular file: " + config_p.str());
 
-    json data;
     try {
-        data = json::parse(config_p.read());
+        this->j_root = json::parse(config_p.read());
     } catch (const json::parse_error& pe) {
         throw mucs_exception(
             "Failed to parse config: " + config_p.str() + "\n" + pe.what());
     }
-
-    this->parse(data, config_p.str());
 }
 
 
-Config& Config::parse(const json& root, const string& filename) {
-    this->filename = filename;
+Config::Config(json root, string fn) : j_root(root), filename(fn) {
+}
 
-    this->validate_config(root);
 
-    root["course_id"].get_to(this->course_id);
-    root["admin_hash"].get_to(this->admin_hash);
-    root["homeworks"].get_to(this->homeworks);
-    root["lab-sessions"].get_to(this->lab_sessions);
-    root["lab-assignments"].get_to(this->lab_assignments);
-    root["roster"].get_to(this->roster);
+Config& Config::parse() {
+    this->j_root["course_id"].get_to(this->course_id);
+    this->j_root["admin_hash"].get_to(this->admin_hash);
+    this->j_root["homeworks"].get_to(this->homeworks);
+    this->j_root["lab-sessions"].get_to(this->lab_sessions);
+    this->j_root["lab-assignments"].get_to(this->lab_assignments);
+    this->j_root["roster"].get_to(this->roster);
 
     return *this;
 }
 
 
-void Config::validate_config(const json& root) const {
+Config& Config::validate() {
     Path schema_p = Path(SCHEMA_PATH);
 
     // Make sure schema file exists
@@ -68,11 +65,11 @@ void Config::validate_config(const json& root) const {
     // Validate config
     Validator validator;
     ValidationResults results;
-    NlohmannJsonAdapter adapter(root);
+    NlohmannJsonAdapter adapter(this->j_root);
     if (not validator.validate(schema, adapter, &results)) {
         ostringstream msg;
         ValidationResults::Error e;
-        msg << "Invalid config: " << filename;
+        msg << "Invalid config: " << this->filename;
         while (results.numErrors() > 0) {
             results.popError(e);
             msg << '\n';
@@ -82,6 +79,8 @@ void Config::validate_config(const json& root) const {
         }
         throw mucs_exception(msg.str());
     }
+
+    return *this;
 }
 
 
