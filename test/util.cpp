@@ -101,13 +101,18 @@ const LabSesh& RandLabSesh::get() const {
 
 
 RandLabAsgmt::RandLabAsgmt(const string& n) : name(n), ymwd(get_day()) {
+    weekday wd = this->ymwd.weekday();
+    if (wd != Monday) {
+        days dd = wd == Sunday ? days(6) : wd - Monday;
+        this->ymwd = year_month_weekday(sys_days(this->ymwd) - dd);
+    }
 }
 
 
 RandLabAsgmt& RandLabAsgmt::this_week(bool this_week) {
     if (not this_week) {
-        int dm = rand_int(1, 5) * (get_day().month() < month(6) ? 1 : -1);
-        this->ymwd += months(dm);
+        month m = this->ymwd.month() + months(rand_int(12));
+        this->ymwd = this->ymwd.year()/m/Monday[1];
     }
     return *this;
 }
