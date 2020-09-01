@@ -63,7 +63,7 @@ void from_json(const json& j, LabAsgmt& la) {
     if (not la.start.ok())
         invalid_lab_asgmt();
 
-    la.end = today.year()/md.month()/(la.start.day() + days(6));
+    la.end = year_month_day(sys_days(la.start) + days(6));
 }
 
 
