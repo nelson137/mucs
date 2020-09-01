@@ -8,9 +8,7 @@
 
 #include "random.hpp"
 
-#include "util.hpp"
-
-#include "../src/config.hpp"
+#include "../src/models/config.hpp"
 
 using namespace std;
 using namespace Catch::Matchers;

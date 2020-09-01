@@ -24,11 +24,10 @@
 #include "valijson/schema_parser.hpp"
 #include "valijson/validator.hpp"
 
-#include "except.hpp"
-
-#include "consts.hpp"
-#include "path.hpp"
-#include "util.hpp"
+#include "../consts.hpp"
+#include "../except.hpp"
+#include "../path.hpp"
+#include "../util.hpp"
 
 using namespace std;
 using namespace chrono;

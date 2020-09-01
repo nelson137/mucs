@@ -9,8 +9,6 @@
 
 #include "../src/mucs.hpp"
 
-#include "util.hpp"
-
 using namespace fakeit;
 using namespace std;
 

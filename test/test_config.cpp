@@ -96,8 +96,7 @@ TEST_CASE("config has no key homeworks", "[config][homeworks]") {
 
 TEST_CASE("value for key homeworks has incorrect type", "[config][homeworks]") {
     string fn = rand_filename();
-    json data = new_config_data();
-    data["homeworks"] = rand_int(9);
+    json data = new_config_data({ {"homeworks", rand_int(9)} });
     REQUIRE_THROWS_WITH(
         Config(data, fn).validate(),
         StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)

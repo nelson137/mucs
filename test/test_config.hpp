@@ -7,9 +7,9 @@
 #include "catch.hpp"
 #include "json.hpp"
 
-#include "util.hpp"
+#include "random.hpp"
 
-#include "../src/config.hpp"
+#include "../src/models/config.hpp"
 #include "../src/path.hpp"
 
 using namespace std;

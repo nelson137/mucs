@@ -2,10 +2,10 @@ EXE       := a.out
 TEST_EXE  := runtests
 DEST      ?= /group/cs1050
 
-SRCS      := $(wildcard src/*.cpp)
+SRCS      := $(shell find src -type f -name '*.cpp')
 OBJS      := $(SRCS:%.cpp=build/%.o)
 
-TEST_SRCS := $(wildcard test/*.cpp)
+TEST_SRCS := $(shell find test -type f -name '*.cpp')
 TEST_OBJS := $(TEST_SRCS:%.cpp=build/%.o)
 
 ALL_OBJS  := $(OBJS) $(TEST_OBJS)
@@ -112,7 +112,7 @@ wipe: clean
 .PHONY: wipe
 
 build_dirs:
-	@mkdir -p build/src build/test
+	@mkdir -p build/src/models build/test
 .PHONY: build_dirs
 
 

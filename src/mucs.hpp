@@ -16,8 +16,8 @@
 
 #include "except.hpp"
 
-#include "config.hpp"
 #include "consts.hpp"
+#include "models/config.hpp"
 #include "path.hpp"
 #include "proc.hpp"
 #include "util.hpp"
