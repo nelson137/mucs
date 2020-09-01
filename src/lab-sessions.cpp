@@ -1,11 +1,14 @@
 #include "config.hpp"
 
 
-LabSesh::LabSesh() {
+LabSesh::LabSesh() : wd(9) {
+    // Initialize wd to an invalid value so that we can tell if from_json
+    // parsing failed
 }
 
 
 LabSesh::LabSesh(const string& i) : id(i) {
+    this->wd = weekday(9);
     // Normalize id (uppercase)
     stl_transform(this->id, ::toupper);
 }
@@ -35,7 +38,7 @@ string LabSesh::format(string fmt) const {
     map<string,string> repl = {
         {"{id}", this->id},
 
-        {"{weekday}", ::format("%A", this->wd)},
+        {"{weekday}", ::format("%a", this->wd)},
         {"{weekday_n}", to_string(this->wd.c_encoding())},
 
         {"{start}", ::format(TIME_FMT, this->start)},
@@ -85,69 +88,55 @@ ostream& operator<<(ostream& os, const LabSesh& ls) {
 
 
 void from_json(const json& j, LabSesh& ls) {
-    auto invalid_lab_spec = [&] () {
-        throw Config::error(
-            "Lab sessions must be in the format " \
-                "\"<weekday> <start_time> - <end_time>\"",
-            {"lab-sessions", ls.id});
-    };
+    string id = j.value("id", "");
+    ls.id = id;
+    // Normalize id (uppercase)
+    stl_transform(ls.id, ::toupper);
 
-    string spec = j.get<string>();
-
-    // Should be {"<weekday> <start_time> ", " <end_time>"}
-    vector<string> chunks = string_split(spec, "-");
-    if (chunks.size() != 2)
-        invalid_lab_spec();
-
-    // Should be {"<weekday>", "<start_time>", ""}
-    // There will be no third element if spec doesn't have spaces
-    //   around the dash
-    vector<string> wday_start = string_split(chunks[0], " ");
-    if (wday_start.size() < 2)
-        invalid_lab_spec();
-
-    istringstream(string_strip(wday_start[0])) >> parse("%a", ls.wd);
+    string d = j.value("day", "");
+    istringstream iss(d);
+    iss >> date::parse("%a", ls.wd);
     if (not ls.wd.ok())
         throw Config::error(
             "Lab session weekday is invalid (first char must be capitalized)",
-            {"lab-sessions", ls.id});
+            {"lab-sessions", id});
 
-    istringstream start_iss(string_strip(wday_start[1]));
-    start_iss >> parse(TIME_FMT, ls.start);
-    if (not start_iss.good())
+    iss = istringstream(j.value("start", ""));
+    iss >> date::parse(TIME_FMT, ls.start);
+    if (not iss.good())
         throw Config::error(
             "Lab session start time is invalid",
-            {"lab-sessions", ls.id});
+            {"lab-sessions", id});
 
-    istringstream end_iss(string_strip(chunks[1]));
-    end_iss >> parse(TIME_FMT, ls.end);
-    if (not end_iss.good())
+    iss = istringstream(j.value("end", ""));
+    iss >> date::parse(TIME_FMT, ls.end);
+    if (not iss.good())
         throw Config::error(
             "Lab session end time is invalid",
-            {"lab-sessions", ls.id});
+            {"lab-sessions", id});
 }
 
 
 void from_json(const json& j, LabSessions& lab_sessions) {
-    string id;
-    for (auto it=j.begin(); it!=j.end(); it++) {
-        id = it.key();
-        // Normalize id (uppercase)
-        stl_transform(id, ::toupper);
-
-        lab_sessions[id] = LabSesh(id);
-        it.value().get_to(lab_sessions[id]);
+    for (const json& j_ls : j) {
+        auto ls = j_ls.get<LabSesh>();
+        lab_sessions[ls.id] = ls;
     }
 }
 
 
 void to_json(json& j, const LabSesh& ls) {
-    j = ls.format("{weekday} {start} - {end}");
+    j = {
+        {"id", ls.id},
+        {"day", ls.format("{weekday}")},
+        {"start", ls.format("{start}")},
+        {"end", ls.format("{end}")}
+    };
 }
 
 
 void to_json(json& j, const LabSessions& lab_sessions) {
-    j = json::object();
+    j = json::array();
     for (auto& ls : lab_sessions)
-        j[ls.first] = json(ls.second);
+        j.push_back(ls.second);
 }

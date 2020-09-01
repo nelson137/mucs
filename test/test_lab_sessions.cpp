@@ -1,34 +1,53 @@
 #include "test_lab_sessions.hpp"
 
 
-TEST_CASE("lab-sessions entry has incorrect format", "[lab-sessions][entry]") {
-    string key = rand_lab_sesh_id();
-    json data = { {key, key} };
+TEST_CASE("lab-sesh day is invalid", "[lab-sesh]") {
+    string id = rand_lab_sesh_id();
+    json data = rand_lab_sesh_data({ {"id", id}, {"day", rand_string(1)} });
     REQUIRE_THROWS_WITH(
-        data.get<LabSessions>(),
-        "Lab sessions must be in the format " \
-            "\"<weekday> <start_time> - <end_time>\": " \
-            "{filename}[\"lab-sessions\"][\"" + key + "\"]"
+        data.get<LabSesh>(),
+        "Lab session weekday is invalid (first char must be capitalized): " \
+            "{filename}[\"lab-sessions\"][\"" + id + "\"]"
     );
 }
 
 
-TEST_CASE("lab-sessions is valid", "[lab-sessions][entry]") {
-    string key = rand_lab_sesh_id();
-    json data = { {key, "Mon 00:00:00 - 23:59:59"} };
-    REQUIRE_NOTHROW(data.get<LabSessions>());
+TEST_CASE("lab-sesh start time is invalid", "[lab-sesh]") {
+    string id = rand_lab_sesh_id();
+    json data = rand_lab_sesh_data({ {"id", id}, {"start", rand_string(1)} });
+    REQUIRE_THROWS_WITH(
+        data.get<LabSesh>(),
+        "Lab session start time is invalid: " \
+            "{filename}[\"lab-sessions\"][\"" + id + "\"]"
+    );
 }
 
 
-TEST_CASE("serialize lab-sessions", "[lab-sessions][serialize]") {
+TEST_CASE("lab-sesh end time is invalid", "[lab-sesh]") {
+    string id = rand_lab_sesh_id();
+    json data = rand_lab_sesh_data({ {"id", id}, {"end", rand_string(1)} });
+    REQUIRE_THROWS_WITH(
+        data.get<LabSesh>(),
+        "Lab session end time is invalid: " \
+            "{filename}[\"lab-sessions\"][\"" + id + "\"]"
+    );
+}
+
+
+TEST_CASE("lab-sesh is valid", "[lab-sesh]") {
+    string id = rand_lab_sesh_id();
+    json data = rand_lab_sesh_data({ {"id", id} });
+    REQUIRE_NOTHROW(data.get<LabSesh>());
+}
+
+
+TEST_CASE("serialize lab-sesh", "[lab-sesh][serialize]") {
     string id = rand_lab_sesh_id();
 
-    string expected = json({ {id, "Monday 00:00:00 - 23:59:59"} }).dump();
+    string expected = rand_lab_sesh_data({ {"id", id}, {"day", "Mon"} }).dump();
 
     LabSesh ls(id, Monday, seconds(0), days(1) - seconds(1));
-    LabSessions sessions;
-    sessions.insert({ id, ls });
-    string actual = json(sessions).dump();
+    string actual = json(ls).dump();
 
     REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }

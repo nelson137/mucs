@@ -30,6 +30,8 @@ string rand_hw_name();
 
 string rand_lab_asgmt_name();
 
+json rand_lab_sesh_data(json j = json::object());
+
 string rand_lab_sesh_id();
 
 string rand_string_digits(int n);

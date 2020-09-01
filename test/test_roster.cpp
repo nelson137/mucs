@@ -18,7 +18,9 @@ TEST_CASE("roster entry has one lab id", "[roster][entry]") {
     string user = rand_user();
     vector<string> expected_ids = { rand_lab_sesh_id() };
     json data = new_config_data({
-        {"lab-sessions", { {expected_ids[0], "Mon 00:00:00 - 23:59:59"} }},
+        {"lab-sessions", {
+            rand_lab_sesh_data({ {"id", expected_ids[0]} })
+        }},
         {"roster", { {user, expected_ids[0]} }},
     });
 
@@ -41,7 +43,9 @@ TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
         ids << ',' << *it;
 
     json data = new_config_data({
-        {"lab-sessions", { {expected_ids[1], "Mon 00:00:00 - 23:59:59"} }},
+        {"lab-sessions", {
+            rand_lab_sesh_data({ {"id", expected_ids[1]} })
+        }},
         {"roster", { {user, ids.str()} }}
     });
 

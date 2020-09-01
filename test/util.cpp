@@ -11,7 +11,7 @@ json new_config_data(json j) {
     default_val("course_id", rand_string(4));
     default_val("admin_hash", "!");
     default_val("homeworks", json::array());
-    default_val("lab-sessions", json::object());
+    default_val("lab-sessions", json::array());
     default_val("lab-assignments", json::array());
     default_val("roster", json::object());
 
@@ -36,6 +36,21 @@ string rand_hw_name() {
 
 string rand_lab_asgmt_name() {
     return "lab" + rand_string_digits(4);
+}
+
+
+json rand_lab_sesh_data(json j) {
+    auto default_val = [&] (const string& key, const json& val) {
+        if (j.count(key) == 0)
+            j[key] = val;
+    };
+
+    default_val("id", rand_lab_sesh_id());
+    default_val("day", to_string(Monday + days(rand_int(7))));
+    default_val("start", "00:00:00");
+    default_val("end", "23:59:59");
+
+    return j;
 }
 
 
