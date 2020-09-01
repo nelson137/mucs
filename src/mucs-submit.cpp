@@ -22,19 +22,19 @@ void Mucs::submit() {
 
     // Show user a summary of their submission and prompt for confirmation
     this->submit_summary(lab, assignment);
-    if (this->prompt_yesno("Are you sure you want to submit [Y/n]? ") == false)
+    if (this->prompt_yesno("Are you sure you want to submit [y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
-    // /.../SUBMIT_DIR
+    // SUBMIT_DIR
     Path submit_root = Path(SUBMIT_DIR);
-    // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
+    // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
     Path assignment_d = submit_root / this->course / lab / assignment;
 
     string now_str = format(DATETIME_EXT_FMT, NOW);
     // .submissions/USER.DATE.TIME
     Path submit_d_rel = Path(".submissions") / this->user + now_str;
 
-    // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT/.submissions/USER.DATE.TIME
+    // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT/.submissions/USER.DATE.TIME
     Path submit_d_abs = assignment_d / submit_d_rel;
     if (submit_d_abs.exists())
         throw mucs_exception(
@@ -43,7 +43,7 @@ void Mucs::submit() {
     // Make sure submit directory exists
     submit_d_abs.mkdir_recurse(0770);
 
-    // /.../SUBMIT_DIR/COURSE/LAB/ASSIGNMENT:
+    // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT:
     //   USER -> .submissions/USER.DATE.TIME
     (assignment_d / this->user).link_to(submit_d_rel);
 

@@ -88,7 +88,7 @@ bool Mucs::prompt_yesno(const string& prompt) const {
     cin >> response;
     cout << endl;
     stl_transform(response, ::tolower);
-    return string_strip(response) == "y";
+    return string_strip(response)[0] == 'y';
 }
 
 
