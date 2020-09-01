@@ -12,7 +12,7 @@ json new_config_data(json j) {
     default_val("admin_hash", "!");
     default_val("homeworks", json::array());
     default_val("lab-sessions", json::object());
-    default_val("lab-assignments", json::object());
+    default_val("lab-assignments", json::array());
     default_val("roster", json::object());
 
     return j;
@@ -114,10 +114,8 @@ RandLabAsgmt& RandLabAsgmt::this_week(bool this_week) {
 
 
 LabAsgmt RandLabAsgmt::get() const {
-    year_month_day ymd(this->ymwd);
-    ostringstream value;
-    value << this->ymwd.month() << ' ' << this->ymwd.index();
-    auto la = json(value.str()).get<LabAsgmt>();
-    la.name = this->name;
-    return la;
+    ostringstream week_ss;
+    week_ss << this->ymwd.month() << ' ' << this->ymwd.index();
+    json j = { {"name", this->name}, {"week", week_ss.str()} };
+    return j.get<LabAsgmt>();
 }

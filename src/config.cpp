@@ -109,8 +109,8 @@ string Config::get_assignment(const string& type) const {
 string Config::get_current_lab() const {
     auto today = get_day();
     for (auto& e : this->lab_assignments)
-        if (e.second.start <= today && today < e.second.end)
-            return e.first;
+        if (e.start <= today && today < e.end)
+            return e.name;
 
     throw mucs_exception(
         "No open lab assignments for course: " + this->course_id);

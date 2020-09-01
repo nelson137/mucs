@@ -155,8 +155,8 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
     mucs.config.roster.insert({ user, {lab_id} });
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh(lab_id).today().now().get() });
-    mucs.config.lab_assignments.insert({
-        lab_name, RandLabAsgmt(lab_name).this_week().get() });
+    mucs.config.lab_assignments.insert(
+        RandLabAsgmt(lab_name).this_week().get());
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, prompt_yesno)).Return(false);

@@ -16,25 +16,22 @@ LabAsgmt::LabAsgmt(const string& n, year_month_day s, year_month_day e)
 }
 
 
-bool LabAsgmt::compare::operator()(
-    const pair<string,LabAsgmt>& a,
-    const pair<string,LabAsgmt>& b
-) const {
+bool LabAsgmt::compare::operator()(const LabAsgmt& a, const LabAsgmt& b) const {
     // Sort `a` before `b` iff:
     //   a starts and ends then b starts and ends
     //   overlapping but offset, a starts first
     //   b is inside of a
     // Otherwise sort `b` before `a`
-    if (a.second.start < b.second.start)
+    if (a.start < b.start)
         return true;
-    else if (a.second.start == b.second.start)
-        return a.second.end < b.second.end;
+    else if (a.start == b.start)
+        return a.end < b.end;
     else
         return false;
 }
 
 
-string LabAsgmt::str() const {
+string LabAsgmt::week_str() const {
     ostringstream spec;
     spec << format("%b", this->start)
          << " "
@@ -44,19 +41,18 @@ string LabAsgmt::str() const {
 
 
 void from_json(const json& j, LabAsgmt& la) {
-    if (j.type() != json::value_t::string)
-        throw Config::error(
-            "Lab assignments must be of type string",
-            {"lab-assignments", la.name});
+    string name = j.value("name", "");
+    la.name = name;
+    stl_transform(la.name, ::tolower);
 
     auto invalid_lab_asgmt = [&] () {
         throw Config::error(
-            "Lab assignments must be in the format \"<month> <week-of-month>\"",
-            {"lab-assignments", la.name});
+            "Invalid lab assignment week",
+            {"lab-assignments", name});
     };
 
     month_day md;
-    istringstream(j.get<string>()) >> parse(LAB_ASGMT_FMT, md);
+    istringstream(j.value("week", "")) >> parse(LAB_ASGMT_FMT, md);
     if (not md.ok())
         invalid_lab_asgmt();
 
@@ -72,32 +68,21 @@ void from_json(const json& j, LabAsgmt& la) {
 
 
 void from_json(const json& j, LabAssignments& lab_assignments) {
-    string name;
-    LabAsgmt la;
-    for (auto it=j.begin(); it!=j.end(); it++) {
-        if (it.value().type() != json::value_t::string)
-            throw Config::error(
-                "Lab assignments must be of type string",
-                {"lab-assignments", it.key()});
-
-        name = it.key();
-        // Normalize month
-        stl_transform(name, ::tolower);
-
-        la = LabAsgmt(name);
-        it.value().get_to(la);
-        lab_assignments.insert({ name, la });
-    }
+    for (const json& la : j)
+        lab_assignments.insert(la.get<LabAsgmt>());
 }
 
 
 void to_json(json& j, const LabAsgmt& la) {
-    j = json(la.str());
+    j = {
+        {"name", la.name},
+        {"week", la.week_str()}
+    };
 }
 
 
 void to_json(json& j, const LabAssignments& lab_assignments) {
-    j = json::object();
+    j = json::array();
     for (auto& la : lab_assignments)
-        j[la.first] = json(la.second);
+        j.push_back(la);
 }

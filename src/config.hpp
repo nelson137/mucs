@@ -130,13 +130,10 @@ struct LabAsgmt {
     LabAsgmt(const string& n, year_month_day s, year_month_day e);
 
     struct compare {
-        bool operator()(
-            const pair<string,LabAsgmt>& a,
-            const pair<string,LabAsgmt>& b
-        ) const;
+        bool operator()(const LabAsgmt& a, const LabAsgmt& b) const;
     };
 
-    string str() const;
+    string week_str() const;
 
     friend void from_json(const json& j, LabAsgmt& la);
     friend void to_json(json& j, const LabAsgmt& la);
@@ -144,9 +141,9 @@ struct LabAsgmt {
 };
 
 
-struct LabAssignments : public set<pair<string,LabAsgmt>, LabAsgmt::compare> {
+struct LabAssignments : public set<LabAsgmt, LabAsgmt::compare> {
 
-    using set<pair<string,LabAsgmt>, LabAsgmt::compare>::set;
+    using set<LabAsgmt, LabAsgmt::compare>::set;
 
     friend void from_json(const json& j, LabAssignments& lab_assignments);
     friend void to_json(json& j, const LabAssignments& lab_assignments);
