@@ -5,6 +5,3 @@ clang
 -Werror
 -Wno-noexcept-type
 -Iinclude
--Ilibmucs/include
-%cpp -Llibmucs/build
-%cpp -lmucs
