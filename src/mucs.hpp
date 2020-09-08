@@ -33,7 +33,7 @@ struct Mucs {
     // From cli
 
     string course;
-    string assignment_type;
+    string assignment;
     vector<Path> sources;
 
     enum DumpFlags {

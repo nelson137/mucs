@@ -29,9 +29,8 @@ unique_ptr<CLI::App> Mucs::get_cli() {
         ->required()
         ->check(CLI::IsMember(CONFIGS_AVAILABLE));
     submit_subcmd
-        ->add_option("assignment_type", this->assignment_type)
-        ->required()
-        ->check(CLI::IsMember({ "hw", "lab" }));
+        ->add_option("assignment", this->assignment)
+        ->required();
     submit_subcmd
         ->add_option("sources", this->sources)
         ->required();
@@ -56,7 +55,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     auto or_dump_flags = [&] (const string& opt, Mucs::DumpFlags flag) {
         admin_dump_subcmd->add_flag_callback(opt, [&] () {
             this->dump_flags |= flag;
-    });
+        });
     };
     or_dump_flags("-a,--lab-assignments", Mucs::DumpLabAssignments);
     or_dump_flags("-r,--roster", Mucs::DumpRoster);

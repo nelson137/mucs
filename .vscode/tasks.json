@@ -19,8 +19,8 @@
             "type": "pickString",
             "description": "arguments for the executable",
             "options": [
-                "submit 1050 lab t.c",
-                "submit 1050 hw t.c",
+                "submit 1050 lab1 t.c",
+                "submit 1050 hw1 t.c",
                 "admin 1050 dump",
                 "admin 1050 update-password"
             ]

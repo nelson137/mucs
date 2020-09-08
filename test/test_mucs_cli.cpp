@@ -69,7 +69,7 @@ TEST_CASE("cli : submit", "[cli][cli-submit]") {
         CONFIGS_AVAILABLE = {"1050"};
         TEST_CLI_SUBCMD_ERROR(
             "mucs submit 1050",
-            "assignment_type is required"
+            "assignment is required"
         );
     }
 

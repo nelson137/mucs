@@ -54,6 +54,8 @@ struct Hw {
         bool operator()(const Hw& a, const Hw& b) const;
     };
 
+    bool is_active() const;
+
     friend void from_json(const json& j, Hw& hw);
     friend void to_json(json& j, const Hw& hw);
 
@@ -134,6 +136,8 @@ struct LabAsgmt {
 
     string week_str() const;
 
+    bool is_active() const;
+
     friend void from_json(const json& j, LabAsgmt& la);
     friend void to_json(json& j, const LabAsgmt& la);
 
@@ -204,9 +208,7 @@ struct Config {
         const initializer_list<string>& keys = {}
     );
 
-    string get_assignment(const string& type) const;
-    string get_current_lab() const;
-    string get_current_hw() const;
+    string validate_assignment(const string& name) const;
 
     vector<LabSesh> get_user_labs(const string& user) const;
     LabSesh get_lab(const string& id) const;

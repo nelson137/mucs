@@ -31,6 +31,12 @@ bool LabAsgmt::compare::operator()(const LabAsgmt& a, const LabAsgmt& b) const {
 }
 
 
+bool LabAsgmt::is_active() const {
+    auto today = get_day();
+    return this->start <= today && today < this->end;
+}
+
+
 string LabAsgmt::week_str() const {
     ostringstream spec;
     spec << format("%b", this->start)
@@ -91,6 +97,6 @@ void to_json(json& j, const LabAsgmt& la) {
 
 void to_json(json& j, const LabAssignments& lab_assignments) {
     j = json::array();
-    for (auto& la : lab_assignments)
+    for (const LabAsgmt& la : lab_assignments)
         j.push_back(la);
 }

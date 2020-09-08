@@ -6,7 +6,8 @@ void Mucs::submit() {
         throw mucs_exception("User not in course:", this->user);
 
     LabSesh lab = config.get_lab(this->user);
-    string assignment = config.get_assignment(this->assignment_type);
+
+    config.validate_assignment(this->assignment);
 
     // Make sure sources exist and are files
     for (const Path& src : this->sources) {

@@ -96,34 +96,29 @@ mucs_exception Config::error(
 }
 
 
-string Config::get_assignment(const string& type) const {
-    if (type == "lab")
-        return this->get_current_lab();
-    else if (type == "hw")
-        return this->get_current_hw();
+string Config::validate_assignment(const string& name) const {
+    auto inactive_error = [&] () {
+        throw mucs_exception(
+            "Submission window is closed for assignment: " + name);
+    };
 
-    throw mucs_exception("Assignment type not recognized: " + type);
-}
+    for (const LabAsgmt& la : this->lab_assignments) {
+        if (la.name == name) {
+            if (not la.is_active())
+                inactive_error();
+            return la.name;
+        }
+    }
 
-
-string Config::get_current_lab() const {
-    auto today = get_day();
-    for (auto& e : this->lab_assignments)
-        if (e.start <= today && today < e.end)
-            return e.name;
-
-    throw mucs_exception(
-        "No open lab assignments for course: " + this->course_id);
-}
-
-
-string Config::get_current_hw() const {
-    for (const Hw& hw : this->homeworks)
-        if (NOW < hw.duedate)
+    for (const Hw& hw : this->homeworks) {
+        if (hw.name == name) {
+            if (not hw.is_active())
+                inactive_error();
             return hw.name;
+        }
+    }
 
-    throw mucs_exception(
-        "No open homework assignments for course: " + this->course_id);
+    throw mucs_exception("No such assignment exists: " + name);
 }
 
 

@@ -14,6 +14,11 @@ bool Hw::compare::operator()(const Hw& a, const Hw& b) const {
 }
 
 
+bool Hw::is_active() const {
+    return NOW < this->duedate;
+}
+
+
 list<vector<string>> Homeworks::to_table() const {
     list<vector<string>> table;
     for (const Hw& hw : *this) {

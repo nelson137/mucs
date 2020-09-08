@@ -1,7 +1,7 @@
 #include "test_mucs_submit.hpp"
 
 
-TEST_CASE("submit user not in course", "[mucs][submit]") {
+TEST_CASE("submit fails when user not in course", "[mucs][submit]") {
     Mucs mucs;
     mucs.user = rand_user();
     mucs.config = Config();
@@ -12,7 +12,7 @@ TEST_CASE("submit user not in course", "[mucs][submit]") {
 }
 
 
-TEST_CASE("submit lab with one lab session", "[mucs][submit]") {
+TEST_CASE("submit lab assignment with one lab session", "[mucs][submit]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
 
@@ -37,13 +37,16 @@ TEST_CASE("submit lab with one lab session", "[mucs][submit]") {
         });
         REQUIRE_THROWS_WITH(
             mucs.submit(),
-            "Assignment type not recognized: "
+            "No such assignment exists: "
         );
     }
 }
 
 
-TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
+TEST_CASE(
+    "submit lab assignment with multiple lab sessions",
+    "[mucs][submit]"
+) {
     string user = rand_user();
     string labA = rand_lab_sesh_id();
     string labB = rand_lab_sesh_id();
@@ -75,20 +78,7 @@ TEST_CASE("submit lab with multiple lab sessions", "[mucs][submit]") {
         });
         REQUIRE_THROWS_WITH(
             mucs.submit(),
-            "Assignment type not recognized: "
-        );
-    }
-
-    SECTION("all are active") {
-        mucs.config.lab_sessions.insert({
-            labA, RandLabSesh(labA).today().now().get()
-        });
-        mucs.config.lab_sessions.insert({
-            labB, RandLabSesh(labB).today().now().get()
-        });
-        REQUIRE_THROWS_WITH(
-            mucs.submit(),
-            "Assignment type not recognized: "
+            "No such assignment exists: "
         );
     }
 }
@@ -102,7 +92,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment_type = "hw";
+    mucs.assignment = hw_name;
     mucs.config.course_id = rand_course();
     mucs.config.roster.insert({ user, {lab_id} });
     mucs.config.lab_sessions.insert({
@@ -114,10 +104,10 @@ TEST_CASE("submit homework", "[mucs][submit]") {
     Fake(Method(spy, submit_summary));
     When(Method(spy, prompt_yesno)).Return(false);
 
-    SECTION("when there are no homeworks") {
+    SECTION("when there are is no such assignment") {
         REQUIRE_THROWS_WITH(
             spy.get().submit(),
-            "No open homework assignments for course: " + mucs.config.course_id
+            "No such assignment exists: " + mucs.assignment
         );
     }
 
@@ -126,7 +116,7 @@ TEST_CASE("submit homework", "[mucs][submit]") {
         mucs.config.homeworks.insert({ hw_name, dd });
         REQUIRE_THROWS_WITH(
             spy.get().submit(),
-            "No open homework assignments for course: " + mucs.config.course_id
+            "Submission window is closed for assignment: " + mucs.assignment
         );
     }
 
@@ -151,7 +141,7 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment_type = "lab";
+    mucs.assignment = lab_name;
     mucs.config.roster.insert({ user, {lab_id} });
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh(lab_id).today().now().get() });
