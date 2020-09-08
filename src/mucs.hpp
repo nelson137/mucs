@@ -37,10 +37,10 @@ struct Mucs {
     vector<Path> sources;
 
     enum DumpFlags {
-        DumpHomeworks = 1 << 0,
-        DumpLabs      = 1 << 1,
-        DumpRoster    = 1 << 2,
-        DumpCurrents  = 1 << 3,
+        DumpLabSessions    = 1 << 0,
+        DumpLabAssignments = 1 << 1,
+        DumpHomeworks      = 1 << 2,
+        DumpRoster         = 1 << 3,
     };
 
     int dump_flags = 0;
@@ -55,11 +55,11 @@ struct Mucs {
 
     virtual void admin_authenticate() const;
 
-    virtual void dump_currents() const;
-
     virtual void dump_homeworks() const;
 
-    virtual void dump_labs() const;
+    virtual void dump_lab_assignments() const;
+
+    virtual void dump_lab_sessions() const;
 
     virtual void dump_roster() const;
 

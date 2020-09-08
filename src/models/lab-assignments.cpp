@@ -40,6 +40,14 @@ string LabAsgmt::week_str() const {
 }
 
 
+list<vector<string>> LabAssignments::to_table() const {
+    list<vector<string>> table;
+    for (auto it=this->begin(); it!=this->end(); it++)
+        table.push_back({ it->week_str() });
+    return table;
+}
+
+
 void from_json(const json& j, LabAsgmt& la) {
     string name = j.value("name", "");
     la.name = name;

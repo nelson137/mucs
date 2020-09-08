@@ -53,18 +53,15 @@ unique_ptr<CLI::App> Mucs::get_cli() {
         ->add_subcommand("dump")
         ->callback(invoke_wrapper(&Mucs::admin_dump));
 
-    admin_dump_subcmd->add_flag_callback("-c,--current-assignments", [&] () {
-        this->dump_flags |= Mucs::DumpCurrents;
+    auto or_dump_flags = [&] (const string& opt, Mucs::DumpFlags flag) {
+        admin_dump_subcmd->add_flag_callback(opt, [&] () {
+            this->dump_flags |= flag;
     });
-    admin_dump_subcmd->add_flag_callback("-l,--labs", [&] () {
-        this->dump_flags |= Mucs::DumpLabs;
-    });
-    admin_dump_subcmd->add_flag_callback("-r,--roster", [&] () {
-        this->dump_flags |= Mucs::DumpRoster;
-    });
-    admin_dump_subcmd->add_flag_callback("-w,--homeworks", [&] () {
-        this->dump_flags |= Mucs::DumpHomeworks;
-    });
+    };
+    or_dump_flags("-a,--lab-assignments", Mucs::DumpLabAssignments);
+    or_dump_flags("-r,--roster", Mucs::DumpRoster);
+    or_dump_flags("-s,--lab-sessions", Mucs::DumpLabSessions);
+    or_dump_flags("-w,--homeworks", Mucs::DumpHomeworks);
 
     // Admin Update Password subcommand
 

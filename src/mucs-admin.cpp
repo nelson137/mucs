@@ -5,16 +5,17 @@ void Mucs::admin_dump() {
     this->admin_authenticate();
 
     if (this->dump_flags == 0)
-        this->dump_flags = DumpCurrents | DumpHomeworks | DumpLabs | DumpRoster;
+        this->dump_flags =
+            DumpLabSessions | DumpHomeworks | DumpLabAssignments | DumpRoster;
 
-    if (this->dump_flags & DumpCurrents)
-        this->dump_currents();
+    if (this->dump_flags & DumpLabSessions)
+        this->dump_lab_sessions();
+
+    if (this->dump_flags & DumpLabAssignments)
+        this->dump_lab_assignments();
 
     if (this->dump_flags & DumpHomeworks)
         this->dump_homeworks();
-
-    if (this->dump_flags & DumpLabs)
-        this->dump_labs();
 
     if (this->dump_flags & DumpRoster)
         this->dump_roster();

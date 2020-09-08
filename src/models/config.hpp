@@ -140,9 +140,12 @@ struct LabAsgmt {
 };
 
 
-struct LabAssignments : public set<LabAsgmt, LabAsgmt::compare> {
+struct LabAssignments
+        : public set<LabAsgmt, LabAsgmt::compare>, public Tabular {
 
     using set<LabAsgmt, LabAsgmt::compare>::set;
+
+    list<vector<string>> to_table() const override;
 
     friend void from_json(const json& j, LabAssignments& lab_assignments);
     friend void to_json(json& j, const LabAssignments& lab_assignments);

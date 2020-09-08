@@ -6,27 +6,19 @@ TEST_CASE("subcommand admin dump", "[mucs][mucs-admin]") {
     Mock<Mucs> spy(mucs);
     Fake(
         Method(spy, admin_authenticate),
-        Method(spy, dump_currents),
         Method(spy, dump_homeworks),
-        Method(spy, dump_labs),
+        Method(spy, dump_lab_assignments),
+        Method(spy, dump_lab_sessions),
         Method(spy, dump_roster)
     );
 
     SECTION("everything by default") {
         mucs.dump_flags = 0;
         REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(
-            Method(spy, dump_currents),
-            Method(spy, dump_homeworks),
-            Method(spy, dump_labs),
-            Method(spy, dump_roster)
-        );
-    }
-
-    SECTION("current assignments") {
-        mucs.dump_flags = Mucs::DumpCurrents;
-        REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(Method(spy, dump_currents));
+        Verify(Method(spy, dump_homeworks));
+        Verify(Method(spy, dump_lab_assignments));
+        Verify(Method(spy, dump_lab_sessions));
+        Verify(Method(spy, dump_roster));
     }
 
     SECTION("homeworks") {
@@ -35,10 +27,16 @@ TEST_CASE("subcommand admin dump", "[mucs][mucs-admin]") {
         Verify(Method(spy, dump_homeworks));
     }
 
-    SECTION("labs") {
-        mucs.dump_flags = Mucs::DumpLabs;
+    SECTION("lab assignments") {
+        mucs.dump_flags = Mucs::DumpLabAssignments;
         REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(Method(spy, dump_labs));
+        Verify(Method(spy, dump_lab_assignments));
+    }
+
+    SECTION("lab sessions") {
+        mucs.dump_flags = Mucs::DumpLabSessions;
+        REQUIRE_NOTHROW(spy.get().admin_dump());
+        Verify(Method(spy, dump_lab_sessions));
     }
 
     SECTION("roster") {
