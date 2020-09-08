@@ -1,19 +1,6 @@
 #include "test_roster.hpp"
 
 
-TEST_CASE("roster entry has incorrect type", "[roster][entry]") {
-    string fn = rand_filename();
-    string user = rand_user();
-    json data = new_config_data({
-        {"roster", { {user, rand_int(9)} }}
-    });
-    REQUIRE_THROWS_WITH(
-        Config(data, fn).validate(),
-        StartsWith("Invalid config: " + fn) && Contains(INVALID_VALUE_TYPE)
-    );
-}
-
-
 TEST_CASE("roster entry has one lab id", "[roster][entry]") {
     string user = rand_user();
     vector<string> expected_ids = { rand_lab_sesh_id() };

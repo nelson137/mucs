@@ -63,7 +63,6 @@ json new_config_data(json j) {
             j[key] = val;
     };
 
-    default_val("filename", rand_string());
     default_val("course_id", rand_string(4));
     default_val("admin_hash", "!");
     default_val("homeworks", json::array());

@@ -208,7 +208,7 @@ struct Config {
     Config(json root, string fn = "");
 
     Config& parse();
-    Config& validate();
+    Config& validate(const IPath& schema_p = Path(SCHEMA_PATH));
 
     static mucs_exception error(
         const string& msg,

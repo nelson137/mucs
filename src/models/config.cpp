@@ -37,15 +37,13 @@ Config& Config::parse() {
 }
 
 
-Config& Config::validate() {
-    Path schema_p = Path(SCHEMA_PATH);
-
+Config& Config::validate(const IPath& schema_p) {
     // Make sure schema file exists
     if (not schema_p.exists())
         throw mucs_exception("Schema does not exist: " + schema_p.str());
     if (not schema_p.is_file())
         throw mucs_exception(
-            "Schema must be a regular file: " + schema_p.str());
+            "Schema path must be a regular file: " + schema_p.str());
 
     // Deserialize schema
     json schema_doc;
