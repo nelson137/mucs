@@ -78,6 +78,17 @@ TEST_CASE("config validation fails when schema has invalid json",
 }
 
 
+TEST_CASE("config validation fails when config has invalid json",
+          "[config][validation]") {
+    string fn = rand_filename();
+    Config config(json::array(), fn);
+    REQUIRE_THROWS_WITH(
+        config.validate(),
+        StartsWith("Invalid config: " + fn)
+    );
+}
+
+
 TEST_CASE("config validation succeeds when both config and schema exist and "
               "have valid json",
           "[config][validation]") {
