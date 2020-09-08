@@ -5,16 +5,16 @@ LabAsgmt::LabAsgmt() {
 }
 
 
-LabAsgmt::LabAsgmt(const string& n) {
-    this->name = n;
+LabAsgmt::LabAsgmt(string n) {
     // Normalize name (lowercase)
-    stl_transform(this->name, ::tolower);
+    stl_transform(n, ::tolower);
+    this->name = n;
 }
 
 
-LabAsgmt::LabAsgmt(const string& n, year_month_day s, year_month_day e)
-        : start(s), end(e) {
-    this->name = n;
+LabAsgmt::LabAsgmt(string n, year_month_day s, year_month_day e) : LabAsgmt(n) {
+    this->start = s;
+    this->end = e;
 }
 
 

@@ -98,3 +98,36 @@ TEST_CASE("serialize config", "[config][serialize]") {
     string actual = json(data.get<Config>()).dump();
     REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
 }
+
+
+TEST_CASE("get_assignment fails when no assignment matches the given name",
+          "[config][get-assignment]") {
+    auto config = Config(json::object());
+    string name = rand_hw_name();
+    REQUIRE_THROWS_WITH(
+        config.get_assignment(name),
+        "No such assignment exists: " + name
+    );
+}
+
+
+TEST_CASE("get_assignment succeeds when there is a matching hw assignment",
+          "[config][get-assignment]") {
+    string expected_name = rand_hw_name();
+    Config config;
+    config.homeworks.emplace(expected_name, sys_seconds{});
+    const auto& actual = dynamic_cast<const Hw&>(
+        config.get_assignment(expected_name));
+    REQUIRE(actual.name == expected_name);
+}
+
+
+TEST_CASE("get_assignment succeeds when there is a matching lab assignment",
+          "[config][get-assignment]") {
+    string expected_name = rand_lab_asgmt_name();
+    Config config;
+    config.lab_assignments.emplace(expected_name, year_month_day{}, get_day());
+    const auto& actual = dynamic_cast<const LabAsgmt&>(
+        config.get_assignment(expected_name));
+    REQUIRE(actual.name == expected_name);
+}

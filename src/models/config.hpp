@@ -56,6 +56,7 @@ struct Hw : public IAssignment {
     sys_seconds duedate;
 
     Hw();
+    Hw(string n);
     Hw(string n, sys_seconds dd);
 
     struct compare {
@@ -95,7 +96,7 @@ struct LabSesh {
     seconds end;
 
     LabSesh();
-    LabSesh(const string& i);
+    LabSesh(string i);
     LabSesh(string id, weekday w, seconds s, seconds e);
 
     operator string() const;
@@ -134,8 +135,8 @@ struct LabAsgmt : public IAssignment {
     year_month_day end;
 
     LabAsgmt();
-    LabAsgmt(const string& n);
-    LabAsgmt(const string& n, year_month_day s, year_month_day e);
+    LabAsgmt(string n);
+    LabAsgmt(string n, year_month_day s, year_month_day e);
 
     struct compare {
         bool operator()(const LabAsgmt& a, const LabAsgmt& b) const;

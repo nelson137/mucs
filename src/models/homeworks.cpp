@@ -5,8 +5,15 @@ Hw::Hw() {
 }
 
 
-Hw::Hw(string n, sys_seconds dd) : duedate(dd) {
+Hw::Hw(string n) {
+    // Normalize name (lowercase)
+    stl_transform(n, ::tolower);
     this->name = n;
+}
+
+
+Hw::Hw(string n, sys_seconds dd) : Hw(n) {
+    this->duedate = dd;
 }
 
 

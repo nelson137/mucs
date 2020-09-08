@@ -7,15 +7,17 @@ LabSesh::LabSesh() : wd(9) {
 }
 
 
-LabSesh::LabSesh(const string& i) : id(i) {
-    this->wd = weekday(9);
+LabSesh::LabSesh(string i) : LabSesh() {
     // Normalize id (uppercase)
-    stl_transform(this->id, ::toupper);
+    stl_transform(i, ::toupper);
+    this->id = i;
 }
 
 
-LabSesh::LabSesh(string id, weekday w, seconds s, seconds e)
-        : id(id), wd(w), start(s), end(e) {
+LabSesh::LabSesh(string id, weekday w, seconds s, seconds e) : LabSesh(id) {
+    this->wd = w;
+    this->start = s;
+    this->end = e;
 }
 
 
