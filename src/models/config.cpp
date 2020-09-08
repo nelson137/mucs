@@ -96,27 +96,14 @@ mucs_exception Config::error(
 }
 
 
-string Config::validate_assignment(const string& name) const {
-    auto inactive_error = [&] () {
-        throw mucs_exception(
-            "Submission window is closed for assignment: " + name);
-    };
+const IAssignment& Config::get_assignment(const string& name) const {
+    for (const LabAsgmt& la : this->lab_assignments)
+        if (la.name == name)
+            return la;
 
-    for (const LabAsgmt& la : this->lab_assignments) {
-        if (la.name == name) {
-            if (not la.is_active())
-                inactive_error();
-            return la.name;
-        }
-    }
-
-    for (const Hw& hw : this->homeworks) {
-        if (hw.name == name) {
-            if (not hw.is_active())
-                inactive_error();
-            return hw.name;
-        }
-    }
+    for (const Hw& hw : this->homeworks)
+        if (hw.name == name)
+            return hw;
 
     throw mucs_exception("No such assignment exists: " + name);
 }

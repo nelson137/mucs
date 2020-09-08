@@ -7,7 +7,10 @@ void Mucs::submit() {
 
     LabSesh lab = config.get_lab(this->user);
 
-    config.validate_assignment(this->assignment);
+    const IAssignment& assignment = config.get_assignment(this->assignment);
+    if (not assignment.is_active())
+        throw mucs_exception(
+            "Submission window is closed for assignment: " + assignment.name);
 
     // Make sure sources exist and are files
     for (const Path& src : this->sources) {
@@ -22,14 +25,14 @@ void Mucs::submit() {
         throw mucs_exception("Unable to submit, program does not compile");
 
     // Show user a summary of their submission and prompt for confirmation
-    this->submit_summary(lab, assignment);
+    this->submit_summary(lab, assignment.name);
     if (this->prompt_yesno("Are you sure you want to submit [y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
     // SUBMIT_DIR
     Path submit_root = Path(SUBMIT_DIR);
     // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
-    Path assignment_d = submit_root / this->course / lab / assignment;
+    Path assignment_d = submit_root / this->course / lab / assignment.name;
 
     string now_str = format(DATETIME_EXT_FMT, NOW);
     // .submissions/USER.DATE.TIME
@@ -48,7 +51,7 @@ void Mucs::submit() {
     //   USER -> .submissions/USER.DATE.TIME
     (assignment_d / this->user).link_to(submit_d_rel);
 
-    for (const Path& src : sources)
+    for (const Path& src : this->sources)
         src.copy_into(submit_d_abs, 0440);
 
     // Fix all directory permissions

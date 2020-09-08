@@ -37,14 +37,22 @@ using namespace valijson::adapters;
 using json = nlohmann::json;
 
 
+struct IAssignment {
+
+    string name;
+
+    virtual bool is_active() const = 0;
+
+};
+
+
 /*************************************************
  * Homeworks
  ************************************************/
 
 
-struct Hw {
+struct Hw : public IAssignment {
 
-    string name;
     sys_seconds duedate;
 
     Hw();
@@ -54,7 +62,7 @@ struct Hw {
         bool operator()(const Hw& a, const Hw& b) const;
     };
 
-    bool is_active() const;
+    bool is_active() const override;
 
     friend void from_json(const json& j, Hw& hw);
     friend void to_json(json& j, const Hw& hw);
@@ -120,9 +128,8 @@ struct LabSessions : public map<string, LabSesh>, public Tabular {
  ************************************************/
 
 
-struct LabAsgmt {
+struct LabAsgmt : public IAssignment {
 
-    string name;
     year_month_day start;
     year_month_day end;
 
@@ -136,7 +143,7 @@ struct LabAsgmt {
 
     string week_str() const;
 
-    bool is_active() const;
+    bool is_active() const override;
 
     friend void from_json(const json& j, LabAsgmt& la);
     friend void to_json(json& j, const LabAsgmt& la);
@@ -208,7 +215,7 @@ struct Config {
         const initializer_list<string>& keys = {}
     );
 
-    string validate_assignment(const string& name) const;
+    const IAssignment& get_assignment(const string& name) const;
 
     vector<LabSesh> get_user_labs(const string& user) const;
     LabSesh get_lab(const string& id) const;

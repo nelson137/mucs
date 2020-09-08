@@ -5,7 +5,8 @@ Hw::Hw() {
 }
 
 
-Hw::Hw(string n, sys_seconds dd) : name(n), duedate(dd) {
+Hw::Hw(string n, sys_seconds dd) : duedate(dd) {
+    this->name = n;
 }
 
 
