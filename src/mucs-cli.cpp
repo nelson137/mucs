@@ -53,9 +53,8 @@ unique_ptr<CLI::App> Mucs::get_cli() {
         ->callback(invoke_wrapper(&Mucs::admin_dump));
 
     auto or_dump_flags = [&] (const string& opt, Mucs::DumpFlags flag) {
-        admin_dump_subcmd->add_flag_callback(opt, [&] () {
-            this->dump_flags |= flag;
-        });
+        admin_dump_subcmd->add_flag_callback(
+            opt, [&] () { this->dump_flags |= flag; });
     };
     or_dump_flags("-a,--lab-assignments", Mucs::DumpLabAssignments);
     or_dump_flags("-r,--roster", Mucs::DumpRoster);
