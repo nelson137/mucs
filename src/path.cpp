@@ -72,13 +72,13 @@ string Path::basename() const {
 }
 
 
-IPath& Path::append(const string& ext) {
+Path& Path::append(const string& ext) {
     this->m_path += ext;
     return *this;
 }
 
 
-IPath& Path::join(const string& rel_path) {
+Path& Path::join(const string& rel_path) {
     this->m_path = join_paths(this->m_path, rel_path);
     return *this;
 }
@@ -121,7 +121,7 @@ void Path::chmod(mode_t mode) const {
 }
 
 
-bool Path::link_to(const IPath& target) const {
+bool Path::link_to(const Path& target) const {
     if (this->exists())
         this->rm();
     return symlink(target.str().c_str(), this->m_path.c_str()) == 0;
@@ -257,7 +257,7 @@ void Path::mkdir_recurse(mode_t mode) const {
 }
 
 
-MockPath::MockPath() : Mock<IPath>() {
+MockPath::MockPath() : Mock<Path>() {
     When(Method((*this), exists)).AlwaysReturn(true);
     When(Method((*this), is_file)).AlwaysReturn(true);
     When(Method((*this), is_dir)).AlwaysReturn(false);
@@ -269,9 +269,9 @@ MockPath::MockPath(const string& p) : MockPath() {
 }
 
 
-IPath& MockPath::get() {
+Path& MockPath::get() {
     When(Method((*this), read)).AlwaysReturn(this->data.str());
-    return Mock<IPath>::get();
+    return Mock<Path>::get();
 }
 
 

@@ -26,12 +26,12 @@ using namespace std;
 using json = nlohmann::json;
 
 
-class IPath {
+class Path {
 
 protected:
     string m_path;
 
-    virtual unique_ptr<struct stat> stat() const = 0;
+    unique_ptr<struct stat> stat() const;
 
 public:
     enum {
@@ -40,52 +40,6 @@ public:
         Link = 1 << 2,
     };
 
-    virtual string str() const = 0;
-    virtual string basename() const = 0;
-
-    virtual IPath& append(const string& ext) = 0;
-    virtual IPath& join(const string& rel_path) = 0;
-
-    virtual bool exists() const = 0;
-    virtual int type() const = 0;
-    virtual bool is_exe() const = 0;
-    virtual bool is_file() const = 0;
-    virtual bool is_dir() const = 0;
-
-    virtual void chmod(mode_t mode) const = 0;
-
-    virtual bool link_to(const IPath& target) const = 0;
-
-    virtual void rm() const = 0;
-    virtual void rm_recurse() const = 0;
-
-    /**
-     * Files only
-     */
-
-    virtual string read() const = 0;
-
-    /**
-     * Directories only
-     */
-
-    virtual vector<string> ls() const = 0;
-    virtual vector<string> ls_base() const = 0;
-
-    virtual void chmod_recurse(mode_t mode, int filter = File|Dir) const = 0;
-
-    virtual void mkdir(mode_t mode = 0775) const = 0;
-    virtual void mkdir_recurse(mode_t mode = 0775) const = 0;
-
-};
-
-
-class Path : public IPath {
-
-protected:
-    unique_ptr<struct stat> stat() const;
-
-public:
     Path() = default;
     Path(const string& s);
 
@@ -99,56 +53,56 @@ public:
     friend Path& operator/=(      Path& p, const string& rel_path);
     friend Path& operator/=(      Path& a, const   Path&        b);
 
-    string str() const override;
-    string basename() const override;
+    virtual string str() const;
+    virtual string basename() const;
 
-    IPath& append(const string& ext) override;
-    IPath& join(const string& rel_path) override;
+    virtual Path& append(const string& ext);
+    virtual Path& join(const string& rel_path);
 
-    bool exists() const override;
-    int type() const override;
-    bool is_exe() const override;
-    bool is_file() const override;
-    bool is_dir() const override;
+    virtual bool exists() const;
+    virtual int type() const;
+    virtual bool is_exe() const;
+    virtual bool is_file() const;
+    virtual bool is_dir() const;
 
-    void chmod(mode_t mode) const override;
+    virtual void chmod(mode_t mode) const;
 
-    bool link_to(const IPath& target) const override;
+    virtual bool link_to(const Path& target) const;
 
-    void rm() const override;
-    void rm_recurse() const override;
+    virtual void rm() const;
+    virtual void rm_recurse() const;
 
     /**
      * Files only
      */
 
-    string read() const override;
+    virtual string read() const;
 
-    void copy_into(const Path& dir, mode_t mode = 0644) const;
+    virtual void copy_into(const Path& dir, mode_t mode = 0644) const;
 
     /**
      * Directories only
      */
 
-    vector<string> ls() const override;
-    vector<string> ls_base() const override;
+    virtual vector<string> ls() const;
+    virtual vector<string> ls_base() const;
 
-    void chmod_recurse(mode_t mode, int filter = File|Dir) const override;
+    virtual void chmod_recurse(mode_t mode, int filter = File|Dir) const;
 
-    void mkdir(mode_t mode = 0775) const override;
-    void mkdir_recurse(mode_t mode = 0775) const override;
+    virtual void mkdir(mode_t mode = 0775) const;
+    virtual void mkdir_recurse(mode_t mode = 0775) const;
 
 };
 
 
-struct MockPath : public Mock<IPath> {
+struct MockPath : public Mock<Path> {
 
     ostringstream data;
 
     MockPath();
     MockPath(const string& p);
 
-    IPath& get();
+    Path& get();
 
     MockPath& operator<<(const string& data);
 

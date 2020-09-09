@@ -205,11 +205,11 @@ struct Config {
     Roster roster;
 
     Config();
-    Config(const IPath& config_p);
+    Config(const Path& config_p);
     Config(json root, string fn = "");
 
     Config& parse();
-    Config& validate(const IPath& schema_p = Path(SCHEMA_PATH));
+    Config& validate(const Path& schema_p = Path(SCHEMA_PATH));
 
     static mucs_exception error(
         const string& msg,
