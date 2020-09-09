@@ -29,6 +29,14 @@ void Mucs::submit() {
     if (this->prompt_yesno("Are you sure you want to submit [y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
+    this->copy_submission_files(lab, assignment);
+}
+
+
+void Mucs::copy_submission_files(
+    const LabSesh& lab,
+    const IAssignment& assignment
+) const {
     // SUBMIT_DIR
     Path submit_root = Path(SUBMIT_DIR);
     // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT

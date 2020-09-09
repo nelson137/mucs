@@ -82,6 +82,11 @@ struct Mucs {
 
     virtual void submit();
 
+    virtual void copy_submission_files(
+        const LabSesh& lab,
+        const IAssignment& assignment
+    ) const;
+
     // Admin Subcommand : mucs-admin.cpp
 
     virtual void admin_dump();
