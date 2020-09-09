@@ -50,6 +50,17 @@
             }
         },
         {
+            "label": "make coverage",
+            "group": "build",
+            "type": "process",
+            "command": "/usr/bin/make",
+            "args": ["coverage"],
+            "problemMatcher": ["$gcc"],
+            "windows": {
+                "command": "C:\\cygwin64\\bin\\make.exe"
+            }
+        },
+        {
             "label": "make clean",
             "group": "build",
             "type": "process",
