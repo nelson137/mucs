@@ -142,3 +142,58 @@ TEST_CASE("get_assignment succeeds when there is a matching lab assignment",
         config.get_assignment(expected_name));
     REQUIRE(actual.name == expected_name);
 }
+
+
+TEST_CASE("get_lab with 1 lab session", "[config][get-lab]") {
+    string user = rand_user();
+    string lab_id = rand_lab_sesh_id();
+    Config config;
+    config.roster[user] = { lab_id };
+
+    SECTION("that isn't in session") {
+        auto ls = RandLabSesh(lab_id).today().now(false).get();
+        config.lab_sessions.insert({ lab_id, ls });
+        REQUIRE_THROWS_WITH(
+            config.get_lab(user),
+            ls.format(
+                "Lab {id} is not in session: {weekday} from {start} to {end}")
+        );
+    }
+
+    SECTION("that is in session") {
+        auto expected_ls = RandLabSesh(lab_id).today().now(true).get();
+        config.lab_sessions.insert({ lab_id, expected_ls });
+        REQUIRE(config.get_lab(user).id == lab_id);
+    }
+}
+
+
+TEST_CASE("get_lab with multiple lab sessions", "[config][get-lab]") {
+    string user = rand_user();
+    Config config;
+
+    SECTION("one is active") {
+        string lab_id1 = rand_lab_sesh_id();
+        string lab_id2 = rand_lab_sesh_id();
+        config.roster[user] = { lab_id1, lab_id2 };
+        config.lab_sessions.insert({
+            lab_id1, RandLabSesh(lab_id1).today().now(false).get() });
+        config.lab_sessions.insert({
+            lab_id2, RandLabSesh(lab_id2).today().now(true).get() });
+        REQUIRE(config.get_lab(user).id == lab_id2);
+    }
+
+    SECTION("none are active") {
+        string lab_id1 = rand_lab_sesh_id();
+        string lab_id2 = rand_lab_sesh_id();
+        config.roster[user] = { lab_id1, lab_id2 };
+        config.lab_sessions.insert({
+            lab_id1, RandLabSesh(lab_id1).today(true).now(false).get() });
+        config.lab_sessions.insert({
+            lab_id2, RandLabSesh(lab_id2).today(false).now(false).get() });
+        REQUIRE_THROWS_WITH(
+            config.get_lab(user),
+            "None of your labs are in session: " + lab_id1 + "," + lab_id2
+        );
+    }
+}
