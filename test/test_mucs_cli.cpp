@@ -26,6 +26,27 @@
         );                                  \
     } while (0)
 
+#define TEST_INVOKE(method_name, method_ptr)               \
+    do {                                                   \
+        Mucs mucs;                                         \
+        mucs.course = "test1";                             \
+        Mock<Mucs> mock(mucs);                             \
+        When(Method(mock, get_user)).Return(rand_user());  \
+        Fake(Method(mock, submit));                        \
+        Fake(Method(mock, admin_dump));                    \
+        Fake(Method(mock, admin_update_password));         \
+        mock.get().invoke(method_ptr);                     \
+        Verify(Method(mock, method_name));                 \
+    } while (0)
+
+
+TEST_CASE("invoke calls the correct subcommand member functions",
+          "[cli][invoke]") {
+    TEST_INVOKE(submit, &Mucs::submit);
+    TEST_INVOKE(admin_dump, &Mucs::admin_dump);
+    TEST_INVOKE(admin_update_password, &Mucs::admin_update_password);
+}
+
 
 TEST_CASE("cli", "[cli]") {
     SECTION("no arguments") {
@@ -94,3 +115,4 @@ TEST_CASE("cli : submit", "[cli][cli-submit]") {
 #undef MUCS_CLI_PARSE
 #undef TEST_CLI_SUBCMD_CALLED
 #undef TEST_CLI_SUBCMD_ERROR
+#undef TEST_INVOKE
