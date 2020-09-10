@@ -1,65 +1,31 @@
 #include "test_roster.hpp"
 
 
-TEST_CASE("roster entry has one lab id", "[roster][entry]") {
+TEST_CASE("insert adds a new entry when the given user doesn't exist",
+          "[roster][insert]") {
     string user = rand_user();
-    vector<string> expected_ids = { rand_lab_sesh_id() };
-    json data = new_config_data({
-        {"lab-sessions", {
-            rand_lab_sesh_data({ {"id", expected_ids[0]} })
-        }},
-        {"roster", { {user, expected_ids[0]} }},
-    });
+    string lab_id = rand_lab_sesh_id();
+    Roster roster;
 
-    Config config = Config(data).parse();
+    roster.insert(user, lab_id);
 
-    REQUIRE(config.roster.count(user) == 1);
-    auto actual_ids = config.roster.at(user);
-    REQUIRE_THAT(actual_ids, Vector::EqualsMatcher<string>(expected_ids));
+    REQUIRE(roster.count(user) == 1);
+    const vector<string>& labs = roster.at(user);
+    REQUIRE_THAT(labs, Equals<string>({ lab_id }));
 }
 
 
-TEST_CASE("roster entry has multiple lab ids", "[roster][entry]") {
+TEST_CASE("insert appends to an existing entry when the given user exists",
+          "[roster][insert]") {
     string user = rand_user();
-    vector<string> expected_ids = {
-        rand_lab_sesh_id(), rand_lab_sesh_id(), "", rand_lab_sesh_id()
-    };
-    ostringstream ids;
-    ids << expected_ids[0];
-    for (auto it=begin(expected_ids)+1; it!=end(expected_ids); it++)
-        ids << ',' << *it;
+    string lab_id1 = rand_lab_sesh_id();
+    string lab_id2 = rand_lab_sesh_id();
+    Roster roster;
+    roster[user] = { lab_id1 };
 
-    json data = new_config_data({
-        {"lab-sessions", {
-            rand_lab_sesh_data({ {"id", expected_ids[1]} })
-        }},
-        {"roster", { {user, ids.str()} }}
-    });
+    roster.insert(user, lab_id2);
 
-    Config config = Config(data).parse();
-
-    REQUIRE(config.roster.count(user) == 1);
-    auto actual_ids = config.roster.at(user);
-    REQUIRE_THAT(actual_ids, Vector::EqualsMatcher<string>(expected_ids));
-}
-
-
-TEST_CASE("serialize roster", "[roster][serialize]") {
-    string user = rand_user();
-    string id = rand_lab_sesh_id();
-    json data = json::object();
-
-    SECTION("with one id") {
-        data[user] = id;
-        string expected = data.dump();
-        string actual = json(data.get<Roster>()).dump();
-        REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
-    }
-
-    SECTION("with multiple ids") {
-        data[user] = id + ',' + id;
-        string expected = data.dump();
-        string actual = json(data.get<Roster>()).dump();
-        REQUIRE_THAT(expected, Equals(actual, Catch::CaseSensitive::No));
-    }
+    REQUIRE(roster.count(user) == 1);
+    const vector<string>& labs = roster.at(user);
+    REQUIRE_THAT(labs, UnorderedEquals<string>({ lab_id1, lab_id2 }));
 }

@@ -3,6 +3,7 @@
 
 
 #include <fstream>
+#include <functional>
 #include <ios>
 #include <memory>
 #include <sstream>
@@ -77,6 +78,7 @@ public:
      */
 
     virtual string read() const;
+    virtual void for_each_line(function<void(const string&)> unary_op) const;
 
     virtual void copy_into(const Path& dir, mode_t mode = 0644) const;
 

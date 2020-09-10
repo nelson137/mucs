@@ -68,7 +68,6 @@ json new_config_data(json j) {
     default_val("homeworks", json::array());
     default_val("lab-sessions", json::array());
     default_val("lab-assignments", json::array());
-    default_val("roster", json::object());
 
     return j;
 }

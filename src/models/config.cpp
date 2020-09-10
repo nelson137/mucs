@@ -5,7 +5,7 @@ Config::Config() {
 }
 
 
-Config::Config(const IPath& config_p) : filename(config_p.str()) {
+Config::Config(const Path& config_p) : filename(config_p.str()) {
     if (not config_p.exists())
         throw mucs_exception("Config file does not exist: " + config_p.str());
     if (not config_p.is_file())
@@ -25,19 +25,7 @@ Config::Config(json root, string fn) : j_root(root), filename(fn) {
 }
 
 
-Config& Config::parse() {
-    this->j_root["course_id"].get_to(this->course_id);
-    this->j_root["admin_hash"].get_to(this->admin_hash);
-    this->j_root["homeworks"].get_to(this->homeworks);
-    this->j_root["lab-sessions"].get_to(this->lab_sessions);
-    this->j_root["lab-assignments"].get_to(this->lab_assignments);
-    this->j_root["roster"].get_to(this->roster);
-
-    return *this;
-}
-
-
-Config& Config::validate(const IPath& schema_p) {
+Config& Config::validate(const Path& schema_p) {
     // Make sure schema file exists
     if (not schema_p.exists())
         throw mucs_exception("Schema does not exist: " + schema_p.str());
@@ -79,6 +67,34 @@ Config& Config::validate(const IPath& schema_p) {
     }
 
     return *this;
+}
+
+
+Config& Config::parse() {
+    this->j_root["course_id"].get_to(this->course_id);
+    this->j_root["admin_hash"].get_to(this->admin_hash);
+    this->j_root["homeworks"].get_to(this->homeworks);
+    this->j_root["lab-sessions"].get_to(this->lab_sessions);
+    this->j_root["lab-assignments"].get_to(this->lab_assignments);
+
+    return *this;
+}
+
+
+void Config::load_roster(const Path& roster_d) {
+    if (not roster_d.exists())
+        throw mucs_exception("Roster directory does not exist:", roster_d);
+    if (not roster_d.is_dir())
+        throw mucs_exception("Roster path must be a directory:", roster_d);
+
+    for (const Path& lab_roster_p : roster_d.ls()) {
+        string lab_id = lab_roster_p.basename();
+        lab_roster_p.for_each_line([&] (const string& line) {
+            string pawprint = string_strip(line);
+            if (pawprint.size())
+                this->roster.insert(pawprint, lab_id);
+        });
+    }
 }
 
 
@@ -167,9 +183,6 @@ void from_json(const json& j, Config& c) {
 
     if (j.count("lab-assignments") > 0)
         j["lab-assignments"].get_to(c.lab_assignments);
-
-    if (j.count("roster") > 0)
-        j["roster"].get_to(c.roster);
 }
 
 
@@ -180,6 +193,5 @@ void to_json(json& j, const Config& c) {
         {"homeworks", c.homeworks},
         {"lab-sessions", c.lab_sessions},
         {"lab-assignments", c.lab_assignments},
-        {"roster", c.roster},
     };
 }

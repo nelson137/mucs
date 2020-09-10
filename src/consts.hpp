@@ -18,6 +18,7 @@ using namespace std;
 
 #define SUBMIT_DIR  MUCS_ROOT "/submissions"
 #define CONFIG_DIR  MUCS_ROOT "/config.d"
+#define ROSTER_DIR  MUCS_ROOT "/roster"
 #define SCHEMA_PATH CONFIG_DIR "/schema.json"
 
 #define LAB_ASGMT_FMT    "%b %d"

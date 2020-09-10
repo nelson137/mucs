@@ -7,8 +7,7 @@
         "admin_hash",
         "homeworks",
         "lab-sessions",
-        "lab-assignments",
-        "roster"
+        "lab-assignments"
     ],
 
     "properties": {
@@ -114,19 +113,6 @@
                         "description": "",
                         "examples": ["Aug 1"]
                     }
-                }
-            }
-        },
-
-        "roster": {
-            "type": "object",
-            "description": "",
-            "patternProperties": {
-                "^[A-Za-z0-9._\\-]+$": {
-                    "type": "string",
-                    "format": "lab-session",
-                    "description": "",
-                    "examples": ["A", "Honors"]
                 }
             }
         }

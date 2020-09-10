@@ -156,6 +156,21 @@ string Path::read() const {
 }
 
 
+void Path::for_each_line(function<void(const string&)> unary_op) const {
+    ifstream is(this->m_path);
+    string buf;
+    do {
+        try {
+            getline(is, buf);
+            unary_op(buf);
+        } catch (const exception& e) {
+            is.close();
+            throw;
+        }
+    } while (not is.eof());
+}
+
+
 void Path::copy_into(const Path& dir, mode_t mode) const {
     if (dir.exists() == false)
         dir.mkdir_recurse();

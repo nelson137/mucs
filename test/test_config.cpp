@@ -111,6 +111,53 @@ TEST_CASE("serialize config", "[config][serialize]") {
 }
 
 
+TEST_CASE("load_roster fails when the given path doesn't exist",
+          "[config][load-roster]") {
+    string fn = rand_filename();
+    Config config;
+    REQUIRE_THROWS_WITH(
+        config.load_roster(Path(fn)),
+        "Roster directory does not exist: " + fn
+    );
+}
+
+
+TEST_CASE("load_roster fails when the given path isn't a directory",
+          "[config][load-roster]") {
+    Config config;
+    REQUIRE_THROWS_WITH(
+        config.load_roster(Path("/usr/bin/sudo")),
+        "Roster path must be a directory: /usr/bin/sudo"
+    );
+}
+
+
+TEST_CASE("load_roster loads the files of the given directory",
+          "[config][load-roster]") {
+    Config config;
+    config.load_roster(Path(ROSTER_DIR));
+
+    const auto& r = config.roster;
+    // print_table(config.roster.to_table());
+    REQUIRE(r.size() == 7);
+    for (const string& user : vector<string>{ "a1", "a2", "a3" }) {
+        REQUIRE(r.count(user) == 1);
+        const vector<string>& labs = r.at(user);
+        REQUIRE(labs.size() == 1);
+        REQUIRE_THAT(labs, Catch::Matchers::UnorderedEquals<string>({ "A" }));
+    }
+    for (const string& user : vector<string>{ "b1", "b2", "b3" }) {
+        REQUIRE(r.count(user) == 1);
+        const vector<string>& labs = r.at(user);
+        REQUIRE(labs.size() == 1);
+        REQUIRE_THAT(labs, Catch::Matchers::UnorderedEquals<string>({ "B" }));
+    }
+    REQUIRE(r.count("x") == 1);
+    const vector<string>& labs = r.at("x");
+    REQUIRE_THAT(labs, Catch::Matchers::UnorderedEquals<string>({ "A", "B" }));
+}
+
+
 TEST_CASE("get_assignment fails when no assignment matches the given name",
           "[config][get-assignment]") {
     auto config = Config(json::object());

@@ -7,6 +7,7 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <functional>
 #include <initializer_list>
 #include <list>
 #include <map>
@@ -32,6 +33,7 @@
 using namespace std;
 using namespace chrono;
 using namespace date;
+using namespace placeholders;
 using namespace valijson;
 using namespace valijson::adapters;
 using json = nlohmann::json;
@@ -174,10 +176,9 @@ struct Roster : public map<string, vector<string>>, public Tabular {
 
     using map<string, vector<string>>::map;
 
-    list<vector<string>> to_table() const override;
+    void insert(string pawprint, string lab_id);
 
-    friend void from_json(const json& j, Roster& roster);
-    friend void to_json(json& j, const Roster& roster);
+    list<vector<string>> to_table() const override;
 
 };
 
@@ -208,8 +209,11 @@ struct Config {
     Config(const Path& config_p);
     Config(json root, string fn = "");
 
-    Config& parse();
     Config& validate(const Path& schema_p = Path(SCHEMA_PATH));
+    Config& parse();
+
+    vector<Path> get_roster_files(const Path& roster_d);
+    void load_roster(const Path& roster_d);
 
     static mucs_exception error(
         const string& msg,
