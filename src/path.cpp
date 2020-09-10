@@ -3,7 +3,7 @@
 
 unique_ptr<struct stat> Path::stat() const {
     unique_ptr<struct stat> s(new struct stat);
-    if (::lstat(this->m_path.c_str(), s.get()) < 0)
+    if (::stat(this->m_path.c_str(), s.get()) < 0)
         throw mucs_exception("Failed to stat file:", this->m_path);
     return s;
 }
