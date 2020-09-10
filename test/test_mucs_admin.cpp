@@ -1,6 +1,27 @@
 #include "test_mucs_admin.hpp"
 
 
+TEST_CASE("admin_authenticate", "[mucs][mucs-admin][admin-authenticate]") {
+    string password = rand_string();
+    Mucs mucs;
+    mucs.config.admin_hash = picosha2::hash256_hex_string(password);
+    Mock<Mucs> spy(mucs);
+
+    SECTION("fails when the entered password is incorrect") {
+        When(Method(spy, prompt_password)).Return(rand_string());
+        REQUIRE_THROWS_WITH(
+            spy.get().admin_authenticate(),
+            "Password incorrect"
+        );
+    }
+
+    SECTION("succeeds when the entered password is correct") {
+        When(Method(spy, prompt_password)).Return(password);
+        REQUIRE_NOTHROW(spy.get().admin_authenticate());
+    }
+}
+
+
 TEST_CASE("subcommand admin dump", "[mucs][mucs-admin]") {
     Mucs mucs;
     Mock<Mucs> spy(mucs);

@@ -1,15 +1,6 @@
 #include "mucs.hpp"
 
 
-void Mucs::admin_authenticate() const {
-    stringstream prompt;
-    prompt << "Admin password for " << this->course << ": ";
-    string password = this->prompt_password(prompt.str());
-    if (picosha2::hash256_hex_string(password) != this->config.admin_hash)
-        throw mucs_exception("Password incorrect");
-}
-
-
 void Mucs::dump_homeworks() const {
     cout << "Homeworks:" << endl;
     print_table(this->config.homeworks.to_table());

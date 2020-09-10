@@ -53,8 +53,6 @@ struct Mucs {
 
     // Util : mucs.cpp
 
-    virtual void admin_authenticate() const;
-
     virtual void dump_homeworks() const;
 
     virtual void dump_lab_assignments() const;
@@ -88,6 +86,8 @@ struct Mucs {
     ) const;
 
     // Admin Subcommand : mucs-admin.cpp
+
+    virtual void admin_authenticate() const;
 
     virtual void admin_dump();
 
