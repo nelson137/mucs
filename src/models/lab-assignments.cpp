@@ -35,7 +35,7 @@ bool LabAsgmt::compare::operator()(const LabAsgmt& a, const LabAsgmt& b) const {
 
 bool LabAsgmt::is_active() const {
     auto today = get_day();
-    return this->start <= today && today < this->end;
+    return this->start <= today && today <= this->end;
 }
 
 
