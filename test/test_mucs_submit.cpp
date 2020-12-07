@@ -54,6 +54,12 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
         RandLabAsgmt(lab_name).this_week(true).get());
 
     Mock<Mucs> spy(mucs);
+    When(Method(spy, prompt_yesno)).AlwaysReturn(true);
+    Fake(
+        Method(spy, compile_sources),
+        Method(spy, submit_summary),
+        Method(spy, copy_submission_files)
+    );
 
     SECTION("doesn't exist") {
         src_fn = rand_filename();
@@ -108,7 +114,7 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
     }
 
     Mock<Mucs> spy(mucs);
-    When(Method(spy, prompt_yesno)).Return(true);
+    When(Method(spy, prompt_yesno)).AlwaysReturn(true);
     Fake(
         Method(spy, compile_sources),
         Method(spy, submit_summary),
@@ -116,7 +122,14 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
     );
 
     spy.get().submit();
-    Verify(Method(spy, copy_submission_files));
+
+    Verify(
+        Method(spy, compile_sources)
+        + Method(spy, submit_summary)
+        + Method(spy, prompt_yesno)
+        + Method(spy, copy_submission_files)
+    ).Once();
+    VerifyNoOtherInvocations(spy);
 }
 
 
@@ -135,13 +148,21 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
         RandLabAsgmt(lab_name).this_week().get());
 
     Mock<Mucs> spy(mucs);
-    When(Method(spy, prompt_yesno)).Return(false);
+    When(Method(spy, prompt_yesno)).AlwaysReturn(false);
     Fake(
         Method(spy, compile_sources),
-        Method(spy, submit_summary)
+        Method(spy, submit_summary),
+        Method(spy, copy_submission_files)
     );
 
     REQUIRE_THROWS_WITH(spy.get().submit(), "Submission cancelled");
+
+    Verify(
+        Method(spy, compile_sources)
+        + Method(spy, submit_summary)
+        + Method(spy, prompt_yesno)
+    ).Once();
+    VerifyNoOtherInvocations(spy);
 }
 
 

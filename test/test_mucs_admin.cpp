@@ -19,6 +19,9 @@ TEST_CASE("admin_authenticate", "[mucs][mucs-admin][admin-authenticate]") {
         When(Method(spy, prompt_password)).Return(password);
         REQUIRE_NOTHROW(spy.get().admin_authenticate());
     }
+
+    Verify(Method(spy, prompt_password)).Once();
+    VerifyNoOtherInvocations(spy);
 }
 
 
@@ -36,37 +39,47 @@ TEST_CASE("subcommand admin dump", "[mucs][mucs-admin]") {
     SECTION("everything by default") {
         mucs.dump_flags = 0;
         REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(Method(spy, dump_homeworks));
-        Verify(Method(spy, dump_lab_assignments));
-        Verify(Method(spy, dump_lab_sessions));
-        Verify(Method(spy, dump_roster));
+        Verify(
+            Method(spy, admin_authenticate)
+            + Method(spy, dump_lab_sessions)
+            + Method(spy, dump_lab_assignments)
+            + Method(spy, dump_homeworks)
+            + Method(spy, dump_roster)
+        ).Once();
     }
 
     SECTION("homeworks") {
         mucs.dump_flags = Mucs::DumpHomeworks;
         REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(Method(spy, dump_homeworks));
+        Verify(
+            Method(spy, admin_authenticate) + Method(spy, dump_homeworks)
+        ).Once();
     }
 
     SECTION("lab assignments") {
         mucs.dump_flags = Mucs::DumpLabAssignments;
         REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(Method(spy, dump_lab_assignments));
+        Verify(
+            Method(spy, admin_authenticate) + Method(spy, dump_lab_assignments)
+        ).Once();
     }
 
     SECTION("lab sessions") {
         mucs.dump_flags = Mucs::DumpLabSessions;
         REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(Method(spy, dump_lab_sessions));
+        Verify(
+            Method(spy, admin_authenticate) + Method(spy, dump_lab_sessions)
+        ).Once();
     }
 
     SECTION("roster") {
         mucs.dump_flags = Mucs::DumpRoster;
         REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(Method(spy, dump_roster));
+        Verify(
+            Method(spy, admin_authenticate) + Method(spy, dump_roster)
+        ).Once();
     }
 
-    Verify(Method(spy, admin_authenticate));
     VerifyNoOtherInvocations(spy);
 }
 
@@ -88,16 +101,27 @@ TEST_CASE("subcommand admin update-password", "[mucs][mucs-admin]") {
             spy.get().admin_update_password(),
             "Passwords do not match"
         );
+
+        Verify(
+            Method(spy, admin_authenticate)
+            + Method(spy, prompt_password)
+            + Method(spy, prompt_password)
+        ).Once();
     }
 
     SECTION("new passwords match") {
         string p = rand_string();
-        When(Method(spy, prompt_password)).Return(p).Return(p);
+        When(Method(spy, prompt_password)).Return(2_Times(p));
 
         REQUIRE_NOTHROW(spy.get().admin_update_password());
 
-        Verify(Method(spy, update_config_admin_hash));
+        Verify(
+            Method(spy, admin_authenticate)
+            + Method(spy, prompt_password)
+            + Method(spy, prompt_password)
+            + Method(spy, update_config_admin_hash)
+        ).Once();
     }
 
-    Verify(Method(spy, admin_authenticate));
+    VerifyNoOtherInvocations(spy);
 }
