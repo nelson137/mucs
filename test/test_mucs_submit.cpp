@@ -68,7 +68,7 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
     SECTION("doesn't compile") {
         src_fn = "/usr/bin/sudo";
         err_msg = "Program doesn't compile";
-        When(Method(spy, try_compile_sources)).Return(false);
+        When(Method(spy, compile_sources)).Throw(err_msg);
     }
 
     mucs.sources = { Path(src_fn) };
@@ -136,10 +136,12 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
     }
 
     Mock<Mucs> spy(mucs);
-    When(Method(spy, try_compile_sources)).Return(true);
-    Fake(Method(spy, submit_summary));
     When(Method(spy, prompt_yesno)).Return(true);
-    Fake(Method(spy, copy_submission_files));
+    Fake(
+        Method(spy, compile_sources),
+        Method(spy, submit_summary),
+        Method(spy, copy_submission_files)
+    );
 
     spy.get().submit();
     Verify(Method(spy, copy_submission_files));
@@ -166,9 +168,11 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
         RandLabAsgmt(lab_name).this_week().get());
 
     Mock<Mucs> spy(mucs);
-    When(Method(spy, try_compile_sources)).Return(true);
-    Fake(Method(spy, submit_summary));
     When(Method(spy, prompt_yesno)).Return(false);
+    Fake(
+        Method(spy, compile_sources),
+        Method(spy, submit_summary)
+    );
 
     REQUIRE_THROWS_WITH(spy.get().submit(), "Submission cancelled");
 }

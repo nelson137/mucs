@@ -21,8 +21,7 @@ void Mucs::submit() {
     }
 
     // Make sure sources compile
-    if (this->try_compile_sources() == false)
-        throw mucs_exception("Program doesn't compile");
+    this->compile_sources();
 
     // Show user a summary of their submission and prompt for confirmation
     this->submit_summary(lab, assignment.name);

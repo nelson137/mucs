@@ -53,6 +53,8 @@ struct Mucs {
 
     // Util : mucs.cpp
 
+    virtual void compile_sources() const;
+
     virtual void dump_homeworks() const;
 
     virtual void dump_lab_assignments() const;
@@ -71,8 +73,6 @@ struct Mucs {
         const LabSesh& lab,
         const string& assignment
     ) const;
-
-    virtual bool try_compile_sources() const;
 
     virtual void update_config_admin_hash(const string& new_hash) const;
 

@@ -1,6 +1,19 @@
 #include "mucs.hpp"
 
 
+void Mucs::compile_sources() const {
+    Proc p = {COMPILE_SCRIPT, "-o", "/dev/null"};
+    p.extend(this->sources);
+
+    Proc::Ret ret = p.execute();
+    if (ret.err.size())
+        cerr << ret.err;
+
+    if (ret.code != 0)
+        throw mucs_exception("Program doesn't compile");
+}
+
+
 void Mucs::dump_homeworks() const {
     cout << "Homeworks:" << endl;
     print_table(this->config.homeworks.to_table());
@@ -92,18 +105,6 @@ void Mucs::submit_summary(const LabSesh& lab, const string& assignment) const {
 
     #undef W_GREEN
     #undef W_BOLD
-}
-
-
-bool Mucs::try_compile_sources() const {
-    Proc p = {COMPILE_SCRIPT, "-o", "/dev/null"};
-    p.extend(this->sources);
-
-    Proc::Ret ret = p.execute();
-    if (ret.err.size())
-        cerr << ret.err;
-
-    return ret.code == 0;
 }
 
 
