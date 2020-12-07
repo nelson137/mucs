@@ -80,34 +80,6 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
 }
 
 
-TEST_CASE("submission fails when a given source file doesn't compile",
-          "[mucs][submit]") {
-    string src_fn, err_msg;
-    string user = rand_user();
-    string lab_id = rand_lab_sesh_id();
-    string lab_name = rand_lab_asgmt_name();
-
-    Mucs mucs;
-    mucs.user = user;
-    mucs.assignment = lab_name;
-    mucs.config.course_id = rand_course();
-    mucs.config.roster.insert(user, lab_id);
-    mucs.config.lab_sessions.insert({
-        lab_id, RandLabSesh().today().now().get()
-    });
-    mucs.config.lab_assignments.insert(
-        RandLabAsgmt(lab_name).this_week(true).get());
-
-    Mock<Mucs> spy(mucs);
-    When(Method(spy, try_compile_sources)).Return(false);
-
-    REQUIRE_THROWS_WITH(
-        spy.get().submit(),
-        "Program doesn't compile"
-    );
-}
-
-
 TEST_CASE("submission succeeds", "[mucs][submit]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
@@ -145,11 +117,6 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
 
     spy.get().submit();
     Verify(Method(spy, copy_submission_files));
-}
-
-
-TEST_CASE("attempt to submit non-compiling sources", "[mucs][submit]") {
-    // TODO
 }
 
 
