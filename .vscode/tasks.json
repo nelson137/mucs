@@ -92,6 +92,17 @@
             }
         },
         {
+            "label": "runtests [x]",
+            "group": "build",
+            "type": "process",
+            "command": "./runtests",
+            "args": ["[x]"],
+            "problemMatcher": ["$gcc"],
+            "windows": {
+                "command": ".\\runtests.exe"
+            }
+        },
+        {
             "label": "make & run",
             "group": "build",
             "dependsOn": ["make", "run"],
@@ -102,6 +113,13 @@
             "label": "make test & runtests",
             "group": "build",
             "dependsOn": ["make test", "runtests"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "make test & runtests [x]",
+            "group": "build",
+            "dependsOn": ["make test", "runtests [x]"],
             "dependsOrder": "sequence",
             "problemMatcher": ["$gcc"]
         }
