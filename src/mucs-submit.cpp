@@ -61,11 +61,5 @@ void Mucs::copy_submission_files(
     for (const Path& src : this->sources)
         src.copy_into(submit_d_abs, 0440);
 
-    // Fix all directory permissions
-    submit_root.chmod_recurse(0770, Path::Dir);
-
-    // Fix all file permissions
-    submit_root.chmod_recurse(0440, Path::File);
-
     cout << rang::fg::green << "Submission complete" << rang::fg::reset << endl;
 }
