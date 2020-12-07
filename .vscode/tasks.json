@@ -54,7 +54,7 @@
             "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
-            "args": ["coverage"],
+            "args": ["-j7", "coverage"],
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
