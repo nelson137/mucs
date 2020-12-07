@@ -49,7 +49,7 @@ struct Mucs {
 
     virtual void invoke(void (Mucs::*subcmd)());
 
-    unique_ptr<CLI::App> get_cli();
+    virtual unique_ptr<CLI::App> get_cli();
 
     // Util : mucs.cpp
 
