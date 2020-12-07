@@ -23,7 +23,7 @@ using namespace std;
 
 #define LAB_ASGMT_FMT    "%b %d"
 #define HW_FMT           "%Y-%m-%d %H:%M:%S"
-#define DATETIME_EXT_FMT ".%Y-%m-%d.%H:%M:%S"
+#define DATETIME_EXT_FMT "_%Y-%m-%d_%H:%M:%S"
 #define TIME_FMT         "%H:%M:%S"
 
 constexpr double TERM_WIDTH_COEFF = .85;

@@ -45,7 +45,7 @@ void Mucs::copy_submission_files(
     // .submissions/USER.DATE.TIME
     Path submit_d_rel = Path(".submissions") / this->user + now_str;
 
-    // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT/.submissions/USER.DATE.TIME
+    // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT/.submissions/USER_DATE_TIME
     Path submit_d_abs = assignment_d / submit_d_rel;
     if (submit_d_abs.exists())
         throw mucs_exception(
@@ -55,7 +55,7 @@ void Mucs::copy_submission_files(
     submit_d_abs.mkdir_recurse(0770);
 
     // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT:
-    //   USER -> .submissions/USER.DATE.TIME
+    //   USER -> .submissions/USER_DATE_TIME
     (assignment_d / this->user).link_to(submit_d_rel);
 
     for (const Path& src : this->sources)
