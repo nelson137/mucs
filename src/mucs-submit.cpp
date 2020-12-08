@@ -28,35 +28,34 @@ void Mucs::submit() {
     if (this->prompt_yesno("Are you sure you want to submit [y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
-    this->copy_submission_files(lab, assignment);
-}
-
-
-void Mucs::copy_submission_files(
-    const LabSesh& lab,
-    const IAssignment& assignment
-) const {
-    // SUBMIT_DIR
-    Path submit_root = Path(SUBMIT_DIR);
     // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
-    Path assignment_d = submit_root / this->course / lab / assignment.name;
+    Path asgmt_d = Path(SUBMIT_DIR) / this->course / lab / assignment.name;
 
     string now_str = format(DATETIME_EXT_FMT, NOW);
     // .submissions/USER.DATE.TIME
     Path submit_d_rel = Path(".submissions") / this->user + now_str;
 
     // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT/.submissions/USER_DATE_TIME
-    Path submit_d_abs = assignment_d / submit_d_rel;
-    if (submit_d_abs.exists())
+    if ((asgmt_d / submit_d_rel).exists())
         throw mucs_exception(
             "Attempted successive submissions too quickly, please try again");
 
-    // Make sure submit directory exists
+    this->copy_submission_files(asgmt_d, submit_d_rel);
+}
+
+
+void Mucs::copy_submission_files(
+    const Path& asgmt_d,
+    const Path& submit_d_rel
+) const {
+    Path submit_d_abs = asgmt_d / submit_d_rel;
+
+    // Create the submit directory
     submit_d_abs.mkdir_recurse(0770);
 
-    // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT:
+    // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT/
     //   USER -> .submissions/USER_DATE_TIME
-    (assignment_d / this->user).link_to(submit_d_rel);
+    (asgmt_d / this->user).link_to(submit_d_rel);
 
     for (const Path& src : this->sources)
         src.copy_into(submit_d_abs, 0440);

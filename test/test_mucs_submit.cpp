@@ -121,7 +121,7 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
         Method(spy, copy_submission_files)
     );
 
-    spy.get().submit();
+    REQUIRE_NOTHROW(spy.get().submit());
 
     Verify(
         Method(spy, compile_sources)
@@ -165,7 +165,41 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
     VerifyNoOtherInvocations(spy);
 }
 
-
 TEST_CASE("double submit homework too quickly", "[mucs][submit]") {
-    // TODO
+    NOW = sys_seconds{};
+    string user = "user1";
+    string lab_id = "X";
+    string hw_name = "hw1";
+    sys_seconds dd{};
+    dd += years((int) get_day().year() - 1970 + 3);
+
+    Mucs mucs;
+    mucs.user = user;
+    mucs.assignment = hw_name;
+    mucs.course = mucs.config.course_id = "1050";
+    mucs.config.roster.insert(user, lab_id);
+    mucs.config.lab_sessions.insert({
+        lab_id, RandLabSesh(lab_id).today().now().get()
+    });
+    mucs.config.homeworks.insert({ hw_name, dd });
+
+    Mock<Mucs> spy(mucs);
+    When(Method(spy, prompt_yesno)).AlwaysReturn(true);
+    Fake(
+        Method(spy, compile_sources),
+        Method(spy, submit_summary),
+        Method(spy, copy_submission_files)
+    );
+
+    REQUIRE_THROWS_WITH(
+        spy.get().submit(),
+        "Attempted successive submissions too quickly, please try again"
+    );
+
+    Verify(
+        Method(spy, compile_sources)
+        + Method(spy, submit_summary)
+        + Method(spy, prompt_yesno)
+    ).Once();
+    VerifyNoOtherInvocations(spy);
 }
