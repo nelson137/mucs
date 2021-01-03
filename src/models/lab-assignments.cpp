@@ -41,7 +41,7 @@ bool LabAsgmt::is_active() const {
 
 string LabAsgmt::week_str() const {
     ostringstream spec;
-    spec << format("%b", this->start)
+    spec << format("%Y %b", this->start)
          << " "
          << year_month_weekday(this->start).index();
     return spec.str();
@@ -67,15 +67,14 @@ void from_json(const json& j, LabAsgmt& la) {
             {"lab-assignments", name});
     };
 
-    month_day md;
-    istringstream(j.value("week", "")) >> parse(LAB_ASGMT_FMT, md);
-    if (not md.ok())
+    year_month_day ymd;
+    istringstream(j.value("week", "")) >> parse(LAB_ASGMT_FMT, ymd);
+    if (not ymd.ok())
         invalid_lab_asgmt();
 
-    auto week = (unsigned) md.day();
-    auto today = get_day();
+    auto week = (unsigned) ymd.day();
 
-    la.start = year_month_day(today.year()/md.month()/Monday[week]);
+    la.start = year_month_day(ymd.year()/ymd.month()/Monday[week]);
     if (not la.start.ok())
         invalid_lab_asgmt();
 

@@ -108,10 +108,10 @@
                     },
                     "week": {
                         "type": "string",
-                        "pattern": "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]$",
-                        "format": "month week-index",
+                        "pattern": "^[0-9]{4} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]$",
+                        "format": "year month week-index",
                         "description": "",
-                        "examples": ["Aug 1"]
+                        "examples": ["2020 Aug 1"]
                     }
                 }
             }
