@@ -2,7 +2,6 @@
     "version": "2.0.0",
     "options": {
         "env": {
-            "MUCS_ROOT": "local"
         }
     },
     "presentation": {
@@ -32,7 +31,7 @@
             "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
-            "args": ["-j7", "MUCS_ROOT=local"],
+            "args": ["-j7", "MUCS_ROOT=test_root"],
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"

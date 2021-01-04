@@ -1,7 +1,7 @@
 #include "main.hpp"
 
 
-#ifndef MUCS_TEST
+#ifndef _MUCS_TEST
 
 int main(int argc, char **argv) {
     NOW = current_datetime();

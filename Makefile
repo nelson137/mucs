@@ -13,59 +13,31 @@ ALL_OBJS  := $(OBJS) $(TEST_OBJS)
 SCRIPTS   := $(wildcard bin/mucs-*)
 
 CFLAGS    := -std=c++11 -g -pedantic -Wall -Werror -Wno-noexcept-type
-COVFLAGS  :=
+INCLUDES  := -Iinclude
 DEFINES   :=
+
+# Return all elements of $2 that are in $1
+# Read as: $1 contains any of $2
+define contains-any-of
+$(strip $(foreach t,$2,$(if $(filter $t,$1),$t)))
+endef
+
+# Setup flags for testing
+ifneq ($(call contains-any-of,$(MAKECMDGOALS),test $(TEST_EXE)),)
+DEFINES   += -D_MUCS_TEST -D_MUCS_ROOT=test_root -D_COMPILE_SCRIPT=scripts/compile
+endif
+
+ifneq ($(COVERAGE),)
+CFLAGS    += --coverage -O0
+endif
 
 ifneq ($(shell uname -s),Linux)
 CFLAGS    += -Wa,-mbig-obj
 DEFINES   += -D_XOPEN_SOURCE=700 -U__STRICT_ANSI__
 endif
 
-define can-find-exe
-$(shell which $1 >/dev/null 2>&1 && echo yes)
-endef
-
-# Return a non-empty string if any element of $2 is found in $1
-# Read as: $1 contains any of $2
-define contains-any-of
-$(strip $(foreach t,$2,$(if $(filter $t,$1),$t)))
-endef
-
-# Setup flags for local mucs root
-define local-mucs-root
-ifeq ($(findstring _MUCS_ROOT_LOCAL,$(DEFINES)),)
-DEFINES += -DMUCS_ROOT='"test_root"' -DCOMPILE_SCRIPT='"scripts/compile"'
-endif
-endef
-
-CXX       := g++ -Iinclude
-ifeq ($(call can-find-exe,gccfilter),yes)
-CXX       := gccfilter -c -n -a $(CXX)
-endif
-
+CXX       := g++ $(INCLUDES)
 INSTALL   := install -g cs1050-ta
-
-ifeq ($(call can-find-exe,lcov),yes)
-LCOV      := lcov -c --no-external
-endif
-
-ifeq ($(call can-find-exe,genhtml),yes)
-GENHTML   := genhtml --legend --function-coverage --demangle-cpp
-endif
-
-ifeq ($(MUCS_ROOT),local)
-$(eval $(call local-mucs-root))
-endif
-
-# Setup flags for testing
-ifneq ($(call contains-any-of,$(MAKECMDGOALS),test $(TEST_EXE) coverage),)
-DEFINES   += -DMUCS_TEST
-$(eval $(call local-mucs-root))
-ifneq ($(LCOV)$(GENHTML),)
-COVFLAGS  := --coverage -O0
-endif
-else
-endif
 
 
 main: $(EXE)
@@ -73,15 +45,6 @@ main: $(EXE)
 
 test: $(TEST_EXE)
 .PHONY: test
-
-ifneq ($(LCOV)$(GENHTML),)
-coverage: test
-	./$(TEST_EXE)
-	@mkdir -p coverage
-	$(LCOV) -b src -d build/src -o coverage/report.info
-	$(GENHTML) coverage/report.info -o coverage
-.PHONY: coverage
-endif
 
 $(EXE): $(OBJS)
 	@echo "build/src/*.o -> $@"
@@ -93,7 +56,7 @@ $(TEST_EXE): $(ALL_OBJS)
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
-	@$(CXX) -c -MMD $(CFLAGS) $(COVFLAGS) $(DEFINES) $< -o $@
+	@$(CXX) -c -MMD $(CFLAGS) $(DEFINES) $< -o $@
 
 install: $(EXE)
 	mkdir -p $(DEST)/{bin,config.d,submissions}
@@ -104,7 +67,7 @@ install: $(EXE)
 .PHONY: install
 
 clean:
-	rm -rf $(EXE) $(TEST_EXE) build coverage
+	rm -rf $(EXE) $(TEST_EXE) build
 .PHONY: clean
 
 wipe: clean

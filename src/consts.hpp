@@ -8,11 +8,19 @@
 using namespace std;
 
 
-#ifndef MUCS_ROOT
+#define _STR(s) #s
+#define STR(s) _STR(s)
+
+
+#ifdef _MUCS_ROOT
+#define MUCS_ROOT STR(_MUCS_ROOT)
+#else
 #define MUCS_ROOT "/group/cs1050"
 #endif
 
-#ifndef COMPILE_SCRIPT
+#ifdef _COMPILE_SCRIPT
+#define COMPILE_SCRIPT STR(_COMPILE_SCRIPT)
+#else
 #define COMPILE_SCRIPT "/usr/local/bin/compile"
 #endif
 
