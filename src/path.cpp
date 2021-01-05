@@ -194,11 +194,10 @@ void Path::copy_into(const Path& dir, mode_t mode) const {
 
 
 vector<string> Path::ls() const {
-    vector<string> children, children_base = this->ls_base();
-    children.reserve(children_base.size());
-    transform(
-        children_base.begin(), children_base.end(),
-        back_inserter(children),
+    vector<string> children;
+    stl_transform_into(
+        this->ls_base(),
+        children,
         [this] (const string& child) {
             return join_paths(this->m_path, child);
         }

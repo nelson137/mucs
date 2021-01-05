@@ -122,4 +122,11 @@ void stl_transform(Container& c, UnaryOp op) {
 }
 
 
+template<typename ContainerA, typename ContainerB, typename UnaryOp>
+void stl_transform_into(const ContainerA& a, ContainerB& b, UnaryOp op) {
+    b.reserve(a.size());
+    transform(a.begin(), a.end(), back_inserter(b), op);
+}
+
+
 #endif
