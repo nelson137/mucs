@@ -146,7 +146,7 @@ LabSesh Config::validate_and_get_lab(const string& user) const {
 
 
 vector<LabSesh> Config::get_student_labs(const string& user) const {
-    const vector<string>& user_lab_ids = this->roster.at(user);
+    const vector<string>& user_lab_ids = this->roster.safe_get(user);
     vector<LabSesh> user_labs;
     user_labs.reserve(user_lab_ids.size());
 

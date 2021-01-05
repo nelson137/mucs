@@ -178,6 +178,8 @@ struct Roster : public map<string, vector<string>>, public Tabular {
 
     void insert(string pawprint, string lab_id);
 
+    const vector<string>& safe_get(const string& user) const;
+
     list<vector<string>> to_table() const override;
 
 };

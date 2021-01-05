@@ -2,9 +2,6 @@
 
 
 void Mucs::submit() {
-    if (not config.roster.count(this->user))
-        throw mucs_exception("User not in course:", this->user);
-
     LabSesh lab = config.validate_and_get_lab(this->user);
 
     const IAssignment& assignment =
