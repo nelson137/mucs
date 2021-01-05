@@ -220,10 +220,10 @@ struct Config {
         const initializer_list<string>& keys = {}
     );
 
-    const IAssignment& get_assignment(const string& name) const;
+    const IAssignment& validate_and_get_asgmt(const string& name) const;
 
-    vector<LabSesh> get_user_labs(const string& user) const;
-    LabSesh get_lab(const string& id) const;
+    vector<LabSesh> get_student_labs(const string& user) const;
+    LabSesh validate_and_get_lab(const string& user) const;
 
     friend void from_json(const json& j, Config& c);
     friend void to_json(json& j, const Config& c);

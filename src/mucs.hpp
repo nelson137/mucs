@@ -53,7 +53,7 @@ struct Mucs {
 
     // Util : mucs.cpp
 
-    virtual void compile_sources() const;
+    virtual bool compile_sources() const;
 
     virtual void dump_homeworks() const;
 

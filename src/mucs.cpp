@@ -1,7 +1,7 @@
 #include "mucs.hpp"
 
 
-void Mucs::compile_sources() const {
+bool Mucs::compile_sources() const {
     Proc p = {COMPILE_SCRIPT, "-o", "/dev/null"};
     p.extend(this->sources);
 
@@ -9,8 +9,7 @@ void Mucs::compile_sources() const {
     if (ret.err.size())
         cerr << ret.err;
 
-    if (ret.code != 0)
-        throw mucs_exception("Program doesn't compile");
+    return ret.code == 0;
 }
 
 

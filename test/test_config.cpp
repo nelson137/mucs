@@ -163,7 +163,7 @@ TEST_CASE("get_assignment fails when no assignment matches the given name",
     auto config = Config(json::object());
     string name = rand_hw_name();
     REQUIRE_THROWS_WITH(
-        config.get_assignment(name),
+        config.validate_and_get_asgmt(name),
         "No such assignment exists: " + name
     );
 }
@@ -175,7 +175,7 @@ TEST_CASE("get_assignment succeeds when there is a matching hw assignment",
     Config config;
     config.homeworks.emplace(expected_name, sys_seconds{});
     const auto& actual = dynamic_cast<const Hw&>(
-        config.get_assignment(expected_name));
+        config.validate_and_get_asgmt(expected_name));
     REQUIRE(actual.name == expected_name);
 }
 
@@ -186,12 +186,13 @@ TEST_CASE("get_assignment succeeds when there is a matching lab assignment",
     Config config;
     config.lab_assignments.emplace(expected_name, year_month_day{}, get_day());
     const auto& actual = dynamic_cast<const LabAsgmt&>(
-        config.get_assignment(expected_name));
+        config.validate_and_get_asgmt(expected_name));
     REQUIRE(actual.name == expected_name);
 }
 
 
-TEST_CASE("get_lab with 1 lab session", "[config][get-lab]") {
+TEST_CASE("validate_and_get_lab with 1 lab session",
+          "[config][validate-and-get-lab]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     Config config;
@@ -201,7 +202,7 @@ TEST_CASE("get_lab with 1 lab session", "[config][get-lab]") {
         auto ls = RandLabSesh(lab_id).today().now(false).get();
         config.lab_sessions.insert({ lab_id, ls });
         REQUIRE_THROWS_WITH(
-            config.get_lab(user),
+            config.validate_and_get_lab(user),
             ls.format(
                 "Lab {id} is not in session: {weekday} from {start} to {end}")
         );
@@ -210,12 +211,13 @@ TEST_CASE("get_lab with 1 lab session", "[config][get-lab]") {
     SECTION("that is in session") {
         auto expected_ls = RandLabSesh(lab_id).today().now(true).get();
         config.lab_sessions.insert({ lab_id, expected_ls });
-        REQUIRE(config.get_lab(user).id == lab_id);
+        REQUIRE(config.validate_and_get_lab(user).id == lab_id);
     }
 }
 
 
-TEST_CASE("get_lab with multiple lab sessions", "[config][get-lab]") {
+TEST_CASE("validate_and_get_lab with multiple lab sessions",
+          "[config][validate-and-get-lab]") {
     string user = rand_user();
     Config config;
 
@@ -227,7 +229,7 @@ TEST_CASE("get_lab with multiple lab sessions", "[config][get-lab]") {
             lab_id1, RandLabSesh(lab_id1).today().now(false).get() });
         config.lab_sessions.insert({
             lab_id2, RandLabSesh(lab_id2).today().now(true).get() });
-        REQUIRE(config.get_lab(user).id == lab_id2);
+        REQUIRE(config.validate_and_get_lab(user).id == lab_id2);
     }
 
     SECTION("none are active") {
@@ -239,7 +241,7 @@ TEST_CASE("get_lab with multiple lab sessions", "[config][get-lab]") {
         config.lab_sessions.insert({
             lab_id2, RandLabSesh(lab_id2).today(false).now(false).get() });
         REQUIRE_THROWS_WITH(
-            config.get_lab(user),
+            config.validate_and_get_lab(user),
             "None of your labs are in session: " + lab_id1 + "," + lab_id2
         );
     }

@@ -5,9 +5,10 @@ void Mucs::submit() {
     if (not config.roster.count(this->user))
         throw mucs_exception("User not in course:", this->user);
 
-    LabSesh lab = config.get_lab(this->user);
+    LabSesh lab = config.validate_and_get_lab(this->user);
 
-    const IAssignment& assignment = config.get_assignment(this->assignment);
+    const IAssignment& assignment =
+        config.validate_and_get_asgmt(this->assignment);
     if (not assignment.is_active())
         throw mucs_exception(
             "Submission window is closed for assignment: " + assignment.name);
@@ -21,7 +22,8 @@ void Mucs::submit() {
     }
 
     // Make sure sources compile
-    this->compile_sources();
+    if (not this->compile_sources())
+        throw mucs_exception("Program doesn't compile");
 
     // Show user a summary of their submission and prompt for confirmation
     this->submit_summary(lab, assignment.name);

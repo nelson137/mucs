@@ -110,7 +110,7 @@ mucs_exception Config::error(
 }
 
 
-const IAssignment& Config::get_assignment(const string& name) const {
+const IAssignment& Config::validate_and_get_asgmt(const string& name) const {
     for (const LabAsgmt& la : this->lab_assignments)
         if (la.name == name)
             return la;
@@ -123,8 +123,8 @@ const IAssignment& Config::get_assignment(const string& name) const {
 }
 
 
-LabSesh Config::get_lab(const string& user) const {
-    const vector<LabSesh>& user_labs = this->get_user_labs(user);
+LabSesh Config::validate_and_get_lab(const string& user) const {
+    const vector<LabSesh>& user_labs = this->get_student_labs(user);
     LabSesh lab;
 
     if (user_labs.size() == 1) {
@@ -145,7 +145,7 @@ LabSesh Config::get_lab(const string& user) const {
 }
 
 
-vector<LabSesh> Config::get_user_labs(const string& user) const {
+vector<LabSesh> Config::get_student_labs(const string& user) const {
     const vector<string>& user_lab_ids = this->roster.at(user);
     vector<LabSesh> user_labs;
     user_labs.reserve(user_lab_ids.size());

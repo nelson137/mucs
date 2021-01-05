@@ -54,9 +54,9 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
         RandLabAsgmt(lab_name).this_week(true).get());
 
     Mock<Mucs> spy(mucs);
+    bool compile_ret = true;
     When(Method(spy, prompt_yesno)).AlwaysReturn(true);
     Fake(
-        Method(spy, compile_sources),
         Method(spy, submit_summary),
         Method(spy, copy_submission_files)
     );
@@ -74,9 +74,10 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
     SECTION("doesn't compile") {
         src_fn = "/usr/bin/sudo";
         err_msg = "Program doesn't compile";
-        When(Method(spy, compile_sources)).Throw(err_msg);
+        compile_ret = false;
     }
 
+    When(Method(spy, compile_sources)).AlwaysReturn(compile_ret);
     mucs.sources = { Path(src_fn) };
 
     REQUIRE_THROWS_WITH(
@@ -115,8 +116,8 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, prompt_yesno)).AlwaysReturn(true);
+    When(Method(spy, compile_sources)).AlwaysReturn(true);
     Fake(
-        Method(spy, compile_sources),
         Method(spy, submit_summary),
         Method(spy, copy_submission_files)
     );
@@ -149,8 +150,8 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, prompt_yesno)).AlwaysReturn(false);
+    When(Method(spy, compile_sources)).AlwaysReturn(true);
     Fake(
-        Method(spy, compile_sources),
         Method(spy, submit_summary),
         Method(spy, copy_submission_files)
     );
@@ -185,8 +186,8 @@ TEST_CASE("double submit homework too quickly", "[mucs][submit]") {
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, prompt_yesno)).AlwaysReturn(true);
+    When(Method(spy, compile_sources)).AlwaysReturn(true);
     Fake(
-        Method(spy, compile_sources),
         Method(spy, submit_summary),
         Method(spy, copy_submission_files)
     );
