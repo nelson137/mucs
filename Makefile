@@ -10,7 +10,7 @@ TEST_OBJS := $(TEST_SRCS:%.cpp=build/%.o)
 
 ALL_OBJS  := $(OBJS) $(TEST_OBJS)
 
-SCRIPTS   := $(wildcard bin/mucs-*)
+SCRIPTS   := $(wildcard scripts/mucs-*)
 
 CFLAGS    := -std=c++11 -g -pedantic -Wall -Werror -Wno-noexcept-type
 INCLUDES  := -Iinclude
