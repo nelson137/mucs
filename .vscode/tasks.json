@@ -27,7 +27,7 @@
     ],
     "tasks": [
         {
-            "label": "make",
+            "label": "make (local)",
             "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
@@ -43,17 +43,6 @@
             "type": "process",
             "command": "/usr/bin/make",
             "args": ["-j7", "test"],
-            "problemMatcher": ["$gcc"],
-            "windows": {
-                "command": "C:\\cygwin64\\bin\\make.exe"
-            }
-        },
-        {
-            "label": "make coverage",
-            "group": "build",
-            "type": "process",
-            "command": "/usr/bin/make",
-            "args": ["-j7", "coverage"],
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
@@ -102,9 +91,9 @@
             }
         },
         {
-            "label": "make & run",
+            "label": "make (local) & run",
             "group": "build",
-            "dependsOn": ["make", "run"],
+            "dependsOn": ["make (local)", "run"],
             "dependsOrder": "sequence",
             "problemMatcher": ["$gcc"]
         },
