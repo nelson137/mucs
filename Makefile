@@ -3,12 +3,9 @@ TEST_EXE  := runtests
 DEST      ?= /group/cs1050
 
 SRCS      := $(shell find src -type f -name '*.cpp')
-OBJS      := $(SRCS:%.cpp=build/%.o)
-
 TEST_SRCS := $(shell find test -type f -name '*.cpp')
+OBJS      := $(SRCS:%.cpp=build/%.o)
 TEST_OBJS := $(TEST_SRCS:%.cpp=build/%.o)
-
-ALL_OBJS  := $(OBJS) $(TEST_OBJS)
 
 SCRIPTS   := $(wildcard scripts/mucs-*)
 
@@ -16,14 +13,8 @@ CFLAGS    := -std=c++11 -g -pedantic -Wall -Werror -Wno-noexcept-type
 INCLUDES  := -Iinclude
 DEFINES   :=
 
-# Return all elements of $2 that are in $1
-# Read as: $1 contains any of $2
-define contains-any-of
-$(strip $(foreach t,$2,$(if $(filter $t,$1),$t)))
-endef
-
-# Setup flags for testing
-ifneq ($(call contains-any-of,$(MAKECMDGOALS),test $(TEST_EXE)),)
+# Setup flags for testing if the target recipes include `test`
+ifneq ($(filter test,$(MAKECMDGOALS)),)
 DEFINES   += -D_MUCS_TEST -D_MUCS_ROOT=test_root -D_COMPILE_SCRIPT=scripts/compile
 endif
 
@@ -40,19 +31,15 @@ CXX       := g++ $(INCLUDES)
 INSTALL   := install -g cs1050-ta
 
 
-main: $(EXE)
+main: $(OBJS)
+	@echo "build/src/*.o -> $(EXE)"
+	@$(CXX) $^ -o $(EXE)
 .PHONY: main
 
-test: $(TEST_EXE)
+test: $(OBJS) $(TEST_OBJS)
+	@echo "build/**/*.o -> $(TEST_EXE)"
+	@$(CXX) $^ -o $(TEST_EXE) -lgcov
 .PHONY: test
-
-$(EXE): $(OBJS)
-	@echo "build/src/*.o -> $@"
-	@$(CXX) $(OBJS) -o $@
-
-$(TEST_EXE): $(ALL_OBJS)
-	@echo "build/**/*.o -> $@"
-	@$(CXX) $(ALL_OBJS) -o $@ -lgcov
 
 build/%.o: %.cpp | build_dirs
 	@echo "$< -> $@"
