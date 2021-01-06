@@ -13,34 +13,6 @@ bool Mucs::compile_sources() const {
 }
 
 
-void Mucs::dump_homeworks() const {
-    cout << "Homeworks:" << endl;
-    print_table(this->config.homeworks.to_table());
-    cout << endl;
-}
-
-
-void Mucs::dump_lab_assignments() const {
-    cout << "Lab Assignments:" << endl;
-    print_table(this->config.lab_assignments.to_table());
-    cout << endl;
-}
-
-
-void Mucs::dump_lab_sessions() const {
-    cout << "Lab Sessions:" << endl;
-    print_table(this->config.lab_sessions.to_table());
-    cout << endl;
-}
-
-
-void Mucs::dump_roster() const {
-    cout << "Roster:" << endl;
-    print_table(this->config.roster.to_table());
-    cout << endl;
-}
-
-
 string Mucs::get_user() const {
     return getpwuid(getuid())->pw_name;
 }

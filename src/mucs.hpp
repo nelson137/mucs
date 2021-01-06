@@ -55,14 +55,6 @@ struct Mucs {
 
     virtual bool compile_sources() const;
 
-    virtual void dump_homeworks() const;
-
-    virtual void dump_lab_assignments() const;
-
-    virtual void dump_lab_sessions() const;
-
-    virtual void dump_roster() const;
-
     virtual string get_user() const;
 
     virtual string prompt_password(const string& prompt) const;

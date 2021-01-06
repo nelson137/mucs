@@ -17,17 +17,29 @@ void Mucs::admin_dump() {
         this->dump_flags =
             DumpLabSessions | DumpHomeworks | DumpLabAssignments | DumpRoster;
 
-    if (this->dump_flags & DumpLabSessions)
-        this->dump_lab_sessions();
+    if (this->dump_flags & DumpLabSessions) {
+        cout << "Lab Sessions:" << endl;
+        print_table(this->config.lab_sessions.to_table());
+        cout << endl;
+    }
 
-    if (this->dump_flags & DumpLabAssignments)
-        this->dump_lab_assignments();
+    if (this->dump_flags & DumpLabAssignments) {
+        cout << "Lab Assignments:" << endl;
+        print_table(this->config.lab_assignments.to_table());
+        cout << endl;
+    }
 
-    if (this->dump_flags & DumpHomeworks)
-        this->dump_homeworks();
+    if (this->dump_flags & DumpHomeworks) {
+        cout << "Homeworks:" << endl;
+        print_table(this->config.homeworks.to_table());
+        cout << endl;
+    }
 
-    if (this->dump_flags & DumpRoster)
-        this->dump_roster();
+    if (this->dump_flags & DumpRoster) {
+        cout << "Roster:" << endl;
+        print_table(this->config.roster.to_table());
+        cout << endl;
+    }
 }
 
 

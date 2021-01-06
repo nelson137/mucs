@@ -27,59 +27,14 @@ TEST_CASE("admin_authenticate", "[mucs][mucs-admin][admin-authenticate]") {
 
 TEST_CASE("subcommand admin dump", "[mucs][mucs-admin]") {
     Mucs mucs;
+    mucs.dump_flags = 0;
+
     Mock<Mucs> spy(mucs);
-    Fake(
-        Method(spy, admin_authenticate),
-        Method(spy, dump_homeworks),
-        Method(spy, dump_lab_assignments),
-        Method(spy, dump_lab_sessions),
-        Method(spy, dump_roster)
-    );
+    string err_msg = rand_string();
+    When(Method(spy, admin_authenticate)).AlwaysThrow(err_msg);
 
-    SECTION("everything by default") {
-        mucs.dump_flags = 0;
-        REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(
-            Method(spy, admin_authenticate)
-            + Method(spy, dump_lab_sessions)
-            + Method(spy, dump_lab_assignments)
-            + Method(spy, dump_homeworks)
-            + Method(spy, dump_roster)
-        ).Once();
-    }
-
-    SECTION("homeworks") {
-        mucs.dump_flags = Mucs::DumpHomeworks;
-        REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(
-            Method(spy, admin_authenticate) + Method(spy, dump_homeworks)
-        ).Once();
-    }
-
-    SECTION("lab assignments") {
-        mucs.dump_flags = Mucs::DumpLabAssignments;
-        REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(
-            Method(spy, admin_authenticate) + Method(spy, dump_lab_assignments)
-        ).Once();
-    }
-
-    SECTION("lab sessions") {
-        mucs.dump_flags = Mucs::DumpLabSessions;
-        REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(
-            Method(spy, admin_authenticate) + Method(spy, dump_lab_sessions)
-        ).Once();
-    }
-
-    SECTION("roster") {
-        mucs.dump_flags = Mucs::DumpRoster;
-        REQUIRE_NOTHROW(spy.get().admin_dump());
-        Verify(
-            Method(spy, admin_authenticate) + Method(spy, dump_roster)
-        ).Once();
-    }
-
+    REQUIRE_THROWS_WITH(spy.get().admin_dump(), err_msg);
+    Verify(Method(spy, admin_authenticate)).Once();
     VerifyNoOtherInvocations(spy);
 }
 
