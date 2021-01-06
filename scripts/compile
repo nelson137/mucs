@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 gcc -std=c11 -g -Wall -Werror "$@" -lm
