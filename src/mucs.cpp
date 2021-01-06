@@ -82,8 +82,9 @@ void Mucs::submit_summary(const LabSesh& lab, const string& assignment) const {
 void Mucs::update_config_admin_hash(const string& new_hash) const {
     // Generate new config with jq
     Proc p = {
-        "/usr/bin/jq", "-M", "--indent", "4",
-        ".admin_hash=\"" + new_hash + "\"",
+        "/bin/sed",
+        "-i",
+        "s/"+this->config.admin_hash+"/"+new_hash+"/",
         this->config.filename
     };
     Proc::Ret ret = p.execute();
@@ -93,7 +94,4 @@ void Mucs::update_config_admin_hash(const string& new_hash) const {
         throw mucs_exception(
             "Failed to update admin hash for course:", to_string(this->course));
     }
-
-    // Write new config to disk
-    ofstream(this->config.filename, ios::out | ios::trunc) << ret.out;
 }
