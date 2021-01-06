@@ -10,7 +10,6 @@ void Mucs::submit() {
         throw mucs_exception(
             "Submission window is closed for assignment: " + assignment.name);
 
-    // Make sure sources exist and are files
     for (const Path& src : this->sources) {
         if (src.exists() == false)
             throw mucs_exception("Source file does not exist:", src);
@@ -18,11 +17,9 @@ void Mucs::submit() {
             throw mucs_exception("Cannot submit directories:", src);
     }
 
-    // Make sure sources compile
     if (not this->compile_sources())
         throw mucs_exception("Program doesn't compile");
 
-    // Show user a summary of their submission and prompt for confirmation
     this->submit_summary(lab, assignment.name);
     if (this->prompt_yesno("Are you sure you want to submit [y/n]? ") == false)
         throw mucs_exception("Submission cancelled");

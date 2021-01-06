@@ -171,6 +171,11 @@ const LabSesh& RandLabSesh::get() const {
 
 RandLabAsgmt::RandLabAsgmt(const string& n) : name(n), ymwd(get_day()) {
     weekday wd = this->ymwd.weekday();
+    /**
+     * The date library considers weeks to be Sunday-Saturday but we want weeks
+     * to be Monday-Sunday. ymwd needs to be the Monday of the desired week
+     * so dd is the offset of the current weekday from the previous Monday.
+     */
     if (wd != Monday) {
         days dd = wd == Sunday ? days(6) : wd - Monday;
         this->ymwd = year_month_weekday(sys_days(this->ymwd) - dd);

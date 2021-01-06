@@ -27,6 +27,9 @@ bool Hw::is_active() const {
 }
 
 
+/**
+ * Row format: {NAME, DUEDATE}
+ */
 list<vector<string>> Homeworks::to_table() const {
     list<vector<string>> table;
     for (const Hw& hw : *this) {

@@ -39,10 +39,18 @@ using namespace valijson::adapters;
 using json = nlohmann::json;
 
 
+/**
+ * Interface for all assignment types
+ */
 struct IAssignment {
 
     string name;
 
+    /**
+     * Return whether the assignment can be turned in.
+     * In most cases, this is when the assignment's due date is in the future
+     * or the current date and time is within the due date "window".
+     */
     virtual bool is_active() const = 0;
 
 };
@@ -104,8 +112,26 @@ struct LabSesh {
     operator string() const;
     friend ostream& operator<<(ostream& os, const LabSesh& ls);
 
+    /**
+     * Return whether this lab is ongoing.
+     * This is true if today is the same weekday as wd and the current time is
+     * between start and end.
+     */
     bool is_active() const;
 
+    /**
+     * Return a string where template strings are replaced with formatted
+     * member fields.
+     *
+     * The supported template strings are as follows:
+     *   {id}         The id.
+     *   {weekday}    The weekday string (Sunday, Monday, ...).
+     *   {weekday_n}  The weekday integer (Sunday=0, Monday=1, ...).
+     *   {start}      The start time (24 hour clock).
+     *   {start_p}    The start time (12 hour clock).
+     *   {end}        The end time (24 hour clock).
+     *   {end_p}      The end time (12 hour clock).
+     */
     string format(string fmt) const;
 
     friend void from_json(const json& j, LabSesh& ls);
@@ -144,6 +170,14 @@ struct LabAsgmt : public IAssignment {
         bool operator()(const LabAsgmt& a, const LabAsgmt& b) const;
     };
 
+    /**
+     * Stringify this object as it would be used in the JSON config.
+     * Format: YEAR MONTH_ABREV WEEK_INDEX
+     *
+     * The first week of the month (i.e. the week of the first Monday of the
+     * month) is index 1. Index 0 should not be used. For example, the first
+     * week of January 2020 (2020-1-6 to 2020-1-12) would be "2020 Jan 1"
+     */
     string week_str() const;
 
     bool is_active() const override;
@@ -176,8 +210,20 @@ struct Roster : public map<string, vector<string>>, public Tabular {
 
     using map<string, vector<string>>::map;
 
-    void insert(string pawprint, string lab_id);
+    /**
+     * Insert a new record into the roster object.
+     *
+     * Students can be in more than 1 lab, so the key's value is a list. If no
+     * entry for user exists a new list is created containing lab_id. Otherwise
+     * lab_id is appended to the existing list for user. There will never be an
+     * entry with an empty list.
+     */
+    void insert(string user, string lab_id);
 
+    /**
+     * Return the string list of lab ids that are associated with user.
+     * Throw if user is not found.
+     */
     const vector<string>& safe_get(const string& user) const;
 
     list<vector<string>> to_table() const override;
@@ -192,6 +238,7 @@ struct Roster : public map<string, vector<string>>, public Tabular {
 
 struct Config {
 
+    // The serialized JSON of the parsed config file.
     json j_root;
 
     string filename;
@@ -207,23 +254,59 @@ struct Config {
 
     Roster roster;
 
+    /**
+     * All constructors with arguments do the minimum amount of work to populate
+     * j_root, maybe initialize filename, and nothing else. Validation and
+     * deeper deserialization is done later in methods.
+     */
     Config();
     Config(const Path& config_p);
     Config(json root, string fn = "");
 
+    /**
+     * Validate j_root against a given schema file.
+     */
     Config& validate(const Path& schema_p = Path(SCHEMA_PATH));
+
+    /**
+     * Deserialize the child nodes of j_root into their data members.
+     */
     Config& deserialize();
 
+    /**
+     * Populate the roster data member from the files in the given directory.
+     */
     void load_roster(const Path& roster_d);
 
+    /**
+     * Return an error message of the config filename and path to the invalid
+     * node.
+     *
+     * The filename will be a template string that gets replaced with the real
+     * value in main().
+     */
     static mucs_exception error(
         const string& msg,
         const initializer_list<string>& keys = {}
     );
 
+    /**
+     * Return an assignment whose name equals the given name.
+     * Throw if none is found.
+     */
     const IAssignment& validate_and_get_asgmt(const string& name) const;
 
+    /**
+     * Return a list of LabSesh objects from the list of lab ids associated with
+     * user in roster.
+     */
     vector<LabSesh> get_student_labs(const string& user) const;
+
+    /**
+     * Return the first active LabSesh from the list associated with user in
+     * roster.
+     * Throw if none are active.
+     */
     LabSesh validate_and_get_lab(const string& user) const;
 
     friend void from_json(const json& j, Config& c);

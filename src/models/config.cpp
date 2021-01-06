@@ -25,6 +25,17 @@ Config::Config(json root, string fn) : j_root(root), filename(fn) {
 }
 
 
+/**
+ * Types used:
+ *   NlohmannJsonAdapter: wrapper for nlohmann::json type; they are different
+ *     libraries so all nlohmann::json objects have to be adapted for the
+ *     validator library
+ *   Schema: contains rules for json validation
+ *   SchemaParser: parses json objects into schemas of a specific version
+ *   Validator: validates the target json against a Schema object, puts errors
+ *     in a ValidationResults object
+ *   ValidationResults: contains error messages and traceback info
+ */
 Config& Config::validate(const Path& schema_p) {
     // Make sure schema file exists
     if (not schema_p.exists())

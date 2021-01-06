@@ -19,11 +19,14 @@ LabAsgmt::LabAsgmt(string n, year_month_day s, year_month_day e) : LabAsgmt(n) {
 
 
 bool LabAsgmt::compare::operator()(const LabAsgmt& a, const LabAsgmt& b) const {
-    // Sort `a` before `b` iff:
-    //   a starts and ends then b starts and ends
-    //   overlapping but offset, a starts first
-    //   b is inside of a
-    // Otherwise sort `b` before `a`
+    /**
+     * Sort a before b iff:
+     *   a starts and ends before b starts and ends
+     *   overlapping and a starts first
+     *   b is inside of a
+     *   a and b start at the same time but a ends first
+     * Otherwise sort b before a
+     */
     if (a.start < b.start)
         return true;
     else if (a.start == b.start)
@@ -48,6 +51,10 @@ string LabAsgmt::week_str() const {
 }
 
 
+/**
+ * Row format: {WEEK_SPEC}
+ * where WEEK_SPEC is the same format as in the json config
+ */
 list<vector<string>> LabAssignments::to_table() const {
     list<vector<string>> table;
     for (auto it=this->begin(); it!=this->end(); it++)
@@ -68,6 +75,7 @@ void from_json(const json& j, LabAsgmt& la) {
     };
 
     year_month_day ymd;
+    // Parses as "YEAR MONTH_ABREV DAY" but DAY will be used as a week index
     istringstream(j.value("week", "")) >> parse("%Y %b %d", ymd);
     if (not ymd.ok())
         invalid_lab_asgmt();

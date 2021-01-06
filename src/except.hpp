@@ -17,6 +17,10 @@ private:
     string message;
 
 public:
+    /**
+     * Construct an exception with a message of all arguments joined with a
+     * space.
+     */
     template<typename... String>
     mucs_exception(const string& msg1, const String&... msgs) {
         vector<string> pieces = { msgs... };

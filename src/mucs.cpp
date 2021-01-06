@@ -13,6 +13,10 @@ bool Mucs::compile_sources() const {
 }
 
 
+/**
+ * Uses UID instead of EUID because EUID is affected by the set-uid bit on
+ * executables.
+ */
 string Mucs::get_user() const {
     return getpwuid(getuid())->pw_name;
 }
@@ -80,7 +84,6 @@ void Mucs::submit_summary(const LabSesh& lab, const string& assignment) const {
 
 
 void Mucs::update_config_admin_hash(const string& new_hash) const {
-    // Generate new config with jq
     Proc p = {
         "/bin/sed",
         "-i",

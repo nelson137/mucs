@@ -95,6 +95,7 @@ void from_json(const json& j, LabSesh& ls) {
     // Normalize id (uppercase)
     stl_transform(ls.id, ::toupper);
 
+    // Parse day field
     string d = j.value("day", "");
     istringstream iss(d);
     iss >> date::parse("%a", ls.wd);
@@ -103,6 +104,7 @@ void from_json(const json& j, LabSesh& ls) {
             "Lab session weekday is invalid (first char must be capitalized)",
             {"lab-sessions", id});
 
+    // Parse start time field
     iss = istringstream(j.value("start", ""));
     iss >> date::parse(TIME_FMT, ls.start);
     if (not iss.good())
@@ -110,6 +112,7 @@ void from_json(const json& j, LabSesh& ls) {
             "Lab session start time is invalid",
             {"lab-sessions", id});
 
+    // Parse end time field
     iss = istringstream(j.value("end", ""));
     iss >> date::parse(TIME_FMT, ls.end);
     if (not iss.good())

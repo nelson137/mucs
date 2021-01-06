@@ -139,7 +139,6 @@ TEST_CASE("load_roster loads the files of the given directory",
     config.load_roster(Path(ROSTER_DIR));
 
     const auto& r = config.roster;
-    // print_table(config.roster.to_table());
     REQUIRE(r.size() == 7);
     for (const string& user : vector<string>{ "a1", "a2", "a3" }) {
         REQUIRE(r.count(user) == 1);

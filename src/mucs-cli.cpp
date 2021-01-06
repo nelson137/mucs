@@ -62,7 +62,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     or_dump_flags("-s,--lab-sessions", Mucs::DumpLabSessions);
     or_dump_flags("-w,--homeworks", Mucs::DumpHomeworks);
 
-    // Admin Update Password subcommand
+    // Admin Update-Password subcommand
 
     admin_subcmd
         ->add_subcommand("update-password")

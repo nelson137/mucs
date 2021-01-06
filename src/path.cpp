@@ -99,6 +99,10 @@ int Path::type() const {
 }
 
 
+/**
+ * A file is considered executable if the execution bit is set for either the
+ * current UID or the current GID.
+ */
 bool Path::is_exe() const {
     unique_ptr<struct stat> s = this->stat();
     return s->st_mode & S_IXUSR || s->st_mode & S_IXGRP;
