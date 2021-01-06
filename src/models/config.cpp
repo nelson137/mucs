@@ -90,9 +90,9 @@ void Config::load_roster(const Path& roster_d) {
     for (const Path& lab_roster_p : roster_d.ls()) {
         string lab_id = lab_roster_p.basename();
         lab_roster_p.for_each_line([&] (const string& line) {
-            string pawprint = string_strip(line);
-            if (pawprint.size())
-                this->roster.insert(pawprint, lab_id);
+            string user = string_strip(line);
+            if (user.size())
+                this->roster.insert(user, lab_id);
         });
     }
 }
@@ -123,6 +123,26 @@ const IAssignment& Config::validate_and_get_asgmt(const string& name) const {
 }
 
 
+vector<LabSesh> Config::get_student_labs(const string& user) const {
+    const vector<string>& user_lab_ids = this->roster.safe_get(user);
+    vector<LabSesh> user_labs;
+
+    stl_transform_into(
+        user_lab_ids,
+        user_labs,
+        [&] (const string& id) -> const LabSesh& {
+            auto it = this->lab_sessions.find(id);
+            if (it == this->lab_sessions.end())
+                throw mucs_exception(
+                    "Student '" + user + "' has invalid lab: " + id);
+            return it->second;
+        }
+    );
+
+    return user_labs;
+}
+
+
 LabSesh Config::validate_and_get_lab(const string& user) const {
     const vector<LabSesh>& user_labs = this->get_student_labs(user);
     LabSesh lab;
@@ -134,35 +154,14 @@ LabSesh Config::validate_and_get_lab(const string& user) const {
                 "Lab {id} is not in session: {weekday} from {start} to {end}"
             ));
     } else {
-        auto active_lab = stl_find_if(user_labs, mem_fn(&LabSesh::is_active));
-        if (active_lab == user_labs.end())
+        auto it = stl_find_if(user_labs, mem_fn(&LabSesh::is_active));
+        if (it == user_labs.end())
             throw mucs_exception(
                 "None of your labs are in session:", stl_join(user_labs));
-        lab = *active_lab;
+        lab = *it;
     }
 
     return lab;
-}
-
-
-vector<LabSesh> Config::get_student_labs(const string& user) const {
-    const vector<string>& user_lab_ids = this->roster.safe_get(user);
-    vector<LabSesh> user_labs;
-
-    stl_transform_into(
-        user_lab_ids,
-        user_labs,
-        [&] (const string& id) -> const LabSesh& {
-            try {
-                return this->lab_sessions.at(id);
-            } catch (const out_of_range& e) {
-                throw mucs_exception(
-                    "User '" + user + "' has invalid lab: " + id);
-            }
-        }
-    );
-
-    return user_labs;
 }
 
 

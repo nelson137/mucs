@@ -77,7 +77,7 @@ Proc::Ret Proc::execute() {
     if (not exe.exists())
         throw mucs_exception("Failed to find executable:", exe.str());
     if (not exe.is_exe())
-        throw mucs_exception("File is not executable: " + exe.str());
+        throw mucs_exception("File is not executable:", exe.str());
 
     int pipe_out[2] = { -1, -1 };
     int pipe_err[2] = { -1, -1 };
@@ -110,12 +110,12 @@ Proc::Ret Proc::execute() {
     } else {
         // Parent
 
+        close(pipe_out[CHILD]);
+        close(pipe_err[CHILD]);
+
         int wstatus;
         waitpid(pid, &wstatus, 0);
         code = WEXITSTATUS(wstatus);
-
-        close(pipe_out[CHILD]);
-        close(pipe_err[CHILD]);
 
         if (not read_fd(pipe_out[PARENT], out))
             throw mucs_exception("Error reading process stdout");

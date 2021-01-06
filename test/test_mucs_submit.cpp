@@ -7,7 +7,7 @@ TEST_CASE("submit fails when user not in course", "[mucs][submit]") {
     mucs.config = Config();
     REQUIRE_THROWS_WITH(
         mucs.submit(),
-        "User not in course: " + mucs.user
+        "Student not in course: " + mucs.user
     );
 }
 

@@ -1,18 +1,18 @@
 #include "config.hpp"
 
 
-void Roster::insert(string pawprint, string lab_id) {
-    if (this->count(pawprint) == 0)
-        map<string, vector<string>>::insert({ pawprint, {lab_id} });
+void Roster::insert(string user, string lab_id) {
+    if (this->count(user) == 0)
+        map<string, vector<string>>::insert({ user, {lab_id} });
     else
-        this->at(pawprint).push_back(lab_id);
+        this->at(user).push_back(lab_id);
 }
 
 
 const vector<string>& Roster::safe_get(const string& user) const {
     auto it = this->find(user);
     if (it == this->end())
-        throw mucs_exception("User not in course:", user);
+        throw mucs_exception("Student not in course:", user);
     return it->second;
 }
 

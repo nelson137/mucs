@@ -68,7 +68,7 @@ void from_json(const json& j, LabAsgmt& la) {
     };
 
     year_month_day ymd;
-    istringstream(j.value("week", "")) >> parse(LAB_ASGMT_FMT, ymd);
+    istringstream(j.value("week", "")) >> parse("%Y %b %d", ymd);
     if (not ymd.ok())
         invalid_lab_asgmt();
 

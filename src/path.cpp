@@ -284,12 +284,12 @@ MockPath::MockPath(const string& p) : MockPath() {
 
 
 Path& MockPath::get() {
-    When(Method((*this), read)).AlwaysReturn(this->data.str());
+    When(Method((*this), read)).AlwaysReturn(this->file_contents.str());
     return Mock<Path>::get();
 }
 
 
 MockPath& MockPath::operator<<(const string& data) {
-    this->data << data;
+    this->file_contents << data;
     return *this;
 }

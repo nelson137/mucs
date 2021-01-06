@@ -35,7 +35,7 @@ protected:
     unique_ptr<struct stat> stat() const;
 
 public:
-    enum {
+    enum Type {
         File = 1 << 0,
         Dir  = 1 << 1,
         Link = 1 << 2,
@@ -99,7 +99,7 @@ public:
 
 struct MockPath : public Mock<Path> {
 
-    ostringstream data;
+    ostringstream file_contents;
 
     MockPath();
     MockPath(const string& p);

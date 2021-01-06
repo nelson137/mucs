@@ -44,10 +44,9 @@ public:
 static chars_t chars_lower("abcdefghijklmnopqrstuvwxyz");
 static chars_t chars_upper("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 static chars_t chars_nums("0123456789");
-static chars_t chars_hex_alpha("abcdef");
 // Using the default copy constructor
-static chars_t chars_alphanum(chars_nums | chars_upper | chars_lower);
-static chars_t chars_hex(chars_nums | chars_hex_alpha);
+static chars_t chars_alphanum = chars_nums | chars_upper | chars_lower;
+static chars_t chars_hex = chars_t("abcdef") | chars_nums;
 
 
 /**

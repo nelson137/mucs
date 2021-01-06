@@ -92,6 +92,6 @@ void Mucs::update_config_admin_hash(const string& new_hash) const {
     if (ret.code != 0) {
         cerr << ret.err;
         throw mucs_exception(
-            "Failed to update admin hash for course:", to_string(this->course));
+            "Failed to update admin hash for course:", this->course);
     }
 }

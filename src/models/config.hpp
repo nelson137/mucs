@@ -214,7 +214,6 @@ struct Config {
     Config& validate(const Path& schema_p = Path(SCHEMA_PATH));
     Config& deserialize();
 
-    vector<Path> get_roster_files(const Path& roster_d);
     void load_roster(const Path& roster_d);
 
     static mucs_exception error(
