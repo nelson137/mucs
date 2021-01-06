@@ -4,5 +4,4 @@ runtests.exe
 .ccls-cache/
 build/
 coverage/
-test_root/
 libmucs/build/

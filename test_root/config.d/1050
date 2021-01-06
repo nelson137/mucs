@@ -1,0 +1,13 @@
+{
+    "course_id": "1050",
+    "admin_hash": "!",
+    "homeworks": [
+        { "name": "hw1", "duedate": "2020-08-31 10:00:00" }
+    ],
+    "lab-sessions": [
+        { "id": "X", "day": "Mon", "start": "00:00:00", "end": "23:59:59" }
+    ],
+    "lab-assignments": [
+        { "name": "lab1", "week": "Dec 1" }
+    ]
+}
