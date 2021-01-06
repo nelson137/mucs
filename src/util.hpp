@@ -82,27 +82,6 @@ weekday get_weekday(sys_seconds tp = NOW);
 string join_paths(string a, deque<string> parts);
 
 /**
- * Print each column of table with the same width and separate each column with
- * delim.
- */
-void print_table(const list<vector<string>>& table, const string& delim = "  ");
-
-/**
- * Return a list of tokens of s split on delim.
- *
- * None of the tokens will contain delim.
- *
- * An empty list will never be returned. If s doesn't contain delim then the
- * list will have 1 element, being s.
- */
-vector<string> string_split(const string& s, const string& delim);
-
-/**
- * Return s with all whitespace characters removed from the start and end.
- */
-string string_strip(string s);
-
-/**
  * Join all arguments using `/` as a delimeter.
  */
 template<typename... String>
@@ -126,6 +105,12 @@ template<int n = 2>
 ostream& prefix_zeros(ostream& os) {
     return os << prefix_char<n,'0'>;
 }
+
+/**
+ * Print each column of table with the same width and separate each column with
+ * delim.
+ */
+void print_table(const list<vector<string>>& table, const string& delim = "  ");
 
 /**
  * Return whether c contains val.
@@ -181,6 +166,21 @@ void stl_transform_into(const ContainerA& a, ContainerB& b, UnaryOp op) {
     b.reserve(a.size());
     transform(a.begin(), a.end(), back_inserter(b), op);
 }
+
+/**
+ * Return a list of tokens of s split on delim.
+ *
+ * None of the tokens will contain delim.
+ *
+ * An empty list will never be returned. If s doesn't contain delim then the
+ * list will have 1 element, being s.
+ */
+vector<string> string_split(const string& s, const string& delim);
+
+/**
+ * Return s with all whitespace characters removed from the start and end.
+ */
+string string_strip(string s);
 
 
 #endif
