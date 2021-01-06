@@ -9,7 +9,7 @@ TEST_OBJS := $(TEST_SRCS:%.cpp=build/%.o)
 
 SCRIPTS   := $(wildcard scripts/mucs-*)
 
-CFLAGS    := -std=c++11 -g -pedantic -Wall -Werror -Wno-noexcept-type
+CFLAGS    := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
 INCLUDES  := -Iinclude
 
 DEFINES   :=
@@ -19,6 +19,12 @@ LOCAL_COMPILE_SCRIPT := scripts/compile
 # Setup flags for testing if the target recipes include `test`
 ifneq ($(filter test,$(MAKECMDGOALS)),)
 DEFINES   += -D_MUCS_TEST -D_MUCS_ROOT=$(TEST_MUCS_ROOT) -D_COMPILE_SCRIPT=$(LOCAL_COMPILE_SCRIPT)
+endif
+
+# Setup flags for debugging
+# Usage: make DEBUG=1
+ifneq ($(DEBUG),)
+CFLAGS    += -g
 endif
 
 # Setup flags for a custom MUCS_ROOT
