@@ -11,13 +11,27 @@ SCRIPTS   := $(wildcard scripts/mucs-*)
 
 CFLAGS    := -std=c++11 -g -pedantic -Wall -Werror -Wno-noexcept-type
 INCLUDES  := -Iinclude
+
 DEFINES   :=
+TEST_MUCS_ROOT := test_root
+LOCAL_COMPILE_SCRIPT := scripts/compile
 
 # Setup flags for testing if the target recipes include `test`
 ifneq ($(filter test,$(MAKECMDGOALS)),)
-DEFINES   += -D_MUCS_TEST -D_MUCS_ROOT=test_root -D_COMPILE_SCRIPT=scripts/compile
+DEFINES   += -D_MUCS_TEST -D_MUCS_ROOT=$(TEST_MUCS_ROOT) -D_COMPILE_SCRIPT=$(LOCAL_COMPILE_SCRIPT)
 endif
 
+# Setup flags for a custom MUCS_ROOT
+# Usage: make MUCS_ROOT=my_root
+# A directory other than `test_root` should be used as it contains files that
+# could break tests if they are changed.
+ifneq ($(MUCS_ROOT),)
+DEFINES   += -D_MUCS_ROOT=$(MUCS_ROOT) -D_COMPILE_SCRIPT=$(LOCAL_COMPILE_SCRIPT)
+endif
+
+# Setup flags for generating coverage data
+# Usage: make test COVERAGE=1
+# Note: should only be used with target `test`
 ifneq ($(COVERAGE),)
 CFLAGS    += --coverage -O0
 endif
