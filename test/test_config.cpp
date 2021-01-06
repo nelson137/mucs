@@ -97,9 +97,10 @@ TEST_CASE("config validation succeeds when both config and schema exist and "
 }
 
 
-TEST_CASE("config parsing succeeds when json is valid", "[config][parsing]") {
+TEST_CASE("config parsing succeeds when json is valid",
+          "[config][deserialize]") {
     json data = new_config_data();
-    REQUIRE_NOTHROW(Config(data).parse());
+    REQUIRE_NOTHROW(Config(data).deserialize());
 }
 
 

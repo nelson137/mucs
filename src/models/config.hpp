@@ -212,7 +212,7 @@ struct Config {
     Config(json root, string fn = "");
 
     Config& validate(const Path& schema_p = Path(SCHEMA_PATH));
-    Config& parse();
+    Config& deserialize();
 
     vector<Path> get_roster_files(const Path& roster_d);
     void load_roster(const Path& roster_d);

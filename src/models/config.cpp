@@ -70,7 +70,7 @@ Config& Config::validate(const Path& schema_p) {
 }
 
 
-Config& Config::parse() {
+Config& Config::deserialize() {
     this->j_root["course_id"].get_to(this->course_id);
     this->j_root["admin_hash"].get_to(this->admin_hash);
     this->j_root["homeworks"].get_to(this->homeworks);
