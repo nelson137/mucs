@@ -87,31 +87,31 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
 }
 
 
-TEST_CASE("submission succeeds", "[mucs][submit]") {
+TEST_CASE("submission for homework succeeds while the lab session",
+          "[mucs][submit]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
+    string hw_name = rand_hw_name();
+    sys_seconds dd{};
+    dd += years((int) get_day().year() - 1970 + 3);
 
     Mucs mucs;
     mucs.user = user;
+    mucs.assignment = hw_name;
     mucs.config.course_id = rand_course();
+    mucs.config.homeworks.insert({ hw_name, dd });
     mucs.config.roster.safe_insert(user, lab_id);
-    mucs.config.lab_sessions.insert({
-        lab_id, RandLabSesh().today().now().get()
-    });
 
-    SECTION("for homeworks") {
-        string hw_name = rand_hw_name();
-        sys_seconds dd{};
-        dd += years((int) get_day().year() - 1970 + 3);
-        mucs.config.homeworks.insert({ hw_name, dd });
-        mucs.assignment = hw_name;
+    SECTION("is active") {
+        mucs.config.lab_sessions.insert({
+            lab_id, RandLabSesh().today().now().get()
+        });
     }
 
-    SECTION("for lab assignments") {
-        string lab_name = rand_lab_asgmt_name();
-        mucs.config.lab_assignments.insert(
-            RandLabAsgmt(lab_name).this_week().get());
-        mucs.assignment = lab_name;
+    SECTION("is not active") {
+        mucs.config.lab_sessions.insert({
+            lab_id, RandLabSesh().today(false).now().get()
+        });
     }
 
     Mock<Mucs> spy(mucs);
@@ -131,6 +131,57 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
         + Method(spy, copy_submission_files)
     ).Once();
     VerifyNoOtherInvocations(spy);
+}
+
+
+TEST_CASE("submission for lab assignment while the lab session",
+          "[mucs][submit][x]") {
+    string user = rand_user();
+    string lab_id = rand_lab_sesh_id();
+    string lab_name = rand_lab_asgmt_name();
+
+    Mucs mucs;
+    mucs.user = user;
+    mucs.assignment = lab_name;
+    mucs.config.course_id = rand_course();
+    mucs.config.lab_assignments.insert(
+        RandLabAsgmt(lab_name).this_week().get());
+    mucs.config.roster.safe_insert(user, lab_id);
+
+    Mock<Mucs> spy(mucs);
+    When(Method(spy, prompt_yesno)).AlwaysReturn(true);
+    When(Method(spy, compile_sources)).AlwaysReturn(true);
+    Fake(
+        Method(spy, submit_summary),
+        Method(spy, copy_submission_files)
+    );
+
+    SECTION("is active succeeds") {
+        mucs.config.lab_sessions.insert({
+            lab_id, RandLabSesh().today().now().get()
+        });
+
+        REQUIRE_NOTHROW(spy.get().submit());
+
+        Verify(
+            Method(spy, compile_sources)
+            + Method(spy, submit_summary)
+            + Method(spy, prompt_yesno)
+            + Method(spy, copy_submission_files)
+        ).Once();
+        VerifyNoOtherInvocations(spy);
+    }
+
+    SECTION("is not active fails") {
+        LabSesh ls = RandLabSesh().today(false).now().get();
+        mucs.config.lab_sessions.insert({ lab_id, ls });
+
+        REQUIRE_THROWS_WITH(
+            spy.get().submit(),
+            ls.format(
+                "Lab {id} is not in session: {weekday} from {start} to {end}")
+        );
+    }
 }
 
 

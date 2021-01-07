@@ -191,17 +191,14 @@ TEST_CASE("validate_and_get_lab",
     Config config;
     config.roster[user] = lab_id;
 
-    SECTION("fails when the lab isn't in session") {
-        auto ls = RandLabSesh(lab_id).today().now(false).get();
-        config.lab_sessions.insert({ lab_id, ls });
+    SECTION("fails when the lab is invalid") {
         REQUIRE_THROWS_WITH(
             config.validate_and_get_lab(user),
-            ls.format(
-                "Lab {id} is not in session: {weekday} from {start} to {end}")
+            "Student '" + user + "' has invalid lab: " + lab_id
         );
     }
 
-    SECTION("succeeds when the lab is in session") {
+    SECTION("succeeds when the lab is valid") {
         auto expected_ls = RandLabSesh(lab_id).today().now(true).get();
         config.lab_sessions.insert({ lab_id, expected_ls });
         REQUIRE(config.validate_and_get_lab(user).id == lab_id);

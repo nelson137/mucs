@@ -44,7 +44,14 @@ using json = nlohmann::json;
  */
 struct IAssignment {
 
+    enum AType {
+        Asgmt_Hw,
+        Asgmt_Lab
+    };
+
     string name;
+
+    virtual AType type() const = 0;
 
     /**
      * Return whether the assignment can be turned in.
@@ -68,6 +75,8 @@ struct Hw : public IAssignment {
     Hw();
     Hw(string n);
     Hw(string n, sys_seconds dd);
+
+    inline AType type() const { return IAssignment::Asgmt_Hw; }
 
     struct compare {
         bool operator()(const Hw& a, const Hw& b) const;
@@ -165,6 +174,8 @@ struct LabAsgmt : public IAssignment {
     LabAsgmt();
     LabAsgmt(string n);
     LabAsgmt(string n, year_month_day s, year_month_day e);
+
+    inline AType type() const { return IAssignment::Asgmt_Lab; }
 
     struct compare {
         bool operator()(const LabAsgmt& a, const LabAsgmt& b) const;

@@ -9,6 +9,10 @@ void Mucs::submit() {
     if (not assignment.is_active())
         throw mucs_exception(
             "Submission window is closed for assignment: " + assignment.name);
+    if (assignment.type() == IAssignment::Asgmt_Lab && not lab.is_active())
+        throw mucs_exception(lab.format(
+            "Lab {id} is not in session: {weekday} from {start} to {end}"
+        ));
 
     for (const Path& src : this->sources) {
         if (src.exists() == false)

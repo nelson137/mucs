@@ -136,19 +136,11 @@ const IAssignment& Config::validate_and_get_asgmt(const string& name) const {
 
 const LabSesh& Config::validate_and_get_lab(const string& user) const {
     const string& id = this->roster.safe_get(user);
-
     auto it = this->lab_sessions.find(id);
     if (it == this->lab_sessions.end())
         throw mucs_exception(
             "Student '" + user + "' has invalid lab: " + id);
-    const LabSesh& lab = it->second;
-
-    if (lab.is_active() == false)
-        throw mucs_exception(lab.format(
-            "Lab {id} is not in session: {weekday} from {start} to {end}"
-        ));
-
-    return lab;
+    return it->second;
 }
 
 
