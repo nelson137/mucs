@@ -3,13 +3,15 @@
 
 void Roster::insert(string user, string lab_id) {
     if (this->count(user) == 0)
-        map<string, vector<string>>::insert({ user, {lab_id} });
+        map<string, string>::insert({ user, lab_id });
     else
-        this->at(user).push_back(lab_id);
+        throw mucs_exception(
+            "Student cannot be in lab sessions '" + this->at(user) + "' and '"
+            + lab_id + "': " + user);
 }
 
 
-const vector<string>& Roster::safe_get(const string& user) const {
+const string& Roster::safe_get(const string& user) const {
     auto it = this->find(user);
     if (it == this->end())
         throw mucs_exception("Student not in course:", user);
@@ -26,7 +28,7 @@ list<vector<string>> Roster::to_table() const {
         // Column 1
         row.push_back(it->first);
         // Column 2
-        row.push_back(stl_join(it->second));
+        row.push_back(it->second);
         // Append row
         table.push_back(move(row));
     }

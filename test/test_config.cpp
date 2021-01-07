@@ -139,22 +139,15 @@ TEST_CASE("load_roster loads the files of the given directory",
     config.load_roster(Path(ROSTER_DIR));
 
     const auto& r = config.roster;
-    REQUIRE(r.size() == 7);
-    for (const string& user : vector<string>{ "a1", "a2", "a3" }) {
+    REQUIRE(r.size() == 4);
+    for (const string& user : vector<string>{ "a1", "a2" }) {
         REQUIRE(r.count(user) == 1);
-        const vector<string>& labs = r.at(user);
-        REQUIRE(labs.size() == 1);
-        REQUIRE_THAT(labs, Catch::Matchers::UnorderedEquals<string>({ "A" }));
+        REQUIRE(r.at(user) == "A");
     }
-    for (const string& user : vector<string>{ "b1", "b2", "b3" }) {
+    for (const string& user : vector<string>{ "b1", "b2" }) {
         REQUIRE(r.count(user) == 1);
-        const vector<string>& labs = r.at(user);
-        REQUIRE(labs.size() == 1);
-        REQUIRE_THAT(labs, Catch::Matchers::UnorderedEquals<string>({ "B" }));
+        REQUIRE(r.at(user) == "B");
     }
-    REQUIRE(r.count("x") == 1);
-    const vector<string>& labs = r.at("x");
-    REQUIRE_THAT(labs, Catch::Matchers::UnorderedEquals<string>({ "A", "B" }));
 }
 
 
@@ -191,14 +184,14 @@ TEST_CASE("get_assignment succeeds when there is a matching lab assignment",
 }
 
 
-TEST_CASE("validate_and_get_lab with 1 lab session",
+TEST_CASE("validate_and_get_lab",
           "[config][validate-and-get-lab]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     Config config;
-    config.roster[user] = { lab_id };
+    config.roster[user] = lab_id;
 
-    SECTION("that isn't in session") {
+    SECTION("fails when the lab isn't in session") {
         auto ls = RandLabSesh(lab_id).today().now(false).get();
         config.lab_sessions.insert({ lab_id, ls });
         REQUIRE_THROWS_WITH(
@@ -208,41 +201,9 @@ TEST_CASE("validate_and_get_lab with 1 lab session",
         );
     }
 
-    SECTION("that is in session") {
+    SECTION("succeeds when the lab is in session") {
         auto expected_ls = RandLabSesh(lab_id).today().now(true).get();
         config.lab_sessions.insert({ lab_id, expected_ls });
         REQUIRE(config.validate_and_get_lab(user).id == lab_id);
-    }
-}
-
-
-TEST_CASE("validate_and_get_lab with multiple lab sessions",
-          "[config][validate-and-get-lab]") {
-    string user = rand_user();
-    Config config;
-
-    SECTION("one is active") {
-        string lab_id1 = rand_lab_sesh_id();
-        string lab_id2 = rand_lab_sesh_id();
-        config.roster[user] = { lab_id1, lab_id2 };
-        config.lab_sessions.insert({
-            lab_id1, RandLabSesh(lab_id1).today().now(false).get() });
-        config.lab_sessions.insert({
-            lab_id2, RandLabSesh(lab_id2).today().now(true).get() });
-        REQUIRE(config.validate_and_get_lab(user).id == lab_id2);
-    }
-
-    SECTION("none are active") {
-        string lab_id1 = rand_lab_sesh_id();
-        string lab_id2 = rand_lab_sesh_id();
-        config.roster[user] = { lab_id1, lab_id2 };
-        config.lab_sessions.insert({
-            lab_id1, RandLabSesh(lab_id1).today(true).now(false).get() });
-        config.lab_sessions.insert({
-            lab_id2, RandLabSesh(lab_id2).today(false).now(false).get() });
-        REQUIRE_THROWS_WITH(
-            config.validate_and_get_lab(user),
-            "None of your labs are in session: " + lab_id1 + "," + lab_id2
-        );
     }
 }

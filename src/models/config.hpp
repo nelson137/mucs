@@ -206,25 +206,21 @@ struct LabAssignments
  ************************************************/
 
 
-struct Roster : public map<string, vector<string>>, public Tabular {
+struct Roster : public map<string, string>, public Tabular {
 
-    using map<string, vector<string>>::map;
+    using map<string, string>::map;
 
     /**
      * Insert a new record into the roster object.
-     *
-     * Students can be in more than 1 lab, so the key's value is a list. If no
-     * entry for user exists a new list is created containing lab_id. Otherwise
-     * lab_id is appended to the existing list for user. There will never be an
-     * entry with an empty list.
+     * Throw if a record already exists for user.
      */
     void insert(string user, string lab_id);
 
     /**
-     * Return the string list of lab ids that are associated with user.
+     * Return the lab id that is associated with user.
      * Throw if user is not found.
      */
-    const vector<string>& safe_get(const string& user) const;
+    const string& safe_get(const string& user) const;
 
     list<vector<string>> to_table() const override;
 
@@ -297,17 +293,11 @@ struct Config {
     const IAssignment& validate_and_get_asgmt(const string& name) const;
 
     /**
-     * Return a list of LabSesh objects from the list of lab ids associated with
-     * user in roster.
+     * Return the active LabSesh that is associated with user in roster.
+     * Throw if user isn't in roster.
+     * Throw if the LabSesh isn't active.
      */
-    vector<LabSesh> get_student_labs(const string& user) const;
-
-    /**
-     * Return the first active LabSesh from the list associated with user in
-     * roster.
-     * Throw if none are active.
-     */
-    LabSesh validate_and_get_lab(const string& user) const;
+    const LabSesh& validate_and_get_lab(const string& user) const;
 
     friend void from_json(const json& j, Config& c);
     friend void to_json(json& j, const Config& c);

@@ -134,43 +134,19 @@ const IAssignment& Config::validate_and_get_asgmt(const string& name) const {
 }
 
 
-vector<LabSesh> Config::get_student_labs(const string& user) const {
-    const vector<string>& user_lab_ids = this->roster.safe_get(user);
-    vector<LabSesh> user_labs;
+const LabSesh& Config::validate_and_get_lab(const string& user) const {
+    const string& id = this->roster.safe_get(user);
 
-    stl_transform_into(
-        user_lab_ids,
-        user_labs,
-        [&] (const string& id) -> const LabSesh& {
-            auto it = this->lab_sessions.find(id);
-            if (it == this->lab_sessions.end())
-                throw mucs_exception(
-                    "Student '" + user + "' has invalid lab: " + id);
-            return it->second;
-        }
-    );
+    auto it = this->lab_sessions.find(id);
+    if (it == this->lab_sessions.end())
+        throw mucs_exception(
+            "Student '" + user + "' has invalid lab: " + id);
+    const LabSesh& lab = it->second;
 
-    return user_labs;
-}
-
-
-LabSesh Config::validate_and_get_lab(const string& user) const {
-    const vector<LabSesh>& user_labs = this->get_student_labs(user);
-    LabSesh lab;
-
-    if (user_labs.size() == 1) {
-        lab = user_labs[0];
-        if (lab.is_active() == false)
-            throw mucs_exception(lab.format(
-                "Lab {id} is not in session: {weekday} from {start} to {end}"
-            ));
-    } else {
-        auto it = stl_find_if(user_labs, mem_fn(&LabSesh::is_active));
-        if (it == user_labs.end())
-            throw mucs_exception(
-                "None of your labs are in session:", stl_join(user_labs));
-        lab = *it;
-    }
+    if (lab.is_active() == false)
+        throw mucs_exception(lab.format(
+            "Lab {id} is not in session: {weekday} from {start} to {end}"
+        ));
 
     return lab;
 }
