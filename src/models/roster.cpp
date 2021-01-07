@@ -1,7 +1,7 @@
 #include "config.hpp"
 
 
-void Roster::insert(string user, string lab_id) {
+void Roster::safe_insert(string user, string lab_id) {
     if (this->count(user) == 0)
         map<string, string>::insert({ user, lab_id });
     else

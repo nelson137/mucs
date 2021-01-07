@@ -103,7 +103,7 @@ void Config::load_roster(const Path& roster_d) {
         lab_roster_p.for_each_line([&] (const string& line) {
             string user = string_strip(line);
             if (user.size())
-                this->roster.insert(user, lab_id);
+                this->roster.safe_insert(user, lab_id);
         });
     }
 }

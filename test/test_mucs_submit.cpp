@@ -22,7 +22,7 @@ TEST_CASE("submission fails when the submission window is closed",
     mucs.user = user;
     mucs.assignment = hw_name;
     mucs.config.course_id = rand_course();
-    mucs.config.roster.insert(user, lab_id);
+    mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh().today().now().get()
     });
@@ -46,7 +46,7 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
     mucs.user = user;
     mucs.assignment = lab_name;
     mucs.config.course_id = rand_course();
-    mucs.config.roster.insert(user, lab_id);
+    mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh().today().now().get()
     });
@@ -94,7 +94,7 @@ TEST_CASE("submission succeeds", "[mucs][submit]") {
     Mucs mucs;
     mucs.user = user;
     mucs.config.course_id = rand_course();
-    mucs.config.roster.insert(user, lab_id);
+    mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh().today().now().get()
     });
@@ -142,7 +142,7 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
     Mucs mucs;
     mucs.user = user;
     mucs.assignment = lab_name;
-    mucs.config.roster.insert(user, lab_id);
+    mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh(lab_id).today().now().get() });
     mucs.config.lab_assignments.insert(
@@ -178,7 +178,7 @@ TEST_CASE("double submit homework too quickly", "[mucs][submit]") {
     mucs.user = user;
     mucs.assignment = hw_name;
     mucs.course = mucs.config.course_id = "1050";
-    mucs.config.roster.insert(user, lab_id);
+    mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh(lab_id).today().now().get()
     });

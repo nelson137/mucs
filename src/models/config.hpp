@@ -214,7 +214,7 @@ struct Roster : public map<string, string>, public Tabular {
      * Insert a new record into the roster object.
      * Throw if a record already exists for user.
      */
-    void insert(string user, string lab_id);
+    void safe_insert(string user, string lab_id);
 
     /**
      * Return the lab id that is associated with user.
