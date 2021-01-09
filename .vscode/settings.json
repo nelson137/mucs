@@ -2,5 +2,8 @@
     "files.trimTrailingWhitespace": true,
     "files.eol": "\n",
     "files.trimFinalNewlines": true,
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "files.exclude": {
+        "/**": true
+    }
 }
