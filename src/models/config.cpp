@@ -145,19 +145,19 @@ const LabSesh& Config::validate_and_get_lab(const string& user) const {
 
 
 void from_json(const json& j, Config& c) {
-    if (j.count("course_id") > 0)
+    if (j.contains("course_id"))
         j["course_id"].get_to(c.course_id);
 
-    if (j.count("admin_hash") > 0)
+    if (j.contains("admin_hash"))
         j["admin_hash"].get_to(c.admin_hash);
 
-    if (j.count("homeworks") > 0)
+    if (j.contains("homeworks"))
         j["homeworks"].get_to(c.homeworks);
 
-    if (j.count("lab-sessions") > 0)
+    if (j.contains("lab-sessions"))
         j["lab-sessions"].get_to(c.lab_sessions);
 
-    if (j.count("lab-assignments") > 0)
+    if (j.contains("lab-assignments"))
         j["lab-assignments"].get_to(c.lab_assignments);
 }
 

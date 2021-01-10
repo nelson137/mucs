@@ -64,7 +64,7 @@ list<vector<string>> LabAssignments::to_table() const {
 
 
 void from_json(const json& j, LabAsgmt& la) {
-    string name = j.value("name", "");
+    string name = j["name"];
     la.name = name;
     stl_transform(la.name, ::tolower);
 
@@ -76,7 +76,7 @@ void from_json(const json& j, LabAsgmt& la) {
 
     year_month_day ymd;
     // Parses as "YEAR MONTH_ABREV DAY" but DAY will be used as a week index
-    istringstream(j.value("week", "")) >> parse("%Y %b %d", ymd);
+    istringstream(j["week"].get<string>()) >> parse("%Y %b %d", ymd);
     if (not ymd.ok())
         invalid_lab_asgmt();
 

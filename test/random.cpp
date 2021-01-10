@@ -95,7 +95,7 @@ string rand_lab_asgmt_name() {
 
 json rand_lab_sesh_data(json j) {
     auto default_val = [&] (const string& key, const json& val) {
-        if (j.count(key) == 0)
+        if (not j.contains(key))
             j[key] = val;
     };
 

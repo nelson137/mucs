@@ -48,12 +48,12 @@ list<vector<string>> Homeworks::to_table() const {
 
 
 void from_json(const json& j, Hw& hw) {
-    string name = j.value("name", "");
+    string name = j["name"];
     hw.name = name;
     // Normalize name (lowercase)
     stl_transform(hw.name, ::tolower);
 
-    istringstream iss(j.value("duedate", ""));
+    istringstream iss(j["duedate"].get<string>());
     iss >> date::parse(HW_FMT, hw.duedate);
     if (not iss.good())
         throw Config::error("Invalid duedate", {"homeworks", name});

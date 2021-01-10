@@ -2,15 +2,15 @@
 
 
 void Mucs::submit() {
-    LabSesh lab = config.validate_and_get_lab(this->user);
+    LabSesh lab_sesh = config.validate_and_get_lab(this->user);
 
-    const IAssignment& assignment =
-        config.validate_and_get_asgmt(this->assignment);
-    if (not assignment.is_active())
+    const IAssignment& asgmt =
+        config.validate_and_get_asgmt(this->asgmt_name);
+    if (not asgmt.is_active())
         throw mucs_exception(
-            "Submission window is closed for assignment: " + assignment.name);
-    if (assignment.type() == IAssignment::Asgmt_Lab && not lab.is_active())
-        throw mucs_exception(lab.format(
+            "Submission window is closed for assignment: " + asgmt.name);
+    if (asgmt.type() == IAssignment::Asgmt_Lab && not lab_sesh.is_active())
+        throw mucs_exception(lab_sesh.format(
             "Lab {id} is not in session: {weekday} from {start} to {end}"
         ));
 
@@ -24,12 +24,12 @@ void Mucs::submit() {
     if (not this->compile_sources())
         throw mucs_exception("Program doesn't compile");
 
-    this->submit_summary(lab, assignment.name);
+    this->submit_summary(lab_sesh, asgmt.name);
     if (this->prompt_yesno("Are you sure you want to submit [y/n]? ") == false)
         throw mucs_exception("Submission cancelled");
 
     // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
-    Path asgmt_d = Path(SUBMIT_DIR) / this->course / lab / assignment.name;
+    Path asgmt_d = Path(SUBMIT_DIR) / this->course / lab_sesh / asgmt.name;
 
     string now_str = format("_%Y-%m-%d_%H:%M:%S", NOW);
     // .submissions/USER.DATE.TIME

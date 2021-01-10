@@ -30,7 +30,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
         ->required()
         ->check(CLI::IsMember(CONFIGS_AVAILABLE));
     submit_subcmd
-        ->add_option("assignment", this->assignment)
+        ->add_option("assignment", this->asgmt_name)
         ->required();
     submit_subcmd
         ->add_option("sources", this->sources)

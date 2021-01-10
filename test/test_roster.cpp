@@ -15,7 +15,7 @@ TEST_CASE("safe_insert adds an entry when the user doesn't have an entry yet",
 }
 
 
-TEST_CASE("safe_insert fails when there is already an entry for the user",
+TEST_CASE("safe_insert throws when there is already an entry for the user",
           "[roster][safe-insert]") {
     string user = rand_user();
     string lab_id1 = rand_lab_sesh_id();

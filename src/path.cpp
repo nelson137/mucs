@@ -212,7 +212,7 @@ vector<string> Path::ls() const {
 
 vector<string> Path::ls_base() const {
     DIR *dir = opendir(this->m_path.c_str());
-    if (dir == nullptr)
+    if (not dir)
         throw mucs_exception("Could not list directory");
 
     vector<string> children;

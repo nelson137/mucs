@@ -90,13 +90,13 @@ ostream& operator<<(ostream& os, const LabSesh& ls) {
 
 
 void from_json(const json& j, LabSesh& ls) {
-    string id = j.value("id", "");
+    string id = j["id"];
     ls.id = id;
     // Normalize id (uppercase)
     stl_transform(ls.id, ::toupper);
 
     // Parse day field
-    string d = j.value("day", "");
+    string d = j["day"];
     istringstream iss(d);
     iss >> date::parse("%a", ls.wd);
     if (not ls.wd.ok())
@@ -105,7 +105,7 @@ void from_json(const json& j, LabSesh& ls) {
             {"lab-sessions", id});
 
     // Parse start time field
-    iss = istringstream(j.value("start", ""));
+    iss = istringstream(j["start"].get<string>());
     iss >> date::parse(TIME_FMT, ls.start);
     if (not iss.good())
         throw Config::error(
@@ -113,7 +113,7 @@ void from_json(const json& j, LabSesh& ls) {
             {"lab-sessions", id});
 
     // Parse end time field
-    iss = istringstream(j.value("end", ""));
+    iss = istringstream(j["end"].get<string>());
     iss >> date::parse(TIME_FMT, ls.end);
     if (not iss.good())
         throw Config::error(

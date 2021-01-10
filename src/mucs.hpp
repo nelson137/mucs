@@ -33,7 +33,7 @@ struct Mucs {
     // From cli
 
     string course;
-    string assignment;
+    string asgmt_name;
     vector<Path> sources;
 
     enum DumpFlags {
@@ -103,7 +103,7 @@ struct Mucs {
      */
     virtual void submit_summary(
         const LabSesh& lab,
-        const string& assignment
+        const string& asgmt_name
     ) const;
 
     /**

@@ -60,7 +60,7 @@ bool Mucs::prompt_yesno(const string& prompt) const {
 }
 
 
-void Mucs::submit_summary(const LabSesh& lab, const string& assignment) const {
+void Mucs::submit_summary(const LabSesh& lab, const string& asgmt_name) const {
     int w = get_term_width() * TERM_WIDTH_COEFF;
     const string spacer = string(min(w, 80), '=');
 
@@ -70,7 +70,7 @@ void Mucs::submit_summary(const LabSesh& lab, const string& assignment) const {
     cout << W_GREEN(spacer) << endl;
     cout << "Course     : " << W_BOLD(course) << endl;
     cout << "Lab        : " << W_BOLD(lab) << endl;
-    cout << "Assignment : " << W_BOLD(assignment) << endl;
+    cout << "Assignment : " << W_BOLD(asgmt_name) << endl;
     cout << "User       : " << W_BOLD(this->user) << endl;
     cout << "Files      :";
     for (const Path& s : this->sources)

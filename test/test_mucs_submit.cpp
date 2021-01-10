@@ -1,7 +1,7 @@
 #include "test_mucs_submit.hpp"
 
 
-TEST_CASE("submit fails when user not in course", "[mucs][submit]") {
+TEST_CASE("submit throws when user not in course", "[mucs][submit]") {
     Mucs mucs;
     mucs.user = rand_user();
     mucs.config = Config();
@@ -12,7 +12,7 @@ TEST_CASE("submit fails when user not in course", "[mucs][submit]") {
 }
 
 
-TEST_CASE("submission fails when the submission window is closed",
+TEST_CASE("submit throws when the submission window is closed",
           "[mucs][submit]") {
     string user = rand_user();
     string hw_name = rand_hw_name();
@@ -20,7 +20,7 @@ TEST_CASE("submission fails when the submission window is closed",
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment = hw_name;
+    mucs.asgmt_name = hw_name;
     mucs.config.course_id = rand_course();
     mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
@@ -31,12 +31,12 @@ TEST_CASE("submission fails when the submission window is closed",
     mucs.config.homeworks.insert({ hw_name, dd });
     REQUIRE_THROWS_WITH(
         mucs.submit(),
-        "Submission window is closed for assignment: " + mucs.assignment
+        "Submission window is closed for assignment: " + mucs.asgmt_name
     );
 }
 
 
-TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
+TEST_CASE("submit throws when a given source path", "[mucs][submit]") {
     string src_fn, err_msg;
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
@@ -44,7 +44,7 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment = lab_name;
+    mucs.asgmt_name = lab_name;
     mucs.config.course_id = rand_course();
     mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
@@ -87,7 +87,7 @@ TEST_CASE("submission fails when a given source path", "[mucs][submit]") {
 }
 
 
-TEST_CASE("submission for homework succeeds while the lab session",
+TEST_CASE("submit for homework succeeds while the lab session",
           "[mucs][submit]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
@@ -97,7 +97,7 @@ TEST_CASE("submission for homework succeeds while the lab session",
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment = hw_name;
+    mucs.asgmt_name = hw_name;
     mucs.config.course_id = rand_course();
     mucs.config.homeworks.insert({ hw_name, dd });
     mucs.config.roster.safe_insert(user, lab_id);
@@ -134,15 +134,15 @@ TEST_CASE("submission for homework succeeds while the lab session",
 }
 
 
-TEST_CASE("submission for lab assignment while the lab session",
-          "[mucs][submit][x]") {
+TEST_CASE("submit for lab assignment while the lab session",
+          "[mucs][submit]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     string lab_name = rand_lab_asgmt_name();
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment = lab_name;
+    mucs.asgmt_name = lab_name;
     mucs.config.course_id = rand_course();
     mucs.config.lab_assignments.insert(
         RandLabAsgmt(lab_name).this_week().get());
@@ -156,7 +156,7 @@ TEST_CASE("submission for lab assignment while the lab session",
         Method(spy, copy_submission_files)
     );
 
-    SECTION("is active succeeds") {
+    SECTION("is active, succeeds") {
         mucs.config.lab_sessions.insert({
             lab_id, RandLabSesh().today().now().get()
         });
@@ -172,7 +172,7 @@ TEST_CASE("submission for lab assignment while the lab session",
         VerifyNoOtherInvocations(spy);
     }
 
-    SECTION("is not active fails") {
+    SECTION("is not active, throws") {
         LabSesh ls = RandLabSesh().today(false).now().get();
         mucs.config.lab_sessions.insert({ lab_id, ls });
 
@@ -192,7 +192,7 @@ TEST_CASE("submission cancelled by user", "[mucs][submit]") {
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment = lab_name;
+    mucs.asgmt_name = lab_name;
     mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({
         lab_id, RandLabSesh(lab_id).today().now().get() });
@@ -227,7 +227,7 @@ TEST_CASE("double submit homework too quickly", "[mucs][submit]") {
 
     Mucs mucs;
     mucs.user = user;
-    mucs.assignment = hw_name;
+    mucs.asgmt_name = hw_name;
     mucs.course = mucs.config.course_id = "1050";
     mucs.config.roster.safe_insert(user, lab_id);
     mucs.config.lab_sessions.insert({

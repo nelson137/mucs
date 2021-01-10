@@ -7,7 +7,7 @@ TEST_CASE("admin_authenticate", "[mucs][mucs-admin][admin-authenticate]") {
     mucs.config.admin_hash = picosha2::hash256_hex_string(password);
     Mock<Mucs> spy(mucs);
 
-    SECTION("fails when the entered password is incorrect") {
+    SECTION("throws when the entered password is incorrect") {
         When(Method(spy, prompt_password)).Return(rand_string());
         REQUIRE_THROWS_WITH(
             spy.get().admin_authenticate(),

@@ -298,7 +298,7 @@ struct Config {
     );
 
     /**
-     * Return an assignment whose name equals the given name.
+     * Return an assignment whose name matches the given name.
      * Throw if none is found.
      */
     const IAssignment& validate_and_get_asgmt(const string& name) const;
