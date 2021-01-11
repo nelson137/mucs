@@ -73,11 +73,6 @@ struct Mucs {
     virtual bool compile_sources() const;
 
     /**
-     * Return the username of the current UID.
-     */
-    virtual string get_user() const;
-
-    /**
      * Print prompt then get and return user input.
      *
      * Terminal attributes are set to make password entry safe, such as

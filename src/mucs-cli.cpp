@@ -2,7 +2,7 @@
 
 
 void Mucs::invoke(void (Mucs::*subcmd)()) {
-    this->user = this->get_user();
+    this->user = get_user();
     this->config = Config(Path(CONFIG_DIR) / this->course);
     this->config.validate().deserialize();
     this->config.load_roster(Path(ROSTER_DIR));

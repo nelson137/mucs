@@ -34,6 +34,15 @@ weekday get_weekday(sys_seconds tp) {
 }
 
 
+/**
+ * Uses UID instead of EUID because EUID is affected by the set-uid bit on
+ * executables.
+ */
+string get_user() {
+    return getpwuid(getuid())->pw_name;
+}
+
+
 string join_paths(string a, deque<string> parts) {
     string b = parts.front();
     parts.pop_front();

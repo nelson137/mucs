@@ -77,6 +77,11 @@ seconds get_time(sys_seconds tp = NOW);
 weekday get_weekday(sys_seconds tp = NOW);
 
 /**
+ * Return the username of the current UID.
+ */
+string get_user();
+
+/**
  * Join a and each element of parts using `/` as a delimeter.
  */
 string join_paths(string a, deque<string> parts);

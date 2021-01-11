@@ -13,15 +13,6 @@ bool Mucs::compile_sources() const {
 }
 
 
-/**
- * Uses UID instead of EUID because EUID is affected by the set-uid bit on
- * executables.
- */
-string Mucs::get_user() const {
-    return getpwuid(getuid())->pw_name;
-}
-
-
 string Mucs::prompt_password(const string& prompt) const {
     if (prompt.size())
         cout << prompt;
