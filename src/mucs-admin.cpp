@@ -14,31 +14,27 @@ void Mucs::admin_dump() {
     this->admin_authenticate();
 
     if (this->dump_flags == 0)
-        this->dump_flags =
-            DumpLabSessions | DumpHomeworks | DumpLabAssignments | DumpRoster;
+        this->dump_flags = DumpOverrides | DumpLabSessions | DumpHomeworks
+            | DumpLabAssignments | DumpRoster;
 
-    if (this->dump_flags & DumpLabSessions) {
-        cout << "Lab Sessions:" << endl;
-        print_table(this->config.lab_sessions.to_table());
-        cout << endl;
-    }
+    struct D {
+          DumpFlags flag;     const char *label;  const Tabular& model;
+    };
 
-    if (this->dump_flags & DumpLabAssignments) {
-        cout << "Lab Assignments:" << endl;
-        print_table(this->config.lab_assignments.to_table());
-        cout << endl;
-    }
+    vector<D> dumps = {
+        D{DumpOverrides,      "Overrides:",       this->config.overrides},
+        D{DumpLabSessions,    "Lab Sessions:",    this->config.lab_sessions},
+        D{DumpLabAssignments, "Lab Assignments:", this->config.lab_assignments},
+        D{DumpHomeworks,      "Homeworks:",       this->config.homeworks},
+        D{DumpRoster,         "Roster:",          this->config.roster},
+    };
 
-    if (this->dump_flags & DumpHomeworks) {
-        cout << "Homeworks:" << endl;
-        print_table(this->config.homeworks.to_table());
-        cout << endl;
-    }
-
-    if (this->dump_flags & DumpRoster) {
-        cout << "Roster:" << endl;
-        print_table(this->config.roster.to_table());
-        cout << endl;
+    for (const D& d : dumps) {
+        if (this->dump_flags & d.flag) {
+            cout << d.label << endl;
+            print_table(d.model.to_table());
+            cout << endl;
+        }
     }
 }
 

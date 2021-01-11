@@ -5,6 +5,7 @@
     "required": [
         "course_id",
         "admin_hash",
+        "overrides",
         "homeworks",
         "lab-sessions",
         "lab-assignments"
@@ -26,6 +27,66 @@
                 "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
                 "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
             ]
+        },
+
+        "overrides": {
+            "type": "object",
+            "description": "",
+            "required": ["labs", "homeworks"],
+            "properties": {
+                "labs": {
+                    "type": "array",
+                    "description": "",
+                    "items": {
+                        "type": "object",
+                        "description": "",
+                        "required": ["user", "session"],
+                        "properties": {
+                            "user": {
+                                "type": "string",
+                                "format": "user",
+                                "description": "",
+                                "examples": ["nwewnh"]
+                            },
+                            "session": {
+                                "type": "string",
+                                "format": "lab session id",
+                                "description": "",
+                                "examples": ["A", "Honors"]
+                            },
+                            "assignment": {
+                                "type": "string",
+                                "format": "lab assignment name",
+                                "description": "",
+                                "examples": ["lab1"]
+                            }
+                        }
+                    }
+                },
+                "homeworks": {
+                    "type": "array",
+                    "description": "",
+                    "items": {
+                        "type": "object",
+                        "description": "",
+                        "required": ["user", "name"],
+                        "properties": {
+                            "user": {
+                                "type": "string",
+                                "format": "user",
+                                "description": "",
+                                "examples": ["nwewnh"]
+                            },
+                            "name": {
+                                "type": "string",
+                                "format": "homework name",
+                                "description": "",
+                                "examples": ["hw1"]
+                            }
+                        }
+                    }
+                }
+            }
         },
 
         "homeworks": {

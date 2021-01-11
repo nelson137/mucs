@@ -84,6 +84,7 @@ Config& Config::validate(const Path& schema_p) {
 Config& Config::deserialize() {
     this->j_root["course_id"].get_to(this->course_id);
     this->j_root["admin_hash"].get_to(this->admin_hash);
+    this->j_root["overrides"].get_to(this->overrides);
     this->j_root["homeworks"].get_to(this->homeworks);
     this->j_root["lab-sessions"].get_to(this->lab_sessions);
     this->j_root["lab-assignments"].get_to(this->lab_assignments);
@@ -106,6 +107,18 @@ void Config::load_roster(const Path& roster_d) {
                 this->roster.safe_insert(user, lab_id);
         });
     }
+}
+
+
+void Config::apply_overrides(const string& user, const string& asgmt_name) {
+    for (const OLab& ol : this->overrides.o_labs)
+        if (ol.user == user && ol.asgmt_matches(asgmt_name))
+            this->roster.safe_get(user) = ol.session;
+
+    const Hw *hw_ptr;
+    for (const OHomework oh : this->overrides.o_homeworks)
+        if (oh.user == user && (hw_ptr = this->homeworks.find_name(oh.name)))
+            hw_ptr->override();
 }
 
 
@@ -151,6 +164,9 @@ void from_json(const json& j, Config& c) {
     if (j.contains("admin_hash"))
         j["admin_hash"].get_to(c.admin_hash);
 
+    if (j.contains("overrides"))
+        j["overrides"].get_to(c.overrides);
+
     if (j.contains("homeworks"))
         j["homeworks"].get_to(c.homeworks);
 
@@ -166,6 +182,7 @@ void to_json(json& j, const Config& c) {
     j = {
         {"course_id", c.course_id},
         {"admin_hash", c.admin_hash},
+        {"overrides", c.overrides},
         {"homeworks", c.homeworks},
         {"lab-sessions", c.lab_sessions},
         {"lab-assignments", c.lab_assignments},

@@ -17,6 +17,66 @@ TEST_CASE("hw is valid", "[hw]") {
     REQUIRE_NOTHROW(data.get<Hw>());
 }
 
+TEST_CASE("is_active returns", "[hw][is-active]") {
+    Hw hw;
+    bool ret_val;
+
+    SECTION("true when the current datetime is before duedate") {
+        NOW = sys_seconds{} + seconds(rand_int(100));
+        hw.duedate = NOW + seconds(rand_int(1, 100));
+        ret_val = true;
+    }
+
+    SECTION("false when the current datetime is after duedate") {
+        hw.duedate = sys_seconds{} + seconds(rand_int(100));
+        NOW = hw.duedate + seconds(rand_int(1, 100));
+        ret_val = false;
+    }
+
+    SECTION("false when the current datetime is the same as duedate") {
+        NOW = hw.duedate = sys_seconds{} + seconds(rand_int(100));
+        ret_val = false;
+    }
+
+    REQUIRE(hw.is_active() == ret_val);
+}
+
+
+TEST_CASE("is_active always returns true when overridden", "[hw][is-active]") {
+    Hw hw;
+    hw.duedate = sys_seconds{} + seconds(rand_int(100));
+    NOW = hw.duedate + seconds(rand_int(1, 100));
+
+    REQUIRE(hw.is_active() == false);
+    hw.override();
+    REQUIRE(hw.is_active() == true);
+}
+
+
+TEST_CASE("find_name returns nullptr when no matching Hw is found",
+          "[homeworks][find-name]") {
+    Homeworks homeworks;
+    homeworks.emplace(rand_hw_name());
+    homeworks.emplace(rand_hw_name());
+    REQUIRE(homeworks.find_name(rand_hw_name()) == nullptr);
+}
+
+
+TEST_CASE("find_name returns a pointer to the first Hw with a matching name",
+          "[homeworks][find-name]") {
+    string expected_name = rand_hw_name();
+
+    Homeworks homeworks;
+    homeworks.emplace(rand_hw_name());
+    homeworks.emplace(expected_name);
+    homeworks.emplace(rand_hw_name());
+
+    const Hw *found = homeworks.find_name(expected_name);
+
+    REQUIRE(found != nullptr);
+    REQUIRE(found->name == expected_name);
+}
+
 
 TEST_CASE("serialize hw", "[homeworks][serialize]") {
     string name = rand_hw_name();

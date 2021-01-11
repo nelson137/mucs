@@ -1,6 +1,12 @@
 {
     "course_id": "1050",
     "admin_hash": "!",
+    "overrides": {
+        "labs": [
+        ],
+        "homeworks": [
+        ]
+    },
     "homeworks": [
         { "name": "hw1", "duedate": "2020-08-31 10:00:00" }
     ],

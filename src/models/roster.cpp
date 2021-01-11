@@ -19,6 +19,11 @@ const string& Roster::safe_get(const string& user) const {
 }
 
 
+string& Roster::safe_get(const string& user) {
+    return const_cast<string&>(const_cast<const Roster*>(this)->safe_get(user));
+}
+
+
 list<vector<string>> Roster::to_table() const {
     list<vector<string>> table;
     for (auto it=this->begin(); it!=this->end(); it++) {

@@ -72,6 +72,16 @@ struct Hw : public IAssignment {
 
     sys_seconds duedate;
 
+    /**
+     * Whether duedate should be ignored when is_active() is called.
+     * Note: This must be mutable because Hw objects live in a Homeworks object
+     *   which is an ordered set. This means that set::find() calls will return
+     *   an iterator to const elements because a mutation might make the
+     *   elements out of order. This field doesn't affect ordering so it is
+     *   mutable to subvert the constness.
+     */
+    mutable bool is_overridden = false;
+
     Hw();
     Hw(string n);
     Hw(string n, sys_seconds dd);
@@ -79,9 +89,26 @@ struct Hw : public IAssignment {
     inline AType type() const { return IAssignment::Asgmt_Hw; }
 
     struct compare {
+        /**
+         * Return whether a is ordered before b.
+         * Primary sort key: duedate
+         * Secondary sort key: name
+         */
         bool operator()(const Hw& a, const Hw& b) const;
     };
 
+    /**
+     * Enable duedate override for this assignment.
+     *
+     * This causes is_active() to always return true.
+     */
+    void override() const;
+
+    /**
+     * Return whether the current datetime is before duedate.
+     *
+     * If is_overridden is true, then true is always returned.
+     */
     bool is_active() const override;
 
     friend void from_json(const json& j, Hw& hw);
@@ -93,6 +120,11 @@ struct Hw : public IAssignment {
 struct Homeworks : public set<Hw, Hw::compare>, public Tabular {
 
     using set<Hw, Hw::compare>::set;
+
+    /**
+     * Return the first Hw element whose name matches name, otherwise nullptr.
+     */
+    const Hw *find_name(const string& name) const;
 
     list<vector<string>> to_table() const override;
 
@@ -232,8 +264,73 @@ struct Roster : public map<string, string>, public Tabular {
      * Throw if user is not found.
      */
     const string& safe_get(const string& user) const;
+    string& safe_get(const string& user);
 
     list<vector<string>> to_table() const override;
+
+};
+
+
+/*************************************************
+ * Overrides
+ ************************************************/
+
+
+struct OLab {
+
+    string user;
+
+    string session;
+
+    string *asgmt = nullptr;
+
+    OLab();
+    OLab(const OLab& other);
+    OLab(string u, string s);
+    OLab(string u, string s, const string& a_name);
+    ~OLab();
+
+    OLab& operator=(const OLab& o);
+
+    /**
+     * Return whether a user's lab session should be overridden for asgmt_name.
+     *
+     * If asgmt is nullptr then always return true, otherwise return whether
+     * it matches asgmt_name.
+     */
+    bool asgmt_matches(const string& asgmt_name) const;
+
+    friend void from_json(const json& j, OLab& o_lab);
+    friend void to_json(json& j, const OLab& o_lab);
+
+};
+
+
+struct OHomework {
+
+    string user;
+
+    string name;
+
+    OHomework();
+    OHomework(string u, string n);
+
+    friend void from_json(const json& j, OHomework& o_homework);
+    friend void to_json(json& j, const OHomework& o_homework);
+
+};
+
+
+struct Overrides : public Tabular {
+
+    list<OLab> o_labs;
+
+    list<OHomework> o_homeworks;
+
+    list<vector<string>> to_table() const;
+
+    friend void from_json(const json& j, Overrides& overrides);
+    friend void to_json(json& j, const Overrides& overrides);
 
 };
 
@@ -253,6 +350,8 @@ struct Config {
     string course_id;
 
     string admin_hash;
+
+    Overrides overrides;
 
     LabSessions lab_sessions;
     LabAssignments lab_assignments;
@@ -284,6 +383,14 @@ struct Config {
      * Populate the roster data member from the files in the given directory.
      */
     void load_roster(const Path& roster_d);
+
+    /**
+     * Update roster and homeworks according to the rules defined by overrides.
+     *
+     * Lab overrides will change the lab session assigned to a user in roster.
+     * Homework overrides will make Hw duedates ignored.
+     */
+    void apply_overrides(const string& user, const string& asgmt_name);
 
     /**
      * Return an error message of the config filename and path to the invalid

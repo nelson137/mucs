@@ -17,13 +17,40 @@ Hw::Hw(string n, sys_seconds dd) : Hw(n) {
 }
 
 
+/**
+ * Using name as a secondary sort key makes sure that emplace calls succeed when
+ * no duedate is passed. If sorting was done only by duedate, then multiple
+ * successive emplace calls, passed only a name, would consider the constructed
+ * objects to be equivalent to the first because they would all have a duedate
+ * of 0, despite having different names. Also sorting by name fixes this.
+ */
 bool Hw::compare::operator()(const Hw& a, const Hw& b) const {
-    return a.duedate < b.duedate;
+    return a.duedate != b.duedate
+        ? a.duedate < b.duedate
+        : a.name < b.name;
+}
+
+
+void Hw::override() const {
+    this->is_overridden = true;
 }
 
 
 bool Hw::is_active() const {
-    return NOW < this->duedate;
+    return this->is_overridden || NOW < this->duedate;
+}
+
+
+const Hw *Homeworks::find_name(const string& name) const {
+    auto it = stl_find_if(*this, [&] (const Hw& hw) {
+        return hw.name == name;
+    });
+    /**
+     * Why use `&*`: A const_iterator cannot be cast to a pointer, so
+     *   dereference the iterator (*) to get a const reference then get the
+     *   object's address (&).
+     */
+    return it == this->end() ? nullptr : &*it;
 }
 
 

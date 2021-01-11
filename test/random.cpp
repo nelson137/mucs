@@ -57,19 +57,22 @@ string rand_string(const int size, const chars_t& chars) {
 }
 
 
-json new_config_data(json j) {
-    auto default_val = [&] (const string& key, const json& val) {
-        if (j.count(key) == 0)
+json new_config_data(json root) {
+    auto default_val = [] (json& j, const string& key, const json& val) {
+        if (not j.contains(key))
             j[key] = val;
     };
 
-    default_val("course_id", rand_string(4));
-    default_val("admin_hash", "!");
-    default_val("homeworks", json::array());
-    default_val("lab-sessions", json::array());
-    default_val("lab-assignments", json::array());
+    default_val(root, "course_id", rand_string(4));
+    default_val(root, "admin_hash", "!");
+    default_val(root, "overrides", json::object());
+    default_val(root["overrides"], "labs", json::array());
+    default_val(root["overrides"], "homeworks", json::array());
+    default_val(root, "homeworks", json::array());
+    default_val(root, "lab-sessions", json::array());
+    default_val(root, "lab-assignments", json::array());
 
-    return j;
+    return root;
 }
 
 

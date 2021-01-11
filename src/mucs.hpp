@@ -37,10 +37,11 @@ struct Mucs {
     vector<Path> sources;
 
     enum DumpFlags {
-        DumpLabSessions    = 1 << 0,
-        DumpLabAssignments = 1 << 1,
-        DumpHomeworks      = 1 << 2,
-        DumpRoster         = 1 << 3,
+        DumpOverrides      = 1 << 0,
+        DumpLabSessions    = 1 << 1,
+        DumpLabAssignments = 1 << 2,
+        DumpHomeworks      = 1 << 3,
+        DumpRoster         = 1 << 4,
     };
 
     int dump_flags = 0;

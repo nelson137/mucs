@@ -2,10 +2,15 @@
 
 
 void Mucs::submit() {
-    LabSesh lab_sesh = config.validate_and_get_lab(this->user);
+    this->config.apply_overrides(this->user, this->asgmt_name);
+
+    // Make sure "Student not in course" error is first
+    this->config.roster.safe_get(this->user);
 
     const IAssignment& asgmt =
-        config.validate_and_get_asgmt(this->asgmt_name);
+        this->config.validate_and_get_asgmt(this->asgmt_name);
+    const LabSesh& lab_sesh = this->config.validate_and_get_lab(this->user);
+
     if (not asgmt.is_active())
         throw mucs_exception(
             "Submission window is closed for assignment: " + asgmt.name);
