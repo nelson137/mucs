@@ -27,7 +27,7 @@ done
 # No targets given
 # Default to C++ source and test directories
 (( ${#TARGETS[@]} == 0 )) &&
-    TARGETS=( src test libmucs/{include/mucs,src} )
+    TARGETS=( src test )
 
 pushd "$PROJ" >/dev/null
 
