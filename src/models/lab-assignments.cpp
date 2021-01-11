@@ -74,7 +74,18 @@ void from_json(const json& j, LabAsgmt& la) {
             {"lab-assignments", name});
     };
 
-    year_month_day ymd;
+    /**
+     * Explicitly zero-initialize this variable so that it is invalid. The
+     * fields will be y_=0, m_=0, and d_=0; m_ and d_ are invalid in this case.
+     *
+     * If declared as `year_month_day ymd;` its members will be uninitialized
+     * which could result in a valid date. Then, if parsing the "week" key
+     * with invalid data that doesn't modify ymd, the uninitialized data could
+     * erroneously pass undetected, causing a flickering test (and possibly
+     * weird behavior).
+     */
+    year_month_day ymd{};
+
     // Parses as "YEAR MONTH_ABREV DAY" but DAY will be used as a week index
     istringstream(j["week"].get<string>()) >> parse("%Y %b %d", ymd);
     if (not ymd.ok())
