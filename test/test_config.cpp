@@ -172,34 +172,40 @@ TEST_CASE("apply_overrides throws when user isn't in roster",
 }
 
 
-TEST_CASE("apply_overrides for lab overrides", "[config][apply-overrides]") {
+TEST_CASE("apply_overrides correctly updates the roster "
+              "for lab overrides with no assignment",
+          "[config][apply-overrides]") {
     string user = rand_user();
     string orig_lab_id = rand_lab_sesh_id();
     string new_lab_id = rand_lab_sesh_id();
+    string current_asgmt_name = rand_lab_asgmt_name();
 
-    string asgmt_name;
-    string expected_lab_id;
     Config config;
     config.roster[user] = orig_lab_id;
 
-    SECTION("with no assignment, correctly updates the roster") {
-        asgmt_name = "";
-        config.overrides.o_labs.emplace_back(user, new_lab_id);
-        expected_lab_id = new_lab_id;
-    }
+    config.overrides.o_labs.emplace_back(user, new_lab_id);
 
-    SECTION("with a matching assignment, correctly updates the roster") {
-        asgmt_name = rand_lab_asgmt_name();
-        config.overrides.o_labs.emplace_back(user, new_lab_id, asgmt_name);
-        expected_lab_id = new_lab_id;
-    }
+    REQUIRE(config.roster.count(user) == 1);
+    REQUIRE(config.roster.at(user) == orig_lab_id);
 
-    SECTION("with a non-matching assignment, does nothing") {
-        asgmt_name = rand_lab_asgmt_name();
-        config.overrides.o_labs.emplace_back(
-            user, new_lab_id, rand_lab_asgmt_name());
-        expected_lab_id = orig_lab_id;
-    }
+    REQUIRE_NOTHROW(config.apply_overrides(user, current_asgmt_name));
+
+    REQUIRE(config.roster.count(user) == 1);
+    REQUIRE(config.roster.at(user) == new_lab_id);
+}
+
+
+TEST_CASE("apply_overrides correctly updates the roster "
+              "for lab overrides with a matching assignment",
+          "[config][apply-overrides]") {
+    string user = rand_user();
+    string orig_lab_id = rand_lab_sesh_id();
+    string new_lab_id = rand_lab_sesh_id();
+    string asgmt_name = rand_lab_asgmt_name();
+
+    Config config;
+    config.roster[user] = orig_lab_id;
+    config.overrides.o_labs.emplace_back(user, new_lab_id, asgmt_name);
 
     REQUIRE(config.roster.count(user) == 1);
     REQUIRE(config.roster.at(user) == orig_lab_id);
@@ -207,7 +213,30 @@ TEST_CASE("apply_overrides for lab overrides", "[config][apply-overrides]") {
     REQUIRE_NOTHROW(config.apply_overrides(user, asgmt_name));
 
     REQUIRE(config.roster.count(user) == 1);
-    REQUIRE(config.roster.at(user) == expected_lab_id);
+    REQUIRE(config.roster.at(user) == new_lab_id);
+}
+
+
+TEST_CASE("apply_overrides does nothing "
+              "for lab overrides with a non-matching assignment",
+          "[config][apply-overrides]") {
+    string user = rand_user();
+    string orig_lab_id = rand_lab_sesh_id();
+    string new_lab_id = rand_lab_sesh_id();
+    string override_asgmt_name = rand_lab_asgmt_name();
+    string current_asgmt_name = rand_lab_asgmt_name();
+
+    Config config;
+    config.roster[user] = orig_lab_id;
+    config.overrides.o_labs.emplace_back(user, new_lab_id, override_asgmt_name);
+
+    REQUIRE(config.roster.count(user) == 1);
+    REQUIRE(config.roster.at(user) == orig_lab_id);
+
+    REQUIRE_NOTHROW(config.apply_overrides(user, current_asgmt_name));
+
+    REQUIRE(config.roster.count(user) == 1);
+    REQUIRE(config.roster.at(user) == orig_lab_id);
 }
 
 
@@ -263,22 +292,26 @@ TEST_CASE("validate_and_get_assignment returns the matching lab assignment",
 }
 
 
-TEST_CASE("validate_and_get_lab", "[config][validate-and-get-lab]") {
+TEST_CASE("validate_and_get_lab throws when the lab is invalid",
+          "[config][validate-and-get-lab]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     Config config;
     config.roster[user] = lab_id;
+    REQUIRE_THROWS_WITH(
+        config.validate_and_get_lab(user),
+        "Student '" + user + "' has invalid lab: " + lab_id
+    );
+}
 
-    SECTION("throws when the lab is invalid") {
-        REQUIRE_THROWS_WITH(
-            config.validate_and_get_lab(user),
-            "Student '" + user + "' has invalid lab: " + lab_id
-        );
-    }
 
-    SECTION("returns the LabSesh assigned to the given user") {
-        auto expected_ls = RandLabSesh(lab_id).today().now(true).get();
-        config.lab_sessions.insert({ lab_id, expected_ls });
-        REQUIRE(config.validate_and_get_lab(user).id == lab_id);
-    }
+TEST_CASE("validate_and_get_lab returns the LabSesh assigned to the given user",
+          "[config][validate-and-get-lab]") {
+    string user = rand_user();
+    string lab_id = rand_lab_sesh_id();
+    Config config;
+    config.roster[user] = lab_id;
+    auto expected_ls = RandLabSesh(lab_id).today().now(true).get();
+    config.lab_sessions.insert({ lab_id, expected_ls });
+    REQUIRE(config.validate_and_get_lab(user).id == lab_id);
 }

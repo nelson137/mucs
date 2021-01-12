@@ -64,6 +64,7 @@ public:
 /**
  * Define some useful character classes.
  */
+static chars_t chars_whitespace(" \t\n");
 static chars_t chars_lower("abcdefghijklmnopqrstuvwxyz");
 static chars_t chars_upper("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 static chars_t chars_nums("0123456789");

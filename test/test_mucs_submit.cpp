@@ -37,7 +37,6 @@ TEST_CASE("submit throws when the submission window is closed",
 
 
 TEST_CASE("submit throws when a given source path", "[mucs][submit]") {
-    string src_fn, err_msg;
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     string lab_name = rand_lab_asgmt_name();
@@ -54,7 +53,6 @@ TEST_CASE("submit throws when a given source path", "[mucs][submit]") {
         RandLabAsgmt(lab_name).this_week(true).get());
 
     Mock<Mucs> spy(mucs);
-    bool compile_ret = true;
     When(Method(spy, prompt_yesno)).AlwaysReturn(true);
     Fake(
         Method(spy, submit_summary),
@@ -62,28 +60,33 @@ TEST_CASE("submit throws when a given source path", "[mucs][submit]") {
     );
 
     SECTION("doesn't exist") {
-        src_fn = rand_filename();
-        err_msg = "Source file does not exist: " + src_fn;
+        string src_fn = rand_filename();
+        mucs.sources = { Path(src_fn) };
+        When(Method(spy, compile_sources)).AlwaysReturn(true);
+        REQUIRE_THROWS_WITH(
+            spy.get().submit(),
+            "Source file does not exist: " + src_fn
+        );
     }
 
     SECTION("is a directory") {
-        src_fn = "/home";
-        err_msg = "Cannot submit directories: /home";
+        string src_fn = "/home";
+        mucs.sources = { Path(src_fn) };
+        When(Method(spy, compile_sources)).AlwaysReturn(true);
+        REQUIRE_THROWS_WITH(
+            spy.get().submit(),
+            "Cannot submit directories: /home"
+        );
     }
 
     SECTION("doesn't compile") {
-        src_fn = "/usr/bin/sudo";
-        err_msg = "Program doesn't compile";
-        compile_ret = false;
+        mucs.sources = { Path("/usr/bin/sudo") };
+        When(Method(spy, compile_sources)).AlwaysReturn(false);
+        REQUIRE_THROWS_WITH(
+            spy.get().submit(),
+            "Program doesn't compile"
+        );
     }
-
-    When(Method(spy, compile_sources)).AlwaysReturn(compile_ret);
-    mucs.sources = { Path(src_fn) };
-
-    REQUIRE_THROWS_WITH(
-        spy.get().submit(),
-        err_msg
-    );
 }
 
 
@@ -102,40 +105,45 @@ TEST_CASE("submit for homework succeeds while the lab session",
     mucs.config.homeworks.insert({ hw_name, dd });
     mucs.config.roster.safe_insert(user, lab_id);
 
+    auto finish_test_from_section = [&] (const string& section) {
+        Mock<Mucs> spy(mucs);
+        When(Method(spy, prompt_yesno)).AlwaysReturn(true);
+        When(Method(spy, compile_sources)).AlwaysReturn(true);
+        Fake(
+            Method(spy, submit_summary),
+            Method(spy, copy_submission_files)
+        );
+
+        INFO("\rFROM SECTION " + section + ":");
+
+        REQUIRE_NOTHROW(spy.get().submit());
+
+        Verify(
+            Method(spy, compile_sources)
+            + Method(spy, submit_summary)
+            + Method(spy, prompt_yesno)
+            + Method(spy, copy_submission_files)
+        ).Once();
+        VerifyNoOtherInvocations(spy);
+    };
+
     SECTION("is active") {
         mucs.config.lab_sessions.insert({
             lab_id, RandLabSesh().today().now().get()
         });
+        finish_test_from_section("1");
     }
 
     SECTION("is not active") {
         mucs.config.lab_sessions.insert({
             lab_id, RandLabSesh().today(false).now().get()
         });
+        finish_test_from_section("2");
     }
-
-    Mock<Mucs> spy(mucs);
-    When(Method(spy, prompt_yesno)).AlwaysReturn(true);
-    When(Method(spy, compile_sources)).AlwaysReturn(true);
-    Fake(
-        Method(spy, submit_summary),
-        Method(spy, copy_submission_files)
-    );
-
-    REQUIRE_NOTHROW(spy.get().submit());
-
-    Verify(
-        Method(spy, compile_sources)
-        + Method(spy, submit_summary)
-        + Method(spy, prompt_yesno)
-        + Method(spy, copy_submission_files)
-    ).Once();
-    VerifyNoOtherInvocations(spy);
 }
 
 
-TEST_CASE("submit for lab assignment while the lab session",
-          "[mucs][submit]") {
+TEST_CASE("submit for lab assignment", "[mucs][submit]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     string lab_name = rand_lab_asgmt_name();
@@ -156,7 +164,7 @@ TEST_CASE("submit for lab assignment while the lab session",
         Method(spy, copy_submission_files)
     );
 
-    SECTION("is active, succeeds") {
+    SECTION("succeeds when the lab session is active") {
         mucs.config.lab_sessions.insert({
             lab_id, RandLabSesh().today().now().get()
         });
@@ -172,7 +180,7 @@ TEST_CASE("submit for lab assignment while the lab session",
         VerifyNoOtherInvocations(spy);
     }
 
-    SECTION("is not active, throws") {
+    SECTION("throws when the lab session is not active") {
         LabSesh ls = RandLabSesh().today(false).now().get();
         mucs.config.lab_sessions.insert({ lab_id, ls });
 

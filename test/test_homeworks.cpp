@@ -17,28 +17,31 @@ TEST_CASE("hw is valid", "[hw]") {
     REQUIRE_NOTHROW(data.get<Hw>());
 }
 
-TEST_CASE("is_active returns", "[hw][is-active]") {
+
+TEST_CASE("is_active returns true when the current datetime is before duedate",
+          "[hw][is-active]") {
     Hw hw;
-    bool ret_val;
+    NOW = sys_seconds{} + seconds(rand_int(100));
+    hw.duedate = NOW + seconds(rand_int(1, 100));
+    REQUIRE(hw.is_active() == true);
+}
 
-    SECTION("true when the current datetime is before duedate") {
-        NOW = sys_seconds{} + seconds(rand_int(100));
-        hw.duedate = NOW + seconds(rand_int(1, 100));
-        ret_val = true;
-    }
 
-    SECTION("false when the current datetime is after duedate") {
-        hw.duedate = sys_seconds{} + seconds(rand_int(100));
-        NOW = hw.duedate + seconds(rand_int(1, 100));
-        ret_val = false;
-    }
+TEST_CASE("is_active returns false when the current datetime is after duedate",
+          "[hw][is-active]") {
+    Hw hw;
+    hw.duedate = sys_seconds{} + seconds(rand_int(100));
+    NOW = hw.duedate + seconds(rand_int(1, 100));
+    REQUIRE(hw.is_active() == false);
+}
 
-    SECTION("false when the current datetime is the same as duedate") {
-        NOW = hw.duedate = sys_seconds{} + seconds(rand_int(100));
-        ret_val = false;
-    }
 
-    REQUIRE(hw.is_active() == ret_val);
+TEST_CASE("is_active returns false when the current datetime is the same as "
+              "duedate",
+          "[hw][is-active]") {
+    Hw hw;
+    NOW = hw.duedate = sys_seconds{} + seconds(rand_int(100));
+    REQUIRE(hw.is_active() == false);
 }
 
 

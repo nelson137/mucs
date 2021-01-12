@@ -13,15 +13,16 @@ TEST_CASE("admin_authenticate", "[mucs][mucs-admin][admin-authenticate]") {
             spy.get().admin_authenticate(),
             "Password incorrect"
         );
+        Verify(Method(spy, prompt_password)).Once();
+        VerifyNoOtherInvocations(spy);
     }
 
     SECTION("succeeds when the entered password is correct") {
         When(Method(spy, prompt_password)).Return(password);
         REQUIRE_NOTHROW(spy.get().admin_authenticate());
+        Verify(Method(spy, prompt_password)).Once();
+        VerifyNoOtherInvocations(spy);
     }
-
-    Verify(Method(spy, prompt_password)).Once();
-    VerifyNoOtherInvocations(spy);
 }
 
 
@@ -62,6 +63,7 @@ TEST_CASE("subcommand admin update-password", "[mucs][mucs-admin]") {
             + Method(spy, prompt_password)
             + Method(spy, prompt_password)
         ).Once();
+        VerifyNoOtherInvocations(spy);
     }
 
     SECTION("new passwords match") {
@@ -76,7 +78,6 @@ TEST_CASE("subcommand admin update-password", "[mucs][mucs-admin]") {
             + Method(spy, prompt_password)
             + Method(spy, update_config_admin_hash)
         ).Once();
+        VerifyNoOtherInvocations(spy);
     }
-
-    VerifyNoOtherInvocations(spy);
 }
