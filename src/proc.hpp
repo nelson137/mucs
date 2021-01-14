@@ -6,7 +6,7 @@
 #include <cctype>
 #include <cstring>
 #include <initializer_list>
-#include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
 

@@ -1,13 +1,13 @@
 #include "proc.hpp"
 
 
-static bool read_fd(int fd, string& dest) {
-    static char buff[256];
+static bool read_fd(int fd, ostringstream& dest) {
+    static char buff[4096];
     int count;
 
     while ((count = read(fd, buff, sizeof(buff)-1)) > 0) {
         buff[count] = '\0';
-        dest += buff;
+        dest << buff;
     }
 
     return count == 0;
@@ -90,7 +90,7 @@ Proc::Ret Proc::execute() {
 
     pid_t pid;
     int code = 0;
-    string out, err;
+    ostringstream out, err;
 
     if ((pid = fork()) < 0) {
         throw mucs_exception("Unable to fork");
@@ -126,5 +126,5 @@ Proc::Ret Proc::execute() {
         close(pipe_err[PARENT]);
     }
 
-    return Ret{code, out, err};
+    return Ret{code, out.str(), err.str()};
 }
