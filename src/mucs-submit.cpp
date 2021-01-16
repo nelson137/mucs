@@ -36,8 +36,6 @@ void Mucs::submit() {
     bool compiles = this->compile_sources();
 
     this->submit_summary(lab_sesh, asgmt.name, in_submit_window, compiles);
-    if (this->prompt_yesno("Are you sure you want to submit [y/n]? ") == false)
-        throw mucs_exception("Submission cancelled");
 
     // SUBMIT_DIR/COURSE/LAB/ASSIGNMENT
     Path asgmt_d = Path(SUBMIT_DIR) / this->course / lab_sesh / asgmt.name;

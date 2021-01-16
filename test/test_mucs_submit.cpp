@@ -38,7 +38,6 @@ TEST_CASE("submit throws", "[mucs][submit]") {
     SECTION("when a given source path doesn't exist") {
         string src_fn = rand_filename();
         mucs.sources = { Path(src_fn) };
-        When(Method(spy, prompt_yesno)).AlwaysReturn(true);
         REQUIRE_THROWS_WITH(
             spy.get().submit(),
             "Source file does not exist: " + src_fn
@@ -48,18 +47,9 @@ TEST_CASE("submit throws", "[mucs][submit]") {
     SECTION("when a given source path is a directory") {
         string src_fn = "/bin";
         mucs.sources = { Path(src_fn) };
-        When(Method(spy, prompt_yesno)).AlwaysReturn(true);
         REQUIRE_THROWS_WITH(
             spy.get().submit(),
             "Cannot submit directories: " + src_fn
-        );
-    }
-
-    SECTION("when cancelled by user") {
-        When(Method(spy, prompt_yesno)).AlwaysReturn(false);
-        REQUIRE_THROWS_WITH(
-            spy.get().submit(),
-            "Submission cancelled"
         );
     }
 }
@@ -117,7 +107,6 @@ TEST_CASE("submit succeeds", "[mucs][submit]") {
     });
 
     Mock<Mucs> spy(mucs);
-    When(Method(spy, prompt_yesno)).AlwaysReturn(true);
     When(Method(spy, compile_sources)).AlwaysReturn(compiles);
     Fake(Method(spy, submit_summary));
     /**
@@ -143,7 +132,6 @@ TEST_CASE("submit succeeds", "[mucs][submit]") {
 
     Verify(Method(spy, compile_sources)).Once();
     Verify(Method(spy, submit_summary)).Once();
-    Verify(Method(spy, prompt_yesno)).Once();
     Verify(Method(spy, copy_submission_files)).Once();
     VerifyNoOtherInvocations(spy);
 }
@@ -168,7 +156,6 @@ TEST_CASE("double submit homework too quickly", "[mucs][submit]") {
     mucs.config.homeworks.insert({ hw_name, dd });
 
     Mock<Mucs> spy(mucs);
-    When(Method(spy, prompt_yesno)).AlwaysReturn(true);
     When(Method(spy, compile_sources)).AlwaysReturn(true);
     Fake(
         Method(spy, submit_summary),
@@ -182,6 +169,5 @@ TEST_CASE("double submit homework too quickly", "[mucs][submit]") {
 
     Verify(Method(spy, compile_sources)).Once();
     Verify(Method(spy, submit_summary)).Once();
-    Verify(Method(spy, prompt_yesno)).Once();
     VerifyNoOtherInvocations(spy);
 }

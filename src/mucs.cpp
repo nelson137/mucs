@@ -40,17 +40,6 @@ string Mucs::prompt_password(const string& prompt) const {
 }
 
 
-bool Mucs::prompt_yesno(const string& prompt) const {
-    if (prompt.size())
-        cout << prompt;
-    string response;
-    cin >> response;
-    cout << endl;
-    stl_transform(response, ::tolower);
-    return string_strip(response)[0] == 'y';
-}
-
-
 void Mucs::submit_summary(
     const LabSesh& lab,
     const string& asgmt_name,

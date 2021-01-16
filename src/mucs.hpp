@@ -81,13 +81,6 @@ struct Mucs {
     virtual string prompt_password(const string& prompt) const;
 
     /**
-     * Print prompt and return true if the user entered yes, otherwise false.
-     *
-     * Any input that begins with a 'Y' or 'y' is considered to be a yes.
-     */
-    virtual bool prompt_yesno(const string& prompt) const;
-
-    /**
      * Print a summary of the pending submission.
      *
      * The summary includes:
