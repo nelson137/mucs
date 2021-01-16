@@ -51,14 +51,28 @@ bool Mucs::prompt_yesno(const string& prompt) const {
 }
 
 
-void Mucs::submit_summary(const LabSesh& lab, const string& asgmt_name) const {
+void Mucs::submit_summary(
+    const LabSesh& lab,
+    const string& asgmt_name,
+    bool in_submit_window,
+    bool compiles
+) const {
     int w = get_term_width() * TERM_WIDTH_COEFF;
     const string spacer = string(min(w, 80), '=');
 
-    #define W_GREEN(x) rang::fg::green << x << rang::fg::reset
+    auto color = rang::fg::green;
+    if (not in_submit_window) color = rang::fg::yellow;
+    else if (not compiles)    color = rang::fg::red;
+    #define W_COLOR(x) color << x << rang::fg::reset
     #define W_BOLD(x) rang::style::bold << x << rang::style::reset
 
-    cout << W_GREEN(spacer) << endl;
+    cout << W_COLOR(spacer) << endl;
+    if (not compiles)
+    cout << "Note       : "
+         << W_BOLD("COMPILATION FAILS, WON'T BE GRADED") << endl;
+    if (not in_submit_window)
+    cout << "Note       : "
+         << W_BOLD("OUTSIDE SUBMISSION WINDOW, WON'T BE GRADED") << endl;
     cout << "Course     : " << W_BOLD(course) << endl;
     cout << "Lab        : " << W_BOLD(lab) << endl;
     cout << "Assignment : " << W_BOLD(asgmt_name) << endl;
@@ -67,9 +81,9 @@ void Mucs::submit_summary(const LabSesh& lab, const string& asgmt_name) const {
     for (const Path& s : this->sources)
         cout << ' ' << s.str();
     cout << endl;
-    cout << W_GREEN(spacer) << endl;
+    cout << W_COLOR(spacer) << endl;
 
-    #undef W_GREEN
+    #undef W_COLOR
     #undef W_BOLD
 }
 

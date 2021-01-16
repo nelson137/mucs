@@ -91,6 +91,7 @@ struct Mucs {
      * Print a summary of the pending submission.
      *
      * The summary includes:
+     *   - A notice if the submission is late or doesn't compile
      *   - The course
      *   - The lab id
      *   - The assignment name
@@ -99,7 +100,9 @@ struct Mucs {
      */
     virtual void submit_summary(
         const LabSesh& lab,
-        const string& asgmt_name
+        const string& asgmt_name,
+        bool in_submit_window,
+        bool compiles
     ) const;
 
     /**
@@ -119,13 +122,17 @@ struct Mucs {
     /**
      * Submit the files, create any necessary directories and copy the files.
      *
+     * If create_link is true then create a relative symbolic link in asgmt_d
+     * to submit_d_rel.
+     *
      * This logic is separate from Mucs::submit() so it can be stubbed in tests
      * so that they run faster and any potential dangerous write-to-disk
      * operations are not performed.
      */
     virtual void copy_submission_files(
         const Path& asgmt_d,
-        const Path& submit_d_rel
+        const Path& submit_d_rel,
+        bool create_link
     ) const;
 
     // Admin Subcommand : mucs-admin.cpp
