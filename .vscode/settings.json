@@ -4,9 +4,12 @@
     "files.trimFinalNewlines": true,
     "files.insertFinalNewline": true,
     "files.exclude": {
-        "/**": true
+        "/**": true,
+        "**/.git": true
     },
     "files.associations": {
         "**/config.d/*": "json"
-    }
+    },
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 500
 }

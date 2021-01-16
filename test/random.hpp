@@ -143,7 +143,8 @@ private:
     LabSesh ls;
 
 public:
-    RandLabSesh(const string& id = rand_lab_sesh_id());
+    RandLabSesh();
+    RandLabSesh(const string& id);
 
     /**
      * Set whether the LabSesh is active for the current weekday.

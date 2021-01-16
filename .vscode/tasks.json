@@ -31,7 +31,7 @@
             "group": "build",
             "type": "process",
             "command": "/usr/bin/make",
-            "args": ["-j7", "DEBUG=1", "MUCS_ROOT=test_root"],
+            "args": ["-j7", "DEBUG=1", "MUCS_ROOT=my_root"],
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"

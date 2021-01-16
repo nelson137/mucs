@@ -32,7 +32,7 @@ ostream& operator<<(ostream& os, const chars_t& cc) {
 
 
 char rand_char(const chars_t& chars) {
-    return chars[rand_int(chars.size()-1)];
+    return chars[rand_int(chars.size())];
 }
 
 
@@ -127,6 +127,10 @@ string rand_string_digits(int n) {
 
 string rand_user() {
     return "user" + rand_string_digits(4);
+}
+
+
+RandLabSesh::RandLabSesh() {
 }
 
 

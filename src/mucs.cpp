@@ -68,19 +68,14 @@ void Mucs::submit_summary(
 
     cout << W_COLOR(spacer) << endl;
     if (not compiles)
-    cout << "Note       : "
-         << W_BOLD("COMPILATION FAILS, WON'T BE GRADED") << endl;
+    cout << "Note       : " << W_BOLD("COMPILATION FAILS") << endl;
     if (not in_submit_window)
-    cout << "Note       : "
-         << W_BOLD("OUTSIDE SUBMISSION WINDOW, WON'T BE GRADED") << endl;
-    cout << "Course     : " << W_BOLD(course) << endl;
+    cout << "Note       : " << W_BOLD("OUTSIDE SUBMISSION WINDOW") << endl;
+    cout << "Course     : " << W_BOLD(this->course) << endl;
     cout << "Lab        : " << W_BOLD(lab) << endl;
     cout << "Assignment : " << W_BOLD(asgmt_name) << endl;
     cout << "User       : " << W_BOLD(this->user) << endl;
-    cout << "Files      :";
-    for (const Path& s : this->sources)
-        cout << ' ' << s.str();
-    cout << endl;
+    cout << "Files      : " << W_BOLD(stl_join(this->sources, ", ")) << endl;
     cout << W_COLOR(spacer) << endl;
 
     #undef W_COLOR

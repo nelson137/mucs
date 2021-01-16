@@ -77,10 +77,6 @@ clean:
 	rm -rf $(EXE) $(TEST_EXE) build
 .PHONY: clean
 
-wipe: clean
-	rm -rf test_root/submissions
-.PHONY: wipe
-
 build_dirs:
 	@mkdir -p build/src/models build/test
 .PHONY: build_dirs

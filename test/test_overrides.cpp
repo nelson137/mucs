@@ -40,7 +40,7 @@ TEST_CASE("OLab objects correctly serialize", "[olab][serialize]") {
 }
 
 
-TEST_CASE("OHomeworks objects correctly serialize", "[ohomeworks][serialize]") {
+TEST_CASE("OHomework objects correctly serialize", "[ohomework][serialize]") {
     string user = rand_user();
     string name = rand_hw_name();
     OHomework o_hw(user, name);
@@ -50,22 +50,6 @@ TEST_CASE("OHomeworks objects correctly serialize", "[ohomeworks][serialize]") {
 
 
 TEST_CASE("Overrides objects correctly serialize", "[overrides][serialize]") {
-    string user = rand_user();
-    string lab_id = rand_lab_sesh_id();
-    string hw_name = rand_hw_name();
-
-    Overrides overrides;
-    overrides.o_labs.emplace_back(user, lab_id);
-    overrides.o_homeworks.emplace_back(user, hw_name);
-
-    json expected = {
-        {"labs", {
-            { {"user", user}, {"session", lab_id} }
-        }},
-        {"homeworks", {
-            { {"user", user}, {"name", hw_name} }
-        }}
-    };
-
-    REQUIRE(json(overrides) == expected);
+    json expected = { {"labs", json::array()}, {"homeworks", json::array()} };
+    REQUIRE(json(Overrides()) == expected);
 }

@@ -13,8 +13,8 @@ TEST_CASE("join_paths correctly joins arguments", "[util][join_paths]") {
 
     SECTION("the joining slash is already part of >=1 of the args") {
         string expected = "a/b";
-        REQUIRE(join_paths("a", "/b") == expected);
-        REQUIRE(join_paths("a/", "b") == expected);
+        REQUIRE(join_paths("a",  "/b") == expected);
+        REQUIRE(join_paths("a/",  "b") == expected);
         REQUIRE(join_paths("a/", "/b") == expected);
     }
 
@@ -80,32 +80,16 @@ TEST_CASE("string_split correctly splits a string that contains >=1 delimiter",
 
 TEST_CASE("string_strip returns an empty string if the input is empty",
           "[util][string_strip]") {
-    string expected = "";
-
-    SECTION("for an input that is an empty string") {
-        REQUIRE(string_strip("") == expected);
-    }
-
-    SECTION("for an input that is all whitespace") {
-        REQUIRE(string_strip(" \t\n") == expected);
-    }
+    REQUIRE("" == string_strip(""));
 }
 
 
-TEST_CASE("string_strip correctly removes a whitespace",
+TEST_CASE("string_strip correctly removes whitespace",
           "[util][string_strip]") {
     string whitespace = rand_string(10, chars_whitespace);
-    string data(1, rand_char());
-
-    SECTION("prefix") {
-        REQUIRE(string_strip(whitespace + data) == data);
-    }
-
-    SECTION("suffix") {
-        REQUIRE(string_strip(data + whitespace) == data);
-    }
-
-    SECTION("prefix & suffix") {
-        REQUIRE(string_strip(whitespace + data + whitespace) == data);
-    }
+    string c(1, rand_char());
+    REQUIRE("" == string_strip(whitespace));
+    REQUIRE(c == string_strip(whitespace + c));
+    REQUIRE(c == string_strip(c + whitespace));
+    REQUIRE(c == string_strip(whitespace + c + whitespace));
 }
