@@ -97,25 +97,25 @@ void from_json(const json& j, LabSesh& ls) {
 
     // Parse day field
     string d = j["day"];
-    istringstream iss(d);
-    iss >> date::parse("%a", ls.wd);
+    istringstream iss_day(d);
+    iss_day >> date::parse("%a", ls.wd);
     if (not ls.wd.ok())
         throw Config::error(
             "Lab session weekday is invalid (first char must be capitalized)",
             {"lab-sessions", id});
 
     // Parse start time field
-    iss = istringstream(j["start"].get<string>());
-    iss >> date::parse(TIME_FMT, ls.start);
-    if (not iss.good())
+    istringstream iss_start(j["start"].get<string>());
+    iss_start >> date::parse(TIME_FMT, ls.start);
+    if (not iss_start.good())
         throw Config::error(
             "Lab session start time is invalid",
             {"lab-sessions", id});
 
     // Parse end time field
-    iss = istringstream(j["end"].get<string>());
-    iss >> date::parse(TIME_FMT, ls.end);
-    if (not iss.good())
+    istringstream iss_end(j["end"].get<string>());
+    iss_end >> date::parse(TIME_FMT, ls.end);
+    if (not iss_end.good())
         throw Config::error(
             "Lab session end time is invalid",
             {"lab-sessions", id});

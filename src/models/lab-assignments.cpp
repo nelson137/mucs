@@ -87,7 +87,8 @@ void from_json(const json& j, LabAsgmt& la) {
     year_month_day ymd{};
 
     // Parses as "YEAR MONTH_ABREV DAY" but DAY will be used as a week index
-    istringstream(j["week"].get<string>()) >> parse("%Y %b %d", ymd);
+    istringstream iss_week(j["week"].get<string>());
+    iss_week >> date::parse("%Y %b %d", ymd);
     if (not ymd.ok())
         invalid_lab_asgmt();
 

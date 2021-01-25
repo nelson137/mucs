@@ -12,7 +12,7 @@ SCRIPTS   := $(wildcard scripts/mucs-*)
 CFLAGS    := -std=c++11 -pedantic -Wall -Werror -Wno-noexcept-type
 INCLUDES  := -Iinclude
 
-DEFINES   :=
+DEFINES   := -DONLY_C_LOCALE=1
 TEST_MUCS_ROOT := test_root
 LOCAL_COMPILE_SCRIPT := scripts/compile
 
