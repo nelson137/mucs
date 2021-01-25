@@ -202,9 +202,7 @@ vector<string> Path::ls() const {
     stl_transform_into(
         this->ls_base(),
         children,
-        [this] (const string& child) {
-            return join_paths(this->m_path, child);
-        }
+        bind(join_paths<>, this->m_path, _1)
     );
     return children;
 }

@@ -21,8 +21,9 @@
 
 #include "util.hpp"
 
-using namespace fakeit;
 using namespace std;
+using namespace fakeit;
+using namespace placeholders;
 
 using json = nlohmann::json;
 
