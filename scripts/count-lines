@@ -1,27 +1,17 @@
 #!/usr/bin/env bash
 
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# Project root
-PROJ="$HERE/.."
+HERE="$(dirname "$(readlink -f "$0")")"
 
 count_dir() {
-    find "$@" -type f -exec wc -l {} \; | awk 'BEGIN{n=0} {n+=$1} END{print n}'
+    find "$@" -type f -exec wc -l {} + | awk 'END{print $1}'
 }
 
-cpp_src="$(count_dir "$PROJ/src" "$PROJ/libmucs/"{include,src})"
-cpp_test="$(count_dir "$PROJ/test")"
-cpp_total="$(( cpp_src + cpp_test ))"
+cd "$HERE/.."
 
-py_src="$(count_dir "$PROJ/py")"
-py_test="$(count_dir "$PROJ/py-test")"
-py_total="$(( py_src + py_test ))"
+src_lines=$(count_dir src)
+test_lines=$(count_dir test)
+total_lines=$(( src_lines + test_lines ))
 
-echo "   C++ Source: $cpp_src"
-echo "     C++ Test: $cpp_test"
-echo "    Total C++: $cpp_total"
-echo
-echo "Python Source: $py_src"
-echo "  Python Test: $py_test"
-echo " Total Python: $py_total"
-echo
-echo "        Total: $(( cpp_total + py_total ))"
+echo "  Source: $src_lines"
+echo "    Test: $test_lines"
+echo "   Total: $total_lines"
