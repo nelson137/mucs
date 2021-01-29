@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+[ $# -eq 1]
+PREFIX="$1"
+
+chgrp cs1050-ta "$PREFIX/bin/compile" "$PREFIX/scripts/mucs-gen-roster"
+chmod 775 "$PREFIX/bin" "$PREFIX/scripts"
+chmod 770 "$PREFIX/submissions"

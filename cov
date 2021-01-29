@@ -2,18 +2,18 @@
 
 set -e
 
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # Make sure dependencies are installed
-whereis make lcov genhtml &>/dev/null
+for dep in make lcov genhtml; do
+    /usr/bin/env "$dep" --version >/dev/null
+done
 
-pushd "$HERE" >/dev/null
+HERE="$(dirname "$(readlink -f "$0")")"
+cd "$HERE"
 
-    make clean
-    make -j8 test COVERAGE=1
-    ./runtests
-    mkdir -p coverage
-    lcov -c --no-external -b src -d build/src -o coverage/report.info
-    genhtml --legend --function-coverage --demangle-cpp coverage/report.info -o coverage
-
-popd >/dev/null
+mkdir -p build; cd build
+cmake .. -D_COVERAGE=1
+cmake --build . -- -j8
+./mucs_test
+mkdir -p coverage
+lcov -c --no-external -b ../src -d CMakeFiles/mucs_test.dir/src -o coverage/report.info
+genhtml --legend --function-coverage --demangle-cpp coverage/report.info -o coverage

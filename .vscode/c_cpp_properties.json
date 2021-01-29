@@ -1,72 +1,35 @@
 {
     "version": 4,
     "env": {
-        "MUCS_ROOT": "local",
         "mucsIncludePaths": [
             "${workspaceFolder}/include",
             "${workspaceFolder}/src",
             "${workspaceFolder}/test"
-        ],
-        "mucsCompilerArgs": [
-            "-pedantic",
-            "-Wall",
-            "-Werror",
-            "-Wno-noexcept-type",
-            "-D_XOPEN_SOURCE=700"
         ]
     },
     "configurations": [
         {
             "name": "Linux",
+            "configurationProvider": "ms-vscode.cmake-tools",
             "compilerPath": "/usr/bin/g++",
             "compilerArgs": [
-                "${mucsCompilerArgs}"
+                "-pedantic",
+                "-Wall",
+                "-Werror",
+                "-Wno-noexcept-type"
             ],
             "intelliSenseMode": "gcc-x64",
-            "cppStandard": "c++11",
+            "cppStandard": "gnu++11",
             "includePath": [
                 "${mucsIncludePaths}",
-                "/usr/include",
-                "/usr/include/c++/7"
-            ],
-            "defines": [
-                "_XOPEN_SOURCE=700"
+                "/usr/include"
             ],
             "browse": {
                 "path": [
-                    "${mucsIncludePaths}",
-                    "/usr/include",
-                    "/usr/include/c++/7"
+                    "${mucsIncludePaths}"
                 ]
             }
-        },
-        {
-            "name": "Win32",
-            "intelliSenseMode": "gcc-x64",
-            "includePath": [
-                "${mucsIncludePaths}",
-                "C:\\cygwin64\\lib\\gcc\\x86_64-pc-cygwin\\9.3.0\\include",
-                "C:\\cygwin64\\lib\\gcc\\x86_64-pc-cygwin\\9.3.0\\include\\c++",
-                "C:\\cygwin64\\lib\\gcc\\x86_64-pc-cygwin\\9.3.0\\include\\c++\\backward",
-                "C:\\cygwin64\\lib\\gcc\\x86_64-pc-cygwin\\9.3.0\\include\\c++\\x86_64-pc-cygwin"
-            ],
-            "defines": [
-                "_XOPEN_SOURCE=500"
-            ],
-            "compilerPath": "C:\\cygwin64\\bin\\g++.exe",
-            "cppStandard": "c++11",
-            "browse": {
-                "path": [
-                    "${workspaceFolder}"
-                ],
-                "limitSymbolsToIncludedHeaders": true
-            },
-            "compilerArgs": [
-                "${mucsCompilerArgs}",
-                "_MUCS_ROOT_LOCAL",
-                "-U__STRICT_ANSI__",
-                "-m64"
-            ]
         }
+
     ]
 }
