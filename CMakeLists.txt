@@ -9,7 +9,6 @@ project(mucs)
 # Note: these lists don't include main.cpp to avoid multiple definitions
 
 list(APPEND SRCS
-    src/consts.cpp
     src/except.cpp
     src/mucs.cpp
     src/mucs-admin.cpp

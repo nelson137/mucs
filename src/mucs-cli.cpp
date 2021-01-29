@@ -10,7 +10,7 @@ void Mucs::invoke(void (Mucs::*subcmd)()) {
 }
 
 
-unique_ptr<CLI::App> Mucs::get_cli() {
+unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
     // App
 
     unique_ptr<CLI::App> app(new CLI::App);
@@ -28,7 +28,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     submit_subcmd
         ->add_option("course", this->course)
         ->required()
-        ->check(CLI::IsMember(CONFIGS_AVAILABLE));
+        ->check(CLI::IsMember(courses_available));
     submit_subcmd
         ->add_option("assignment", this->asgmt_name)
         ->required();
@@ -45,7 +45,7 @@ unique_ptr<CLI::App> Mucs::get_cli() {
     admin_subcmd
         ->add_option("course", this->course)
         ->required()
-        ->check(CLI::IsMember(CONFIGS_AVAILABLE));
+        ->check(CLI::IsMember(courses_available));
 
     // Admin Dump subcommand
 

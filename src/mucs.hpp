@@ -62,7 +62,9 @@ struct Mucs {
     /**
      * Return a CLI application object.
      */
-    virtual unique_ptr<CLI::App> get_cli();
+    virtual unique_ptr<CLI::App> get_cli(
+        const vector<string>& courses_available
+    );
 
     // Util : mucs.cpp
 

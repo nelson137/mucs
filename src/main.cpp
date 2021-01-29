@@ -3,10 +3,10 @@
 
 int main(int argc, char **argv) {
     NOW = current_datetime();
-    CONFIGS_AVAILABLE = Path(CONFIG_DIR).ls_base();
+    vector<string> configs_available = Path(CONFIG_DIR).ls_base();
 
     Mucs mucs;
-    unique_ptr<CLI::App> app = mucs.get_cli();
+    unique_ptr<CLI::App> app = mucs.get_cli(configs_available);
 
     try {
         /**

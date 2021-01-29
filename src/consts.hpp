@@ -35,7 +35,4 @@ using namespace std;
 constexpr double TERM_WIDTH_COEFF = .85;
 
 
-extern vector<string> CONFIGS_AVAILABLE;
-
-
 #endif
