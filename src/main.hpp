@@ -1,4 +1,4 @@
-#if !defined(MAIN_HPP) && !defined(MUCS_TEST)
+#ifndef MAIN_HPP
 #define MAIN_HPP
 
 

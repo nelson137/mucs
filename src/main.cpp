@@ -1,8 +1,6 @@
 #include "main.hpp"
 
 
-#ifndef _MUCS_TEST
-
 int main(int argc, char **argv) {
     NOW = current_datetime();
     CONFIGS_AVAILABLE = Path(CONFIG_DIR).ls_base();
@@ -32,5 +30,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
-#endif

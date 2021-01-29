@@ -87,7 +87,7 @@ target_compile_definitions(mucs PRIVATE
 ### TEST TARGET
 ##################################################
 
-add_executable(mucs_test ${SRCS} ${TEST_SRCS} test/test_main.cpp)
+add_executable(mucs_test ${SRCS} ${TEST_SRCS} test/main.cpp)
 
 set_target_properties(mucs_test PROPERTIES LINKER_LANGUAGE CXX)
 
@@ -96,7 +96,6 @@ target_include_directories(mucs_test PRIVATE
     )
 
 target_compile_definitions(mucs_test PRIVATE
-    "_MUCS_TEST"
     "_MUCS_ROOT=${PROJECT_SOURCE_DIR}/test_root"
     "_COMPILE_SCRIPT=${_COMPILE_SCRIPT}"
     )
