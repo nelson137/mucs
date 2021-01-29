@@ -49,6 +49,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 set(CMAKE_CXX_FLAGS "-Wall -Werror -pedantic -Wno-noexcept-type")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 # set(CMAKE_VERBOSE_MAKEFILE true)
 
