@@ -121,6 +121,10 @@ install(TARGETS mucs
                 SETUID
     )
 
+install(FILES schema.json
+    DESTINATION .
+    )
+
 install(PROGRAMS scripts/compile
     DESTINATION bin
     )
