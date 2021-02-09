@@ -130,7 +130,7 @@
                     },
                     "day": {
                         "type": "string",
-                        "pattern": "^(Mon|Tue|Wed|Thu|Fri|Sat|Sun|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)$",
+                        "pattern": "^([Mm]on(day)?|[Tt]ue(sday)?|[Ww]ed(nesday)?|[Tt]hu(rsday)?|[Ff]ri(day)?|[Ss]at(urday)?|[Ss]un(day)?)$",
                         "format": "weekday",
                         "description": "",
                         "examples": ["Mon", "Tuesday"]
