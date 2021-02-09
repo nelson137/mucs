@@ -22,7 +22,7 @@ void Mucs::submit() {
         default:
             in_submit_window = false;
             throw mucs_exception(
-                "Assignment type not implemented:", to_string(asgmt.type()));
+                "Assignment type not implemented:", asgmt.type_name());
             break;
     }
 

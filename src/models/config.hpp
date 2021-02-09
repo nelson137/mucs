@@ -44,14 +44,23 @@ using json = nlohmann::json;
  */
 struct IAssignment {
 
-    enum AType {
-        Asgmt_Hw,
+    enum AType : uint8_t {
+        Asgmt_Hw = 0,
         Asgmt_Lab
+    };
+
+    static constexpr const char *const AType_Names[] = {
+        "Homework",
+        "Lab",
     };
 
     string name;
 
     virtual AType type() const = 0;
+
+    virtual const char *type_name() const {
+        return AType_Names[(uint8_t)this->type()];
+    }
 
     /**
      * Return whether the assignment can be turned in.

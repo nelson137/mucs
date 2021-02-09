@@ -1,6 +1,9 @@
 #include "config.hpp"
 
 
+constexpr const char *const IAssignment::AType_Names[];
+
+
 Config::Config() {
 }
 
