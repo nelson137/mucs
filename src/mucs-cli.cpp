@@ -20,15 +20,18 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
         return bind(mem_fn(&Mucs::invoke), this, subcmd);
     };
 
+    auto add_course_arg = [this,&courses_available] (CLI::App *app) {
+        app->add_option("course", this->course)
+            ->required()
+            ->check(CLI::IsMember(courses_available));
+    };
+
     // Submit subcommand
 
     CLI::App *submit_subcmd = app
         ->add_subcommand("submit")
         ->callback(invoke_wrapper(&Mucs::submit));
-    submit_subcmd
-        ->add_option("course", this->course)
-        ->required()
-        ->check(CLI::IsMember(courses_available));
+    add_course_arg(submit_subcmd);
     submit_subcmd
         ->add_option("assignment", this->asgmt_name)
         ->required();
@@ -41,11 +44,6 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
     CLI::App *admin_subcmd = app
         ->add_subcommand("admin")
         ->require_subcommand();
-
-    admin_subcmd
-        ->add_option("course", this->course)
-        ->required()
-        ->check(CLI::IsMember(courses_available));
 
     // Admin Dump subcommand
 
@@ -65,11 +63,15 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
     register_dump_flag("-w,--homeworks",       Mucs::DumpHomeworks);
     register_dump_flag("-r,--roster",          Mucs::DumpRoster);
 
+    add_course_arg(admin_dump_subcmd);
+
     // Admin Update-Password subcommand
 
-    admin_subcmd
+    CLI::App *admin_update_passwd_subcmd = admin_subcmd
         ->add_subcommand("update-password")
         ->callback(invoke_wrapper(&Mucs::admin_update_password));
+
+    add_course_arg(admin_update_passwd_subcmd);
 
     return app;
 }
