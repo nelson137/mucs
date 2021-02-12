@@ -46,23 +46,17 @@ list(APPEND TEST_SRCS
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
-set(CMAKE_CXX_FLAGS "-Wall -Werror -pedantic -Wno-noexcept-type")
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_VERBOSE_MAKEFILE true)
 
-# set(CMAKE_VERBOSE_MAKEFILE true)
+set(DEFAULT_MUCS_ROOT "${PROJECT_SOURCE_DIR}/my_root")
+set(DEFAULT_COMPILE_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/compile")
 
-if(NOT DEFINED _MUCS_ROOT)
-    set(_MUCS_ROOT "${PROJECT_SOURCE_DIR}/my_root")
-endif()
-
-if(NOT DEFINED _COMPILE_SCRIPT)
-    set(_COMPILE_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/compile")
-endif()
-
-if(_DEBUG)
-    set(CMAKE_BUILD_TYPE Debug)
-endif()
+add_compile_options(
+    -Wall -Werror -pedantic -Wno-noexcept-type
+    "$<$<CONFIG:DEBUG>:-g>"
+    "$<$<CONFIG:RELEASE>:-O2>"
+    "$<$<CONFIG:RELWITHDEBINFO>:-g>"
+    )
 
 add_definitions(-DONLY_C_LOCALE=1)
 
@@ -78,10 +72,25 @@ target_include_directories(mucs PRIVATE
     "${PROJECT_SOURCE_DIR}/include"
     )
 
-target_compile_definitions(mucs PRIVATE
-    "_MUCS_ROOT=${_MUCS_ROOT}"
-    "_COMPILE_SCRIPT=${_COMPILE_SCRIPT}"
-    )
+if(DEFINED _MUCS_ROOT)
+    target_compile_definitions(mucs PRIVATE
+        "_MUCS_ROOT=${_MUCS_ROOT}"
+        )
+else()
+    target_compile_definitions(mucs PRIVATE
+        "_MUCS_ROOT=${DEFAULT_MUCS_ROOT}"
+        )
+endif()
+
+if(DEFINED _COMPILE_SCRIPT)
+    target_compile_definitions(mucs PRIVATE
+        "_COMPILE_SCRIPT=${_COMPILE_SCRIPT}"
+        )
+else()
+    target_compile_definitions(mucs PRIVATE
+        "_COMPILE_SCRIPT=${DEFAULT_COMPILE_SCRIPT}"
+        )
+endif()
 
 ##################################################
 ### TEST TARGET
@@ -97,10 +106,10 @@ target_include_directories(mucs_test PRIVATE
 
 target_compile_definitions(mucs_test PRIVATE
     "_MUCS_ROOT=${PROJECT_SOURCE_DIR}/test_root"
-    "_COMPILE_SCRIPT=${_COMPILE_SCRIPT}"
+    "_COMPILE_SCRIPT=${DEFAULT_COMPILE_SCRIPT}"
     )
 
-if(_COVERAGE)
+if(DEFINED _COVERAGE)
     target_compile_options(mucs_test PRIVATE --coverage -O0)
     target_link_libraries(mucs_test PRIVATE gcov)
 endif()
