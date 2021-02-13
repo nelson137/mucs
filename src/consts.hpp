@@ -29,7 +29,7 @@ using namespace std;
 
 #define SUBMIT_DIR  MUCS_ROOT "/submissions"
 #define CONFIG_DIR  MUCS_ROOT "/config.d"
-#define ROSTER_DIR  MUCS_ROOT "/roster"
+#define ROSTER_DIR  MUCS_ROOT "/roster.d"
 #define SCHEMA_PATH MUCS_ROOT "/schema.json"
 
 #define HW_FMT           "%Y-%m-%d %H:%M:%S"
