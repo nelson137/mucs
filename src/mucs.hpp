@@ -49,13 +49,18 @@ struct Mucs {
     // CLI : mucs-cli.cpp
 
     /**
-     * Wrapper for calling subcommands.
+     * Wrapper for calling subcommands, does some setup first.
      *
      * Some setup needs to be done before any subcommand is called:
-     *   - Store the current user's username
-     *   - Initialize the config data member
+     *   - Store the current username
+     *   - Read the config file
      *   - Validate and deserialize the config
      *   - Load the roster
+     */
+    virtual void invoke_with_setup(void (Mucs::*subcmd)());
+
+    /**
+     * Wrapper for calling subcommands, does no setup.
      */
     virtual void invoke(void (Mucs::*subcmd)());
 
@@ -104,6 +109,13 @@ struct Mucs {
      * Modify the config file, replacing the old admin_hash with new_hash.
      */
     virtual void update_config_admin_hash(const string& new_hash) const;
+
+    // Version Subcommand : mucs-version.cpp
+
+    /**
+     * Print the version and compile-time constants.
+     */
+    virtual void version();
 
     // Submit Subcommand : mucs-submit.cpp
 

@@ -1,11 +1,16 @@
 #include "mucs.hpp"
 
 
-void Mucs::invoke(void (Mucs::*subcmd)()) {
+void Mucs::invoke_with_setup(void (Mucs::*subcmd)()) {
     this->user = get_user();
     this->config = Config(Path(CONFIG_DIR) / this->course);
     this->config.validate().deserialize();
     this->config.load_roster(Path(ROSTER_DIR));
+    (this->*subcmd)();
+}
+
+
+void Mucs::invoke(void (Mucs::*subcmd)()) {
     (this->*subcmd)();
 }
 
@@ -16,8 +21,12 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
     unique_ptr<CLI::App> app(new CLI::App);
     app->require_subcommand();
 
-    auto invoke_wrapper = [this] (void (Mucs::*subcmd)()) {
-        return bind(mem_fn(&Mucs::invoke), this, subcmd);
+    auto invoke_wrapper = [this] (void (Mucs::*subcmd)(), bool setup = true) {
+        return bind(
+            mem_fn(setup ? &Mucs::invoke_with_setup : &Mucs::invoke),
+            this,
+            subcmd
+        );
     };
 
     auto add_course_arg = [this,&courses_available] (CLI::App *app) {
@@ -25,6 +34,11 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
             ->required()
             ->check(CLI::IsMember(courses_available));
     };
+
+    // Version subcommand
+
+    app->add_subcommand("version")
+        ->callback(invoke_wrapper(&Mucs::version, false));
 
     // Submit subcommand
 

@@ -14,6 +14,7 @@ list(APPEND SRCS
     src/mucs-admin.cpp
     src/mucs-cli.cpp
     src/mucs-submit.cpp
+    src/mucs-version.cpp
     src/path.cpp
     src/proc.cpp
     src/util.cpp

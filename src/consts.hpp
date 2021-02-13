@@ -12,6 +12,9 @@ using namespace std;
 #define STR(s) _STR(s)
 
 
+#define MUCS_VERSION_MAJOR 2
+#define MUCS_VERSION_MINOR 0
+
 #ifdef _MUCS_ROOT
 #define MUCS_ROOT STR(_MUCS_ROOT)
 #else
