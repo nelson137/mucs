@@ -21,7 +21,7 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
     unique_ptr<CLI::App> app(new CLI::App);
     app->require_subcommand();
 
-    auto invoke_wrapper = [this] (void (Mucs::*subcmd)(), bool setup = true) {
+    auto invoke_wrapper = [this] (void (Mucs::*subcmd)(), bool setup) {
         return bind(
             mem_fn(setup ? &Mucs::invoke_with_setup : &Mucs::invoke),
             this,
@@ -44,7 +44,7 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
 
     CLI::App *submit_subcmd = app
         ->add_subcommand("submit")
-        ->callback(invoke_wrapper(&Mucs::submit));
+        ->callback(invoke_wrapper(&Mucs::submit, true));
     add_course_arg(submit_subcmd);
     submit_subcmd
         ->add_option("assignment", this->asgmt_name)
@@ -63,7 +63,7 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
 
     CLI::App *admin_dump_subcmd = admin_subcmd
         ->add_subcommand("dump")
-        ->callback(invoke_wrapper(&Mucs::admin_dump));
+        ->callback(invoke_wrapper(&Mucs::admin_dump, true));
 
     auto register_dump_flag = [&] (const string& opt, Mucs::DumpFlags flag) {
         admin_dump_subcmd->add_flag_callback(opt, [&] () {
@@ -83,7 +83,7 @@ unique_ptr<CLI::App> Mucs::get_cli(const vector<string>& courses_available) {
 
     CLI::App *admin_update_passwd_subcmd = admin_subcmd
         ->add_subcommand("update-password")
-        ->callback(invoke_wrapper(&Mucs::admin_update_password));
+        ->callback(invoke_wrapper(&Mucs::admin_update_password, true));
 
     add_course_arg(admin_update_passwd_subcmd);
 
