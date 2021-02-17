@@ -7686,7 +7686,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt, weekday& wd
             std::chrono::minutes* offset = nullptr)
 {
     using CT = std::chrono::seconds;
-    fields<CT> fds{weekday{8u}};
+    fields<CT> fds{};
     from_stream(is, fmt, fds, abbrev, offset);
     if (!fds.wd.ok())
         is.setstate(std::ios::failbit);
@@ -7734,7 +7734,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
             std::chrono::minutes* offset = nullptr)
 {
     using CT = std::chrono::seconds;
-    fields<CT> fds{year_month_day{nanyear/0/0}};
+    fields<CT> fds{};
     from_stream(is, fmt, fds, abbrev, offset);
     if (!fds.ymd.ok())
         is.setstate(std::ios::failbit);
@@ -7752,7 +7752,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
     using CT = typename std::common_type<Duration, std::chrono::seconds>::type;
     std::chrono::minutes offset_local{};
     auto offptr = offset ? offset : &offset_local;
-    fields<CT> fds{hh_mm_ss<CT>{}};
+    fields<CT> fds{};
     fds.has_tod = true;
     from_stream(is, fmt, fds, abbrev, offptr);
     if (!fds.ymd.ok() || !fds.tod.in_conventional_range())
@@ -7788,7 +7788,7 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
 {
     using Duration = std::chrono::duration<Rep, Period>;
     using CT = typename std::common_type<Duration, std::chrono::seconds>::type;
-    fields<CT> fds{hh_mm_ss<CT>{}};
+    fields<CT> fds{};
     from_stream(is, fmt, fds, abbrev, offset);
     if (!fds.has_tod)
         is.setstate(std::ios::failbit);
