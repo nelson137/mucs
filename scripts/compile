@@ -14,5 +14,5 @@ should_use_make() {
 if should_use_make; then
     make
 else
-    gcc -std=c11 -g -Wall -Werror "$@" -lm
+    gcc -std=c11 -g -Wall -Werror -I/group/cs1050/include -L/group/cs1050/lib "$@" -lm
 fi
