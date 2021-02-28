@@ -11,8 +11,12 @@ should_use_make() {
     [[ -f Makefile ]] || return 1
 }
 
+module load gcc/gcc-10.1.0
+
 if should_use_make; then
     make
 else
     gcc -std=c11 -g -Wall -Werror -I/group/cs1050/include -L/group/cs1050/lib "$@" -lm
 fi
+
+module purge
