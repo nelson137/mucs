@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+usage() {
+    cat <<HERE
+Usage: $0 COURSE_ID [OUTFILE]
+
+Download all users in the given course from the Canvas API and store the JSON
+in a file.
+
+ARGUMENTS
+  COURSE_ID     The ID of the Canvas course. This can be found in the URL of
+                the course on Canvas which is in the format
+                https://missouri.instructure.com/courses/COURSE_ID.
+  OUTFILE       If given, store the output in OUTFILE. Otherwise store the
+                output in a random tempfile and print the filename.
+
+OPTIONS
+  -h, --help    Print this help message and exit.
+HERE
+    exit "${1:-0}"
+}
+
+[ $# -eq 0 ] && usage 1 >&2
+
+COURSE_ID=
+OUTFILE=
+PRINT_OUTFILE=
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            usage ;;
+        *)
+            if [ -z "$COURSE_ID" ]; then
+                COURSE_ID="$1"
+            elif [ -z "$OUTFILE" ]; then
+                OUTFILE="$1"
+            else
+                usage 1 >&2
+            fi ;;
+    esac
+    shift
+done
+
+if [ -z "$OUTFILE" ]; then
+    OUTFILE="$(mktemp 'students-XXXXXX.json')"
+    PRINT_OUTFILE=1
+fi
+
+RESPONSE_HEADER="$(mktemp '/tmp/canvas-response-header.XXXXXX')"
+PAGES_DIR="$(mktemp -d '/tmp/canvas-pages-dir.XXXXXX')"
+PAGE_INDEX=1
+trap 'rm -rf "$RESPONSE_HEADER" "$PAGES_DIR"' HUP INT TERM EXIT
+
+BASE_URL='https://missouri.instructure.com/api/v1'
+TOKEN='5617~TbiyHETFMt6BcjmVNTXGjMHI3eeZqfSy9wCTSyISowQOy4DKRGuVROMPaIrhZfvG'
+URL="$BASE_URL/courses/$COURSE_ID/users?per_page=100"
+
+HEADER="Authorization: Bearer $TOKEN"
+NEXT_PAGE_URL_SCRIPT='/^[Ll]ink:/{s/.*<([^>]+)>; rel="next".*/\1/p;t;q 1}'
+while :; do
+    # Download a page of users in the course and store it in a file
+    PAGE="$PAGES_DIR/$((PAGE_INDEX++))"
+    curl -L -H "$HEADER" -D "$RESPONSE_HEADER" -o "$PAGE" "$URL"
+    # Extract the next page url from the response header
+    URL="$(sed -nE "$NEXT_PAGE_URL_SCRIPT" "$RESPONSE_HEADER")"
+    [ $? -eq 0 ] || break
+done
+
+# Combine all page files into one and output it
+jq -cs 'flatten(1)' "$PAGES_DIR"/* >"$OUTFILE"
+
+[ "$PRINT_OUTFILE" ] && echo "$OUTFILE"
