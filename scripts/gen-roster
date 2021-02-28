@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+set -e
+
+usage() {
+    cat <<HERE
+Usage: $0 XLSX_DIR STUDENTS_DB ROSTER_OUT_DIR
+
+Generate a roster directory for mucs using xlsx roster files and a JSON file
+downloaded from Canvas.
+
+ARGUMENTS
+  XLSX_DIR          A directory containing the xlsx roster files. Files are
+                    expected to be named like "Lab A" with any extension. For an
+                    xlsx file with that name, a roster file named "A" will be
+                    created in ROSTER_OUT_DIR.
+  STUDENTS_DB       A students database file created by the get-course-students
+                    script.
+  ROSTER_OUT_DIR    The directory in which roster files will be stored. Existing
+                    roster files may be overwritten.
+
+OPTIONS
+  -h, --help
+HERE
+    exit "${1:-0}"
+}
+
+die() {
+    echo "$@" >&2
+    exit 1
+}
+
+xlsx_get_emails() {
+    xlsx2csv -d\; "$1" | sed 1d | cut -d\; -f5
+}
+
+# Uses only the email username because the domain might be different, but the
+# username should be the same.
+lookup_email_user_in_db() {
+    jq -r --arg U "$1" '.[] | select(.email | startswith($U)).login_id' \
+        < "$STUDENTS_DB"
+}
+
+HERE="$(dirname "$(readlink -f "$0")")"
+XLSX_DIR=
+STUDENTS_DB=
+ROSTER_OUT_DIR=
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            usage ;;
+        *)
+            if [ -z "$XLSX_DIR" ]; then
+                XLSX_DIR="$1"
+            elif [ -z "$STUDENTS_DB" ]; then
+                STUDENTS_DB="$1"
+            elif [ -z "$ROSTER_OUT_DIR" ]; then
+                ROSTER_OUT_DIR="$1"
+            else
+                usage 1 >&2
+            fi ;;
+    esac
+    shift
+done
+
+[[ -z "$STUDENTS_DB" || -z "$ROSTER_OUT_DIR" || -z "$XLSX_DIR" ]] &&
+    usage 1 >&2
+
+[ -d "$XLSX_DIR" ] || die "Error: no such directory: $XLSX_DIR"
+[ -f "$STUDENTS_DB" ] || die "Error: no such file: $STUDENTS_DB"
+
+mkdir -p "$ROSTER_OUT_DIR"
+
+# Activate the python virtual environment for xlsx2csv
+. "$HERE/gen-roster-venv/bin/activate"
+
+while read fn; do
+    # Extract lab id from the xlsx filename
+    lab_id="$(sed -E 's#.*/Lab (\w+)\..*#\1#' <<< "$fn")"
+    xlsx_get_emails "$fn" | while read email; do
+        # Extract username from email
+        email_user="$(printf "$email" | cut -d@ -f1)"
+        # Lookup login id from email username
+        username="$(lookup_email_user_in_db "$email_user")"
+        if [ "$username" ]; then
+            echo "$username"
+        else
+            echo "FAILED TO FIND USER | lab $lab_id | email $email" >&2
+        fi
+    done | sort | uniq > "$ROSTER_OUT_DIR/$lab_id" &
+done < <(find "$XLSX_DIR" -mindepth 1 -maxdepth 1 -type f)
+
+wait
+
+# Deactivate the virtual env
+deactivate
