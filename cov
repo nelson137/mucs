@@ -3,17 +3,21 @@
 set -e
 
 # Make sure dependencies are installed
-for dep in make lcov genhtml; do
+for dep in lcov genhtml; do
     /usr/bin/env "$dep" --version >/dev/null
 done
 
 HERE="$(dirname "$(readlink -f "$0")")"
+N_JOBS="$(grep -c '^processor' /proc/cpuinfo || printf 8)"
+
 cd "$HERE"
 
 mkdir -p build; cd build
 cmake .. -D_COVERAGE=1
-cmake --build . -- -j8
+make "-j$N_JOBS" mucs_test
+
 ./mucs_test
+
 mkdir -p coverage
 lcov -c --no-external -b ../src -d CMakeFiles/mucs_test.dir/src -o coverage/report.info
 genhtml --legend --function-coverage --demangle-cpp coverage/report.info -o coverage
