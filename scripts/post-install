@@ -42,4 +42,13 @@ if ! [ -d "$VENV" ]; then
     deactivate
 fi
 
-chgrp -R cs1050-ta schema.json bin scripts config.d roster.d submissions
+# The chgrp command clears special permission bits (setuid, setgid, and sticky)
+# so find is used to chgrp then re-enable setgid
+
+# Change group on files with setgid enabled
+find . ! -type l -perm -g=s \
+    -exec chgrp cs1050-ta {} + \
+    -exec chmod g+s {} +
+# Change group on files with setgid disabled
+find . ! -type l ! -perm -g=s \
+    -exec chgrp cs1050-ta {} +
