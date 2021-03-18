@@ -63,8 +63,6 @@ add_compile_options(
     "$<$<CONFIG:RELWITHDEBINFO>:-g>"
     )
 
-add_definitions(-DONLY_C_LOCALE=1)
-
 ##################################################
 ### MAIN TARGET
 ##################################################
