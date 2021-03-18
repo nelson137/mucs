@@ -50,7 +50,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_VERBOSE_MAKEFILE true)
 
 set(_DEFAULT_MUCS_ROOT "${PROJECT_SOURCE_DIR}/my_root")
-set(_DEFAULT_COMPILE_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/compile")
+set(_DEFAULT_COMPILE_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/simple-compile")
 
 include_directories(
     "${PROJECT_SOURCE_DIR}/include"
