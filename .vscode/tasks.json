@@ -12,19 +12,6 @@
         "showReuseMessage": false,
         "clear": false
     },
-    "inputs": [
-        {
-            "id": "run-args",
-            "type": "pickString",
-            "description": "arguments for the executable",
-            "options": [
-                "submit 1050 lab1 t.c",
-                "submit 1050 hw1 t.c",
-                "admin 1050 dump",
-                "admin 1050 update-password"
-            ]
-        }
-    ],
     "tasks": [
         {
             "label": "make (local)",
@@ -57,16 +44,6 @@
             "problemMatcher": ["$gcc"],
             "windows": {
                 "command": "C:\\cygwin64\\bin\\make.exe"
-            }
-        },
-        {
-            "label": "run",
-            "group": "build",
-            "type": "shell",
-            "command": "./a.out ${input:run-args}",
-            "problemMatcher": ["$gcc"],
-            "windows": {
-                "command": ".\\a.out"
             }
         },
         {
