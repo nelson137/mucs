@@ -91,7 +91,7 @@ bool Path::exists() const {
 
 
 int Path::type() const {
-    unique_ptr<struct stat> s = this->stat();
+    auto s = this->stat();
     return (S_ISREG(s->st_mode) ? Path::File : 0)
          | (S_ISDIR(s->st_mode) ? Path::Dir  : 0)
          | (S_ISLNK(s->st_mode) ? Path::Link : 0)
@@ -104,7 +104,7 @@ int Path::type() const {
  * current UID or the current GID.
  */
 bool Path::is_exe() const {
-    unique_ptr<struct stat> s = this->stat();
+    auto s = this->stat();
     return s->st_mode & S_IXUSR || s->st_mode & S_IXGRP;
 }
 
@@ -116,6 +116,18 @@ bool Path::is_file() const {
 
 bool Path::is_dir() const {
     return S_ISDIR(this->stat()->st_mode);
+}
+
+
+struct utimbuf Path::get_times() const {
+    auto s = this->stat();
+    return {s->st_atim.tv_sec, s->st_mtim.tv_sec};
+}
+
+
+void Path::set_times(struct utimbuf times) {
+    if (utime(this->m_path.c_str(), &times) < 0)
+        throw mucs_exception("Failed to set times for file:", this->m_path);
 }
 
 
@@ -175,7 +187,7 @@ void Path::for_each_line(function<void(const string&)> unary_op) const {
 }
 
 
-void Path::copy_into(const Path& dir, mode_t mode) const {
+void Path::copy_into(const Path& dir, mode_t mode, bool preserve_times) const {
     if (dir.exists() == false)
         dir.mkdir_recurse();
 
@@ -183,17 +195,20 @@ void Path::copy_into(const Path& dir, mode_t mode) const {
         throw mucs_exception(
             "Destination exists but is not a directory:", dir.m_path);
 
-    const Path& dest_p = dir / this->basename();
+    Path dest = dir / this->basename();
 
-    ifstream src(this->m_path, ios::in | ios::binary);
-    ofstream dest(dest_p.m_path, ios::out | ios::binary | ios::trunc);
+    ifstream src_fs(this->m_path, ios::in | ios::binary);
+    ofstream dest_fs(dest.m_path, ios::out | ios::binary | ios::trunc);
 
-    dest << src.rdbuf();
+    dest_fs << src_fs.rdbuf();
 
-    src.close();
-    dest.close();
+    src_fs.close();
+    dest_fs.close();
 
-    dest_p.chmod(mode);
+    if (preserve_times)
+        dest.set_times(this->get_times());
+
+    dest.chmod(mode);
 }
 
 

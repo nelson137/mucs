@@ -73,7 +73,7 @@ void Mucs::copy_submission_files(
     }
 
     for (const Path& src : this->sources)
-        src.copy_into(submit_d_abs, 0440);
+        src.copy_into(submit_d_abs, 0440, true);
 
     cout << rang::fg::green << "Submission complete" << rang::fg::reset << endl;
 }

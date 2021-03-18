@@ -12,6 +12,7 @@
 
 #include <dirent.h>
 #include <unistd.h>
+#include <utime.h>
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -109,6 +110,16 @@ public:
     virtual bool is_dir() const;
 
     /**
+     * Return the creation and modification times for this path.
+     */
+    virtual struct utimbuf get_times() const;
+
+    /**
+     * Set the creation and modification times for this path.
+     */
+    virtual void set_times(struct utimbuf times);
+
+    /**
      * Set the mode of this path to mode.
      */
     virtual void chmod(mode_t mode) const;
@@ -147,7 +158,11 @@ public:
     /**
      * Copy this path into dir with mode mode.
      */
-    virtual void copy_into(const Path& dir, mode_t mode = 0644) const;
+    virtual void copy_into(
+        const Path& dir,
+        mode_t mode,
+        bool preserve_times
+    ) const;
 
     /*************************************************
      * Directory methods
