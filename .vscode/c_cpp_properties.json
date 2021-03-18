@@ -1,0 +1,35 @@
+{
+    "version": 4,
+    "env": {
+        "mucsIncludePaths": [
+            "${workspaceFolder}/include",
+            "${workspaceFolder}/src",
+            "${workspaceFolder}/test"
+        ]
+    },
+    "configurations": [
+        {
+            "name": "Linux",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compilerPath": "/usr/bin/g++",
+            "compilerArgs": [
+                "-pedantic",
+                "-Wall",
+                "-Werror",
+                "-Wno-noexcept-type"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "cppStandard": "gnu++11",
+            "includePath": [
+                "${mucsIncludePaths}",
+                "/usr/include"
+            ],
+            "browse": {
+                "path": [
+                    "${mucsIncludePaths}"
+                ]
+            }
+        }
+
+    ]
+}

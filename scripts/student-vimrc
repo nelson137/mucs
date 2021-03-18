@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -e
+shopt -s nocasematch
+
+VIMRC="$HOME/.vimrc"
+BACKUP=
+
+prompt_yn() {
+    read -rp "$1" response
+    [[ "$response" =~ ^y ]] || return 1
+}
+
+if [ -f "$VIMRC" ]; then
+    echo 'An existing .vimrc has been detected...' >&2
+    prompt_yn 'Would you like to keep it [y/n]? ' && exit 0
+    prompt_yn 'Would you like to save a backup of it [y/n]? ' && BACKUP=1
+fi
+
+[ -n "$BACKUP" ] && mv "$VIMRC" "$HOME/vimrc.bak"
+
+cat >"$VIMRC" <<'HERE'
+set nocompatible  " Make vim more useful
+
+set autoindent    " Copy indentation from previous line
+set background=dark
+set expandtab     " Use spaces instead of tabs
+set incsearch     " Show search matches while typing
+set mouse=a       " Enable mouse
+set nohlsearch    " Don't highlight all search matches
+set number        " Enable line numbers
+set shiftwidth=4  " Autoindent width = 4
+set smartindent   " Indent based on context (requires autoindent)
+set smarttab      " Smarter indentation when <Tab> pressed
+set tabstop=4     " Tab width = 4
+
+"colorscheme evening
+
+augroup goto_last_line
+    au!
+    au BufReadPost *
+        \ if line("'\"") > 1 && line("'\"") |
+        \     exe 'normal! g`"' |
+        \ endif
+augroup end
+
+" Move up/down rows in buffer instead of lines in file
+noremap j gj
+noremap k gk
+HERE

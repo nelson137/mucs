@@ -1,0 +1,92 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "env": {
+        }
+    },
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+    },
+    "tasks": [
+        {
+            "label": "make (local)",
+            "group": "build",
+            "type": "process",
+            "command": "/usr/bin/make",
+            "args": ["-j7", "DEBUG=1", "MUCS_ROOT=my_root"],
+            "problemMatcher": ["$gcc"],
+            "windows": {
+                "command": "C:\\cygwin64\\bin\\make.exe"
+            }
+        },
+        {
+            "label": "make test",
+            "group": "build",
+            "type": "process",
+            "command": "/usr/bin/make",
+            "args": ["-j7", "test", "DEBUG=1"],
+            "problemMatcher": ["$gcc"],
+            "windows": {
+                "command": "C:\\cygwin64\\bin\\make.exe"
+            }
+        },
+        {
+            "label": "make clean",
+            "group": "build",
+            "type": "process",
+            "command": "/usr/bin/make",
+            "args": ["clean"],
+            "problemMatcher": ["$gcc"],
+            "windows": {
+                "command": "C:\\cygwin64\\bin\\make.exe"
+            }
+        },
+        {
+            "label": "runtests",
+            "group": "build",
+            "type": "process",
+            "command": "./runtests",
+            "problemMatcher": ["$gcc"],
+            "windows": {
+                "command": ".\\runtests.exe"
+            }
+        },
+        {
+            "label": "runtests [x]",
+            "group": "build",
+            "type": "process",
+            "command": "./runtests",
+            "args": ["[x]"],
+            "problemMatcher": ["$gcc"],
+            "windows": {
+                "command": ".\\runtests.exe"
+            }
+        },
+        {
+            "label": "make (local) & run",
+            "group": "build",
+            "dependsOn": ["make (local)", "run"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "make test & runtests",
+            "group": "build",
+            "dependsOn": ["make test", "runtests"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "make test & runtests [x]",
+            "group": "build",
+            "dependsOn": ["make test", "runtests [x]"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}

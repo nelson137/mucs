@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -e
+
+usage() {
+    cat <<HERE
+Usage: $0 PREFIX
+
+Finish installation, do stuff that cmake can't.
+
+OPTIONS
+  -h, --help    Print this help message and exit.
+
+ARGUMENTS
+  PREFIX        The directory into which mucs was installed.
+HERE
+    exit "${1:-0}"
+}
+
+HERE="$(dirname "$(readlink -f "$0")")"
+PREFIX=
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help) usage ;;
+        *) [ "$PREFIX" ] && usage 1 >&2 || PREFIX="$1" ;;
+    esac
+    shift
+done
+
+echo '==========[ POST INSTALL SCRIPT ]==========' >&2
+
+[ "$PREFIX" ] && cd "$PREFIX" || usage 1 >&2
+
+mkdir -p "$PREFIX"/{config.d,roster.d,submissions}
+
+VENV=./scripts/gen-roster-venv
+if ! [ -d "$VENV" ]; then
+    python3 -m venv --system-site-packages "$VENV"
+    . "$VENV/bin/activate"
+    pip3 install -r "$HERE/../gen-roster-requirements.txt"
+    deactivate
+fi
+
+# The chgrp command clears special permission bits (setuid, setgid, and sticky)
+# so find is used to chgrp then re-enable setgid
+
+# Change group on files with setgid enabled
+find . ! -type l -perm -g=s \
+    -exec chgrp cs1050-ta {} + \
+    -exec chmod g+s {} +
+# Change group on files with setgid disabled
+find . ! -type l ! -perm -g=s \
+    -exec chgrp cs1050-ta {} +

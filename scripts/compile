@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+
+should_use_make() {
+    # Exit successfully if all are true:
+    # - we are in a git repo
+    git rev-parse --is-inside-work-tree &>/dev/null || return 1
+    # - the origin URL comes from github user JimRies1966
+    local origin="$(git remote get-url origin 2>/dev/null)"
+    [[ "$origin" =~ github\.com/JimRies1966 ]] || return 1
+    # - a file named Makefile exists
+    [[ -f Makefile ]] || return 1
+}
+
+. /usr/share/Modules/init/bash
+module load gcc/gcc-10.1.0 &>/dev/null
+
+if should_use_make; then
+    make
+else
+    gcc -std=c11 -g -Wall -Werror -I/group/cs1050/include -L/group/cs1050/lib "$@" -lm
+fi

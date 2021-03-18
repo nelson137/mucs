@@ -1,0 +1,181 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "mucs-schema.json",
+    "type": "object",
+    "required": [
+        "course_id",
+        "admin_hash",
+        "overrides",
+        "homeworks",
+        "lab-sessions",
+        "lab-assignments"
+    ],
+
+    "properties": {
+        "course_id": {
+            "type": "string",
+            "format": "course number",
+            "description": "",
+            "examples": ["1050", "2050"]
+        },
+
+        "admin_hash": {
+            "type": "string",
+            "format": "sha256 hex digest",
+            "description": "",
+            "examples": [
+                "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+                "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
+            ]
+        },
+
+        "overrides": {
+            "type": "object",
+            "description": "",
+            "required": ["labs", "homeworks"],
+            "properties": {
+                "labs": {
+                    "type": "array",
+                    "description": "",
+                    "items": {
+                        "type": "object",
+                        "description": "",
+                        "required": ["user", "session"],
+                        "properties": {
+                            "user": {
+                                "type": "string",
+                                "format": "user",
+                                "description": "",
+                                "examples": ["nwewnh"]
+                            },
+                            "session": {
+                                "type": "string",
+                                "format": "lab session id",
+                                "description": "",
+                                "examples": ["A", "Honors"]
+                            },
+                            "assignment": {
+                                "type": "string",
+                                "format": "lab assignment name",
+                                "description": "",
+                                "examples": ["lab1"]
+                            }
+                        }
+                    }
+                },
+                "homeworks": {
+                    "type": "array",
+                    "description": "",
+                    "items": {
+                        "type": "object",
+                        "description": "",
+                        "required": ["user", "name"],
+                        "properties": {
+                            "user": {
+                                "type": "string",
+                                "format": "user",
+                                "description": "",
+                                "examples": ["nwewnh"]
+                            },
+                            "name": {
+                                "type": "string",
+                                "format": "homework name",
+                                "description": "",
+                                "examples": ["hw1"]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "homeworks": {
+            "type": "array",
+            "description": "",
+            "items": {
+                "type": "object",
+                "description": "",
+                "required": ["name", "duedate"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "format": "name",
+                        "description": "",
+                        "examples": ["hw1", "hw2"]
+                    },
+                    "duedate": {
+                        "type": "string",
+                        "pattern": "^[0-9]{4}(-[0-9]{2}){2} [0-9]{2}(:[0-9]{2}){2}$",
+                        "format": "yyyy-mm-dd hh:mm:ss",
+                        "description": "",
+                        "examples": ["2020-03-29 21:00:00"]
+                    }
+                }
+            }
+        },
+
+        "lab-sessions": {
+            "type": "array",
+            "description": "",
+            "items": {
+                "type": "object",
+                "description": "",
+                "required": ["id", "day", "start", "end"],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "name",
+                        "description": "",
+                        "examples": ["A", "HONORS"]
+                    },
+                    "day": {
+                        "type": "string",
+                        "pattern": "^([Mm]on(day)?|[Tt]ue(sday)?|[Ww]ed(nesday)?|[Tt]hu(rsday)?|[Ff]ri(day)?|[Ss]at(urday)?|[Ss]un(day)?)$",
+                        "format": "weekday",
+                        "description": "",
+                        "examples": ["Mon", "Tuesday"]
+                    },
+                    "start": {
+                        "type": "string",
+                        "pattern": "^[0-9]{2}(:[0-9]{2}){2}$",
+                        "format": "hh:mm:ss",
+                        "description": "",
+                        "examples": ["10:00:00"]
+                    },
+                    "end": {
+                        "type": "string",
+                        "pattern": "^[0-9]{2}(:[0-9]{2}){2}$",
+                        "format": "hh:mm:ss",
+                        "description": "",
+                        "examples": ["12:30:00"]
+                    }
+                }
+            }
+        },
+
+        "lab-assignments": {
+            "type": "array",
+            "description": "",
+            "items": {
+                "type": "object",
+                "description": "",
+                "required": ["name", "week"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "format": "name",
+                        "description": "",
+                        "examples": ["lab1", "lab2"]
+                    },
+                    "week": {
+                        "type": "string",
+                        "pattern": "^[0-9]{4} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]$",
+                        "format": "year month week-index",
+                        "description": "",
+                        "examples": ["2020 Aug 1"]
+                    }
+                }
+            }
+        }
+    }
+}
