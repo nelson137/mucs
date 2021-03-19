@@ -17,7 +17,6 @@ HERE
     exit "${1:-0}"
 }
 
-HERE="$(dirname "$(readlink -f "$0")")"
 PREFIX=
 
 while [ $# -gt 0 ]; do
@@ -34,21 +33,30 @@ echo '==========[ POST INSTALL SCRIPT ]==========' >&2
 
 mkdir -p "$PREFIX"/{config.d,roster.d,submissions}
 
+# Download the fzf binary
+FZF_URL='https://github.com/junegunn/fzf/releases/download/0.26.0/fzf-0.26.0-linux_amd64.tar.gz'
+FZF_ARCHIVE="$(mktemp -u /tmp/fzf-archive.XXXXXX)"
+curl -sL "$FZF_URL" -o "$FZF_ARCHIVE"
+trap 'rm -f "$FZF_ARCHIVE"' HUP TERM INT EXIT
+tar -xzf "$FZF_ARCHIVE" -C '@_PREFIX@/scripts'
+
+# Create a venv for the gen-roster script and install its dependencies
 VENV=./scripts/gen-roster-venv
 if ! [ -d "$VENV" ]; then
     python3 -m venv --system-site-packages "$VENV"
     . "$VENV/bin/activate"
-    pip3 install -r "$HERE/../gen-roster-requirements.txt"
+    pip3 install -r '@PROJECT_SOURCE_DIR@/gen-roster-requirements.txt'
     deactivate
 fi
 
+# Fix file permisisons
 # The chgrp command clears special permission bits (setuid, setgid, and sticky)
-# so find is used to chgrp then re-enable setgid
+#   so find is used to chgrp then re-enable setgid
 
 # Change group on files with setgid enabled
 find . ! -type l -perm -g=s \
     -exec chgrp cs1050-ta {} + \
     -exec chmod g+s {} +
-# Change group on files with setgid disabled
+# Change group on files with setgid NOT enabled
 find . ! -type l ! -perm -g=s \
     -exec chgrp cs1050-ta {} +

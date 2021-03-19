@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+find_depth() {
+    find "$2" -mindepth "$1" -maxdepth "$1"
+}
+
+my_fzf() {
+    '@_FZF_PATH@' --border=rounded
+}
+
+ROOT='@_MUCS_ROOT@'
+
+COURSE="$(find_depth 1 "$ROOT/submissions")"
+[ "$(echo "$COURSE" | wc -l)" -gt 1 ] && COURSE="$(echo "$COURSE" | my_fzf)"
+
+find_depth 4 "$COURSE" |
+    sed -E 's#.*/(.+)/(.+)/\.((in)?valid)/(.+)_(.+)_(.+)$#\1,\2,\5,\6_\7,\3#' |
+    my_fzf

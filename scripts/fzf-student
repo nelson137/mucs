@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ $# -ne 2 ]; then
+    cat >&2 <<HERE
+Usage: $0 STUDENTS_DB_JSON
+
+Use fzf to search for students.
+
+Records include name, username, and email.
+HERE
+    exit 1
+fi
+
+STUDENTS_DB="$1"
+trap 'rm -f "$STUDENTS_DB"' HUP INT TERM EXIT
+
+jq -r '.[] | .login_id+","+.name+",".email' "$STUDENTS_DB" |
+    '@_FZF_PATH@' --border=rounded

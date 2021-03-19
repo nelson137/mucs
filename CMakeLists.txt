@@ -116,6 +116,12 @@ endif()
 if(_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${_PREFIX}")
 
+    set(_FZF_PATH "${_PREFIX}/scripts/fzf")
+    configure_file(scripts/fzf-roster . @ONLY)
+    configure_file(scripts/fzf-student . @ONLY)
+    configure_file(scripts/fzf-submit . @ONLY)
+    configure_file(scripts/post-install . @ONLY)
+
     install(
         TARGETS mucs
         DESTINATION bin
@@ -143,7 +149,15 @@ if(_PREFIX)
         DESTINATION scripts
         )
 
+    install(
+        PROGRAMS
+            "${CMAKE_CURRENT_BINARY_DIR}/fzf-roster"
+            "${CMAKE_CURRENT_BINARY_DIR}/fzf-student"
+            "${CMAKE_CURRENT_BINARY_DIR}/fzf-submit"
+        DESTINATION scripts
+        )
+
     install(CODE "execute_process(
-        COMMAND \"${PROJECT_SOURCE_DIR}/scripts/post-install\" \"${_PREFIX}\"
+        COMMAND \"${CMAKE_CURRENT_BINARY_DIR}/post-install\" \"${_PREFIX}\"
         )")
 endif()
