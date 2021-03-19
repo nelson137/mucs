@@ -117,9 +117,11 @@ if(_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${_PREFIX}")
 
     set(_FZF_PATH "${_PREFIX}/scripts/fzf")
+    set(_GEN_ROSTER_VENV "${_PREFIX}/scripts/.gen-roster-venv")
     configure_file(scripts/fzf-roster . @ONLY)
     configure_file(scripts/fzf-student . @ONLY)
     configure_file(scripts/fzf-submit . @ONLY)
+    configure_file(scripts/gen-roster . @ONLY)
     configure_file(scripts/post-install . @ONLY)
 
     install(
@@ -143,7 +145,6 @@ if(_PREFIX)
 
     install(
         PROGRAMS
-            scripts/gen-roster
             scripts/get-course-students
             scripts/student-vimrc
         DESTINATION scripts
@@ -154,6 +155,7 @@ if(_PREFIX)
             "${CMAKE_CURRENT_BINARY_DIR}/fzf-roster"
             "${CMAKE_CURRENT_BINARY_DIR}/fzf-student"
             "${CMAKE_CURRENT_BINARY_DIR}/fzf-submit"
+            "${CMAKE_CURRENT_BINARY_DIR}/gen-roster"
         DESTINATION scripts
         )
 

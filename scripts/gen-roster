@@ -41,7 +41,6 @@ lookup_email_user_in_db() {
         < "$STUDENTS_DB"
 }
 
-HERE="$(dirname "$(readlink -f "$0")")"
 XLSX_DIR=
 STUDENTS_DB=
 ROSTER_OUT_DIR=
@@ -73,7 +72,7 @@ done
 mkdir -p "$ROSTER_OUT_DIR"
 
 # Activate the python virtual environment for xlsx2csv
-. "$HERE/gen-roster-venv/bin/activate"
+. '@_GEN_ROSTER_VENV@/bin/activate'
 
 while read fn; do
     # Extract lab id from the xlsx filename

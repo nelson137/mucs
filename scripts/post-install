@@ -41,7 +41,7 @@ trap 'rm -f "$FZF_ARCHIVE"' HUP TERM INT EXIT
 tar -xzf "$FZF_ARCHIVE" -C '@_PREFIX@/scripts'
 
 # Create a venv for the gen-roster script and install its dependencies
-VENV=./scripts/gen-roster-venv
+VENV='@_GEN_ROSTER_VENV@'
 if ! [ -d "$VENV" ]; then
     python3 -m venv --system-site-packages "$VENV"
     . "$VENV/bin/activate"
