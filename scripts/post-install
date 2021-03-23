@@ -37,18 +37,18 @@ mkdir -p "$PREFIX"/{config.d,roster.d,submissions}
 
 (   # Download the colorgcc script
     URL='https://github.com/colorgcc/colorgcc/archive/1.4.5.tar.gz'
-    ARCHIVE="$(mktemp -u /tmp/colorgcc-archive.XXXXXX)"
-    curl -sSL "$URL" -o "$ARCHIVE"
+    ARCHIVE="$(mktemp /tmp/colorgcc-archive.XXXXXX)"
     trap 'rm -f "$ARCHIVE"' HUP TERM INT EXIT
+    curl -sSL "$URL" -o "$ARCHIVE"
     tar -xzf "$ARCHIVE" -C '@_PREFIX@/scripts' \
         --strip-components=1 --wildcards 'colorgcc-*/colorgcc.pl'
 )
 
 (   # Download the fzf binary
     URL='https://github.com/junegunn/fzf/releases/download/0.26.0/fzf-0.26.0-linux_amd64.tar.gz'
-    ARCHIVE="$(mktemp -u /tmp/fzf-archive.XXXXXX)"
-    curl -sSL "$URL" -o "$ARCHIVE"
+    ARCHIVE="$(mktemp /tmp/fzf-archive.XXXXXX)"
     trap 'rm -f "$ARCHIVE"' HUP TERM INT EXIT
+    curl -sSL "$URL" -o "$ARCHIVE"
     tar -xzf "$ARCHIVE" -C '@_PREFIX@/scripts'
 )
 
