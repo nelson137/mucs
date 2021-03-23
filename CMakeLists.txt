@@ -116,8 +116,10 @@ endif()
 if(_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${_PREFIX}")
 
+    set(_COLORGCC_PATH "${_PREFIX}/scripts/colorgcc.pl")
     set(_FZF_PATH "${_PREFIX}/scripts/fzf")
     set(_GEN_ROSTER_VENV "${_PREFIX}/scripts/.gen-roster-venv")
+    configure_file(scripts/compile . @ONLY)
     configure_file(scripts/fzf-roster . @ONLY)
     configure_file(scripts/fzf-student . @ONLY)
     configure_file(scripts/fzf-submit . @ONLY)
@@ -139,15 +141,15 @@ if(_PREFIX)
         )
 
     install(
-        PROGRAMS scripts/compile
-        DESTINATION bin
-        )
-
-    install(
         PROGRAMS
             scripts/get-course-students
             scripts/student-vimrc
         DESTINATION scripts
+        )
+
+    install(
+        PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/compile"
+        DESTINATION bin
         )
 
     install(

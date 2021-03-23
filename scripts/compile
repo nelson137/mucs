@@ -19,5 +19,5 @@ module load gcc/gcc-10.1.0 &>/dev/null
 if should_use_make; then
     make
 else
-    gcc -std=c11 -g -Wall -Werror -I/group/cs1050/include -L/group/cs1050/lib "$@" -lm
+    '@_COLORGCC_PATH@' -std=c11 -g -Wall -Werror -I/group/cs1050/include -L/group/cs1050/lib "$@" -lm
 fi
