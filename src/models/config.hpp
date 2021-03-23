@@ -230,7 +230,7 @@ struct LabAsgmt : public IAssignment {
      * month) is index 1. Index 0 should not be used. For example, the first
      * week of January 2020 (2020-1-6 to 2020-1-12) would be "2020 Jan 1"
      */
-    string week_str() const;
+    string str() const;
 
     bool is_active() const override;
 

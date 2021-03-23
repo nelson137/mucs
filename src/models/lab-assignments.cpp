@@ -42,23 +42,24 @@ bool LabAsgmt::is_active() const {
 }
 
 
-string LabAsgmt::week_str() const {
+string LabAsgmt::str() const {
     ostringstream spec;
-    spec << format("%Y %b", this->start)
-         << " "
-         << year_month_weekday(this->start).index();
+    spec << format("%Y-%m-%d", this->start)
+         << " - "
+         << format("%Y-%m-%d", this->end);
     return spec.str();
 }
 
 
 /**
- * Row format: {WEEK_SPEC}
- * where WEEK_SPEC is the same format as in the json config
+ * Row format: {"START - END"}
+ * where START and END are the start and end dates of the week, respectively,
+ * both in the format "YYYY-MM-DD"
  */
 list<vector<string>> LabAssignments::to_table() const {
     list<vector<string>> table;
     for (auto it=this->begin(); it!=this->end(); it++)
-        table.push_back({ it->week_str() });
+        table.push_back({ it->str() });
     return table;
 }
 
@@ -68,35 +69,25 @@ void from_json(const json& j, LabAsgmt& la) {
     la.name = name;
     stl_transform(la.name, ::tolower);
 
-    auto invalid_lab_asgmt = [&] () {
+    auto invalid_lab_asgmt = [&] (string reason) {
         throw Config::error(
-            "Invalid lab assignment week",
+            "Invalid lab assignment" + reason,
             {"lab-assignments", name});
     };
 
-    /**
-     * Explicitly zero-initialize this variable so that it is invalid. The
-     * fields will be y_=0, m_=0, and d_=0; m_ and d_ are invalid in this case.
-     *
-     * If declared as `year_month_day ymd;` its members will be uninitialized
-     * which could result in a valid date. Then, if parsing the "week" key
-     * with invalid data that doesn't modify ymd, the uninitialized data could
-     * erroneously pass undetected, causing a flickering test (and possibly
-     * weird behavior).
-     */
-    year_month_day ymd{};
+    year y(j["year"].get<int>());
 
-    // Parses as "YEAR MONTH_ABREV DAY" but DAY will be used as a week index
-    istringstream iss_week(j["week"].get<string>());
-    iss_week >> date::parse("%Y %b %d", ymd);
-    if (not ymd.ok())
-        invalid_lab_asgmt();
+    month m;
+    istringstream iss_month(j["month"].get<string>());
+    iss_month >> date::parse("%b", m);
+    if (not m.ok())
+        invalid_lab_asgmt(" month");
 
-    auto week = (unsigned) ymd.day();
+    int w = j["week"].get<int>();
 
-    la.start = year_month_day(ymd.year()/ymd.month()/Monday[week]);
+    la.start = year_month_day(y/m/Monday[w]);
     if (not la.start.ok())
-        invalid_lab_asgmt();
+        invalid_lab_asgmt("");
 
     la.end = year_month_day(sys_days(la.start) + days(6));
 }
@@ -109,9 +100,13 @@ void from_json(const json& j, LabAssignments& lab_assignments) {
 
 
 void to_json(json& j, const LabAsgmt& la) {
+    ostringstream oss_month;
+    oss_month << la.start.month();
     j = {
         {"name", la.name},
-        {"week", la.week_str()}
+        {"year", (int)la.start.year()},
+        {"month", oss_month.str()},
+        {"week", (int)year_month_weekday(la.start).index()}
     };
 }
 

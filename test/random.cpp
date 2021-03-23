@@ -201,9 +201,12 @@ RandLabAsgmt& RandLabAsgmt::this_week(bool this_week) {
 
 LabAsgmt RandLabAsgmt::get() const {
     ostringstream week_ss;
-    week_ss << this->ymwd.year() << ' '
-            << this->ymwd.month() << ' '
-            << this->ymwd.index();
-    json j = { {"name", this->name}, {"week", week_ss.str()} };
+    week_ss << this->ymwd.month();
+    json j = {
+        {"name", this->name},
+        {"year", (int)this->ymwd.year()},
+        {"month", week_ss.str()},
+        {"week", (int)this->ymwd.index()},
+    };
     return j.get<LabAsgmt>();
 }

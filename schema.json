@@ -159,7 +159,7 @@
             "items": {
                 "type": "object",
                 "description": "",
-                "required": ["name", "week"],
+                "required": ["name", "year", "month", "week"],
                 "properties": {
                     "name": {
                         "type": "string",
@@ -167,12 +167,25 @@
                         "description": "",
                         "examples": ["lab1", "lab2"]
                     },
-                    "week": {
-                        "type": "string",
-                        "pattern": "^[0-9]{4} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]$",
-                        "format": "year month week-index",
+                    "year": {
+                        "type": "integer",
+                        "minimum": 2000,
                         "description": "",
-                        "examples": ["2020 Aug 1"]
+                        "examples": ["2020"]
+                    },
+                    "month": {
+                        "type": "string",
+                        "pattern": "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$",
+                        "format": "3-letter abbreviation with the first letter capitalized",
+                        "description": "",
+                        "examples": ["Jan", "Feb"]
+                    },
+                    "week": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 4,
+                        "description": "",
+                        "examples": ["1", "4"]
                     }
                 }
             }
