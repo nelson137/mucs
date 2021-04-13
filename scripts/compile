@@ -7,7 +7,7 @@ should_use_make() {
     # - we are in a git repo
     git rev-parse --is-inside-work-tree &>/dev/null || return 1
     # - the origin URL comes from github user JimRies1966
-    local origin="$(git remote get-url origin 2>/dev/null)"
+    local origin="$(git config --get remote.origin.url 2>/dev/null)"
     [[ "$origin" =~ github\.com/JimRies1966 ]] || return 1
     # - a file named Makefile exists
     [[ -f Makefile ]] || return 1
