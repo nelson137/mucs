@@ -11,5 +11,9 @@
         "**/config.d/*": "json"
     },
     "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 500
+    "files.autoSaveDelay": 500,
+
+    "cmake.debugConfig": {
+        "args": []
+    }
 }
