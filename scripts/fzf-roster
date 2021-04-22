@@ -2,18 +2,8 @@
 
 set -e
 
-if [ $# -ne 1 ]; then
-    cat >&2 <<HERE
-Usage: $0 ROSTER_DIR
+ROSTER_D='@_MUCS_ROOT@/roster.d'
 
-Use fzf to search the roster.
-HERE
-    exit 1
-fi
-
-ROSTER_D="$1"
-
-find "$ROSTER_D" -type f | while read fn; do
-    lab_id="$(basename "$fn")"
-    awk -v lab_id="$lab_id" -v OFS=, '{print lab_id,$1}' "$fn"
+find "$ROSTER_D" -type f -printf '%f %p\n' | while read id fn; do
+    awk -v OFS=, "{print $id,\$1}" "$fn"
 done | '@_FZF_PATH@' --border=rounded
