@@ -14,35 +14,31 @@ static bool read_fd(int fd, ostringstream& dest) {
 }
 
 
-void Proc::cleanup() {
-    if (this->args) {
-        for (unsigned i=0; i<this->v_args.size(); i++)
-            delete[] this->args[i];
-        delete[] this->args;
-    }
-    this->args = nullptr;
-}
+shared_ptr<char*[]> Proc::DynArgs::get() {
+    size_t argc = this->size();
+    auto argv = shared_ptr<char*[]>(
+        // New memory
+        new char*[argc+1],
+        // Deleter func
+        [=] (char *argv[]) {
+            if (argv) {
+                for (size_t i=0; i<argc; i++)
+                    delete[] argv[i];
+                delete[] argv;
+            }
+        }
+    );
 
-
-char **Proc::get_argv() {
-    if (this->args != nullptr)
-        this->cleanup();
-
-    int argc = this->v_args.size() + 1;
-    this->args = new char*[argc];
-
-    int n;
-    int i = 0;
-    for (const auto& a : this->v_args) {
+    int n, i = 0;
+    for (const string& a : *this) {
         n = a.size() + 1;
-        this->args[i] = new char[n];
-        strncpy(this->args[i], a.c_str(), n);
+        argv[i] = new char[n];
+        strncpy(argv[i], a.c_str(), n);
         i++;
     }
+    argv[argc] = nullptr;
 
-    this->args[argc-1] = nullptr;
-
-    return this->args;
+    return argv;
 }
 
 
@@ -50,30 +46,44 @@ Proc::Proc() {
 }
 
 
-Proc::Proc(const initializer_list<string>& il) : v_args(il) {
+Proc::Proc(const initializer_list<string>& il) : args(il) {
 }
 
 
-Proc::~Proc() {
-    this->cleanup();
+Proc& Proc::capture_stdout(bool value) {
+    this->pipe_stdout = value;
+    return *this;
 }
 
 
-void Proc::push_back(const string& s) {
-    this->v_args.push_back(s);
+Proc& Proc::capture_stderr(bool value) {
+    this->pipe_stderr = value;
+    return *this;
+}
+
+
+Proc& Proc::capture_output(bool value) {
+    this->pipe_output = value;
+    return *this;
+}
+
+
+Proc& Proc::push_back(const string& s) {
+    this->args.emplace_back(s.c_str());
+    return *this;
 }
 
 
 const char *Proc::bin() const {
-    return this->v_args.size() ? this->v_args.at(0).c_str() : nullptr;
+    return this->args.size() ? this->args.at(0).c_str() : nullptr;
 }
 
 
-Proc::Ret Proc::execute() {
-    if (this->v_args.empty())
+Proc::Ret Proc::exec() {
+    if (this->args.empty())
         throw mucs_exception("Arguments are required to execute");
 
-    Path exe(this->v_args.at(0));
+    Path exe(this->args.at(0));
     if (not exe.exists())
         throw mucs_exception("Failed to find executable:", exe.str());
     if (not exe.is_exe())
@@ -82,7 +92,11 @@ Proc::Ret Proc::execute() {
     int pipe_out[2] = { -1, -1 };
     int pipe_err[2] = { -1, -1 };
 
-    if (pipe(pipe_out) != 0 || pipe(pipe_err) != 0)
+    bool pipe_stdout = this->pipe_output || this->pipe_stdout;
+    bool pipe_stderr = this->pipe_output || this->pipe_stderr;
+
+    if ((pipe_stdout && pipe(pipe_out) < 0)
+     || (pipe_stderr && pipe(pipe_err) < 0))
         throw mucs_exception("Unable to create pipe");
 
     static constexpr int PARENT = 0;
@@ -90,7 +104,7 @@ Proc::Ret Proc::execute() {
 
     pid_t pid;
     int code = 0;
-    ostringstream out, err;
+    ostringstream oss_out, oss_err;
 
     if ((pid = fork()) < 0) {
         throw mucs_exception("Unable to fork");
@@ -100,13 +114,15 @@ Proc::Ret Proc::execute() {
         close(pipe_out[PARENT]);
         close(pipe_err[PARENT]);
 
-        dup2(pipe_out[CHILD], STDOUT_FILENO);
-        dup2(pipe_err[CHILD], STDERR_FILENO);
+        if (pipe_stdout)
+            dup2(pipe_out[CHILD], STDOUT_FILENO);
+        if (pipe_stderr)
+            dup2(pipe_err[CHILD], STDERR_FILENO);
 
         close(pipe_out[CHILD]);
         close(pipe_err[CHILD]);
 
-        execv(this->bin(), this->get_argv());
+        execv(this->bin(), this->args.get().get());
     } else {
         // Parent
 
@@ -117,14 +133,14 @@ Proc::Ret Proc::execute() {
         waitpid(pid, &wstatus, 0);
         code = WEXITSTATUS(wstatus);
 
-        if (not read_fd(pipe_out[PARENT], out))
+        if (pipe_stdout && not read_fd(pipe_out[PARENT], oss_out))
             throw mucs_exception("Error reading process stdout");
-        if (not read_fd(pipe_err[PARENT], err))
+        if (pipe_stderr && not read_fd(pipe_err[PARENT], oss_err))
             throw mucs_exception("Error reading process stderr");
 
         close(pipe_out[PARENT]);
         close(pipe_err[PARENT]);
     }
 
-    return Ret{code, out.str(), err.str()};
+    return Ret{code, oss_out.str(), oss_err.str()};
 }

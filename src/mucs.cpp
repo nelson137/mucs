@@ -2,19 +2,13 @@
 
 
 bool Mucs::compile_sources() const {
-    Proc p;
-    if (this->should_use_make()) {
+    auto p = Proc().capture_output();
+    if (this->should_use_make())
         p.push_back(MAKE_PATH);
-    } else {
-        p.extend({ COMPILE_SCRIPT, "-o/dev/null" });
-        p.extend(this->sources);
-    }
+    else
+        p.extend({ COMPILE_SCRIPT, "-o/dev/null" }).extend(this->sources);
 
-    Proc::Ret ret = p.execute();
-    if (ret.err.size())
-        cerr << ret.err;
-
-    return ret.code == 0;
+    return p.exec().code == 0;
 }
 
 
@@ -47,14 +41,14 @@ string Mucs::prompt_password(const string& prompt) const {
 
 bool Mucs::should_use_make() const {
     // Check if in a git repo
-    Proc p = { GIT_PATH, "rev-parse", "--is-inside-work-tree" };
-    Proc::Ret ret = p.execute();
+    Proc::Ret ret = Proc::quiet_exec({
+        GIT_PATH, "rev-parse", "--is-inside-work-tree" });
     if (ret.code != 0)
         return false;
 
     // Get the origin URL
-    p = { GIT_PATH, "config", "--get", "remote.origin.url" };
-    ret = p.execute();
+    ret = Proc::quiet_exec({
+        GIT_PATH, "config", "--get", "remote.origin.url" });
     if (ret.code != 0)
         return false;
 
@@ -112,7 +106,7 @@ void Mucs::update_config_admin_hash(const string& new_hash) const {
         "s/"+this->config.admin_hash+"/"+new_hash+"/",
         this->config.filename
     };
-    Proc::Ret ret = p.execute();
+    Proc::Ret ret = p.exec();
 
     if (ret.code != 0) {
         cerr << ret.err;

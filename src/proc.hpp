@@ -6,6 +6,7 @@
 #include <cctype>
 #include <cstring>
 #include <initializer_list>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -24,18 +25,20 @@ using namespace std;
 class Proc {
 
 private:
-    vector<string> v_args;
-    char **args = nullptr;
+    struct DynArgs : public vector<string> {
+        using vector<string>::vector;
 
-    /**
-     * Free memory allocated for args.
-     */
-    void cleanup();
+        /**
+         * Return a fully dynamic char*[] copy of args for use by exec funcs.
+         */
+        shared_ptr<char*[]> get();
+    };
 
-    /**
-     * Copy v_args into args and return it.
-     */
-    char **get_argv();
+    DynArgs args;
+
+    bool pipe_output = false;
+    bool pipe_stdout = false;
+    bool pipe_stderr = false;
 
 public:
     struct Ret {
@@ -47,21 +50,35 @@ public:
 
     Proc();
     Proc(const initializer_list<string>& il);
-    ~Proc();
+
+public:
+    template<class Container = initializer_list<string>>
+    static Proc::Ret quiet_exec(const Container& c) {
+        Proc p(c);
+        p.capture_output();
+        return p.exec();
+    }
+
+    /**
+     * Set whether the process stdout, stderr, or all output should be captured.
+     */
+    Proc& capture_stdout(bool value = true);
+    Proc& capture_stderr(bool value = true);
+    Proc& capture_output(bool value = true);
 
     /**
      * Append s to the argument list.
      */
-    void push_back(const string& s);
+    Proc& push_back(const string& s);
 
     /**
      * Append all elements of c to the argument list.
      */
     template<class Container = initializer_list<string>>
-    void extend(const Container& c) {
-        this->v_args.reserve(this->v_args.size() + c.size());
-        for (const auto& e : c)
-            this->v_args.push_back(e);
+    Proc& extend(const Container& c) {
+        this->args.reserve(this->args.size() + c.size());
+        this->args.insert(this->args.end(), c.begin(), c.end());
+        return *this;
     }
 
     /**
@@ -74,7 +91,7 @@ public:
      * The exit code, stdout, and stderr are captured and stored in the Ret
      * object.
      */
-    Ret execute();
+    Ret exec();
 
 };
 
