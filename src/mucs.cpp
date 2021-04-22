@@ -2,8 +2,13 @@
 
 
 bool Mucs::compile_sources() const {
-    Proc p = {COMPILE_SCRIPT, "-o", "/dev/null"};
-    p.extend(this->sources);
+    Proc p;
+    if (this->should_use_make()) {
+        p.push_back(MAKE_PATH);
+    } else {
+        p.extend({ COMPILE_SCRIPT, "-o/dev/null" });
+        p.extend(this->sources);
+    }
 
     Proc::Ret ret = p.execute();
     if (ret.err.size())
@@ -37,6 +42,34 @@ string Mucs::prompt_password(const string& prompt) const {
     tcsetattr(STDIN_FILENO, TCSANOW, &tty_bak);
     cout << endl;
     return password;
+}
+
+
+bool Mucs::should_use_make() const {
+    // Check if in a git repo
+    Proc p = { GIT_PATH, "rev-parse", "--is-inside-work-tree" };
+    Proc::Ret ret = p.execute();
+    if (ret.code != 0)
+        return false;
+
+    // Get the origin URL
+    p = { GIT_PATH, "config", "--get", "remote.origin.url" };
+    ret = p.execute();
+    if (ret.code != 0)
+        return false;
+
+    // Check that the origin URL matches
+    // Note: the regex has to be a 100% match, hence the .* at the end
+    regex re("(https://|git@)github\\.com/JimRies1966/.*",
+        regex_constants::egrep);
+    if (regex_match(ret.out, re) == false)
+        return false;
+
+    // Check that ./Makefile exists
+    if (Path("./Makefile").exists() == false)
+        return false;
+
+    return true;
 }
 
 

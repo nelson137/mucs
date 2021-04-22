@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 
 project(mucs)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+
+include(Utils)
+
 ##################################################
 ### PROJECT FILES
 ##################################################
@@ -70,6 +74,14 @@ add_compile_options(
 add_executable(mucs ${SRCS} src/main.cpp)
 
 set_target_properties(mucs PROPERTIES LINKER_LANGUAGE CXX)
+
+check_binary_dependency(_GIT_PATH git)
+check_binary_dependency(_MAKE_PATH make)
+
+target_compile_definitions(mucs PRIVATE
+    "_GIT_PATH=${_GIT_PATH}"
+    "_MAKE_PATH=${_MAKE_PATH}"
+    )
 
 if(DEFINED _MUCS_ROOT)
     target_compile_definitions(mucs PRIVATE "_MUCS_ROOT=${_MUCS_ROOT}")

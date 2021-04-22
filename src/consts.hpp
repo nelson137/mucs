@@ -15,11 +15,14 @@ using namespace std;
 #define MUCS_VERSION_MINOR 2
 
 #define MUCS_ROOT      STR(_MUCS_ROOT)
-#define COMPILE_SCRIPT STR(_COMPILE_SCRIPT)
 #define SUBMIT_DIR     MUCS_ROOT "/submissions"
 #define CONFIG_DIR     MUCS_ROOT "/config.d"
 #define ROSTER_DIR     MUCS_ROOT "/roster.d"
 #define SCHEMA_PATH    MUCS_ROOT "/schema.json"
+
+#define GIT_PATH       STR(_GIT_PATH)
+#define MAKE_PATH      STR(_MAKE_PATH)
+#define COMPILE_SCRIPT STR(_COMPILE_SCRIPT)
 
 #define HW_FMT   "%Y-%m-%d %H:%M:%S"
 #define TIME_FMT "%H:%M:%S"

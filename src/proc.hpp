@@ -57,7 +57,7 @@ public:
     /**
      * Append all elements of c to the argument list.
      */
-    template<class Container>
+    template<class Container = initializer_list<string>>
     void extend(const Container& c) {
         this->v_args.reserve(this->v_args.size() + c.size());
         for (const auto& e : c)

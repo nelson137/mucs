@@ -6,6 +6,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -86,6 +87,16 @@ struct Mucs {
      * disabling echo.
      */
     virtual string prompt_password(const string& prompt) const;
+
+    /**
+     * Return whether source compilation should use make or the compile script.
+     *
+     * Returns true iff:
+     *   - The CWD is in a git repo
+     *   - The origin URL is a GitHub URL from user JimRies 1966
+     *   - The file ./Makefile exists
+     */
+    virtual bool should_use_make() const;
 
     /**
      * Print a summary of the pending submission.
