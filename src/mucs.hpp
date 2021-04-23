@@ -31,8 +31,7 @@ struct Mucs {
     Config config;
     string user;
 
-    // From cli
-
+    // Variables for CLI
     string course;
     string asgmt_name;
     vector<Path> sources;
@@ -47,7 +46,9 @@ struct Mucs {
 
     int dump_flags = 0;
 
+    // ==================================================
     // CLI : mucs-cli.cpp
+    // ==================================================
 
     /**
      * Wrapper for calling subcommands, does some setup first.
@@ -72,7 +73,9 @@ struct Mucs {
         const vector<string>& courses_available
     );
 
-    // Util : mucs.cpp
+    // ==================================================
+    // Util : mucs-util.cpp
+    // ==================================================
 
     /**
      * Run the compile script with the source files and return whether
@@ -128,7 +131,9 @@ struct Mucs {
      */
     virtual void version();
 
+    // ==================================================
     // Submit Subcommand : mucs-submit.cpp
+    // ==================================================
 
     /**
      * Callback function for the submit subcommand.
@@ -153,7 +158,9 @@ struct Mucs {
         bool create_link
     ) const;
 
+    // ==================================================
     // Admin Subcommand : mucs-admin.cpp
+    // ==================================================
 
     /**
      * Prompt the user for the admin password and validate the input against
@@ -172,7 +179,9 @@ struct Mucs {
      */
     virtual void admin_dump();
 
+    // ==================================================
     // Admin Update-Password Subcommand : mucs-admin.cpp
+    // ==================================================
 
     /**
      * Requires admin authentication.

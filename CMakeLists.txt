@@ -14,10 +14,10 @@ include(Utils)
 
 list(APPEND SRCS
     src/except.cpp
-    src/mucs.cpp
     src/mucs-admin.cpp
     src/mucs-cli.cpp
     src/mucs-submit.cpp
+    src/mucs-util.cpp
     src/mucs-version.cpp
     src/path.cpp
     src/proc.cpp
