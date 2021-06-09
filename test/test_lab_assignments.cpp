@@ -3,7 +3,7 @@
 
 TEST_CASE("lab-asgmt month is invalid", "[lab-asgmt]") {
     string name = rand_lab_asgmt_name();
-    string m = rand_string();
+    string m = rand_string(3, chars_nums) + rand_string(7);
     json data = { {"name", name}, {"year", 2000}, {"month", m}, {"week", 1} };
     REQUIRE_THROWS_WITH(
         data.get<LabAsgmt>(),
