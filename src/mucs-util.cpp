@@ -2,7 +2,7 @@
 
 
 bool Mucs::compile_sources() const {
-    auto p = Proc().capture_output();
+    auto p = Proc().capture_stdout();
     if (this->should_use_make())
         p.push_back(MAKE_PATH);
     else
