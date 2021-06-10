@@ -141,10 +141,11 @@ class RandLabSesh {
 
 private:
     LabSesh ls;
+    bool called_today = false;
+    bool called_now = false;
 
 public:
-    RandLabSesh();
-    RandLabSesh(const string& id);
+    RandLabSesh(const string& id = rand_lab_sesh_id());
 
     /**
      * Set whether the LabSesh is active for the current weekday.
@@ -170,6 +171,8 @@ private:
     string name;
 
     year_month_weekday ymwd;
+
+    bool called_this_week = false;
 
 public:
     RandLabAsgmt(const string& n = rand_lab_asgmt_name());

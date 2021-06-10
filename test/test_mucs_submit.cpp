@@ -25,7 +25,7 @@ TEST_CASE("submit throws", "[mucs][submit]") {
     mucs.config.lab_sessions.push_back(
         RandLabSesh(lab_id).today().now().get());
     mucs.config.lab_assignments.insert(
-        RandLabAsgmt(lab_name).this_week(true).get());
+        RandLabAsgmt(lab_name).this_week().get());
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, compile_sources)).AlwaysReturn(true);

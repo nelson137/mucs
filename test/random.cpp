@@ -130,16 +130,13 @@ string rand_user() {
 }
 
 
-RandLabSesh::RandLabSesh() : RandLabSesh(rand_lab_sesh_id()) {
-}
-
-
 RandLabSesh::RandLabSesh(const string& id) {
     this->ls.id = id;
 }
 
 
 RandLabSesh& RandLabSesh::today(bool today) {
+    this->called_today = true;
     weekday w = get_weekday();
     this->ls.wd = today ? w : w + days(rand_int(1, 7));
     return *this;
@@ -147,6 +144,8 @@ RandLabSesh& RandLabSesh::today(bool today) {
 
 
 RandLabSesh& RandLabSesh::now(bool now) {
+    this->called_now = true;
+
     // Beginning and end of day
     constexpr seconds bod = seconds(0);
     constexpr seconds eod = days(1) - seconds(1);
@@ -172,34 +171,46 @@ RandLabSesh& RandLabSesh::now(bool now) {
 
 
 const LabSesh& RandLabSesh::get() const {
+    if (!(this->called_today && this->called_now))
+        throw "RandLabSesh: all builder methods must be called to build";
     return this->ls;
 }
 
 
-RandLabAsgmt::RandLabAsgmt(const string& n) : name(n), ymwd(get_day()) {
-    weekday wd = this->ymwd.weekday();
-    /**
-     * The date library considers weeks to be Sunday-Saturday but we want weeks
-     * to be Monday-Sunday. ymwd needs to be the Monday of the desired week
-     * so dd is the offset of the current weekday from the previous Monday.
-     */
-    if (wd != Monday) {
-        days dd = wd == Sunday ? days(6) : wd - Monday;
-        this->ymwd = year_month_weekday(sys_days(this->ymwd) - dd);
-    }
+RandLabAsgmt::RandLabAsgmt(const string& n) : name(n) {
 }
 
 
 RandLabAsgmt& RandLabAsgmt::this_week(bool this_week) {
-    if (not this_week) {
-        month m = this->ymwd.month() + months(rand_int(12));
-        this->ymwd = this->ymwd.year()/m/Monday[1];
+    this->called_this_week = true;
+
+    year_month_day today = get_day();
+    if (this_week) {
+        /**
+         * The date library considers weeks to be Sunday to Saturday but we
+         * want weeks to be Monday to Sunday. this->ymwd needs to be the Monday
+         * of the desired week.
+         */
+        weekday wd = year_month_weekday(today).weekday();
+        this->ymwd = wd == Monday
+            ? year_month_weekday(today)
+            : year_month_weekday(
+                // today - distance_from_monday
+                sys_days(today) - (wd == Sunday ? days(6) : wd - Monday))
+            ;
+    } else {
+        month m = today.month() + months(rand_int(12));
+        this->ymwd = today.year()/m/Monday[1];
     }
+
     return *this;
 }
 
 
 LabAsgmt RandLabAsgmt::get() const {
+    if (!this->called_this_week)
+        throw "RandLabAsgmt: all builder methods must be called to build";
+
     ostringstream week_ss;
     week_ss << this->ymwd.month();
     json j = {
