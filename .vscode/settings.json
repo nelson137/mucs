@@ -15,6 +15,7 @@
     "files.autoSaveDelay": 500,
 
     "cmake.debugConfig": {
+        "cwd": "${workspaceFolder}",
         "args": []
     }
 }
