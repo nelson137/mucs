@@ -53,8 +53,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 
-set(_DEFAULT_MUCS_ROOT "${PROJECT_SOURCE_DIR}/my_root")
-set(_DEFAULT_COMPILE_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/simple-compile")
+set(_DEFAULT_PREFIX "${PROJECT_SOURCE_DIR}/my_root")
+set(_DEFAULT_COMPILE_SCRIPT "${PROJECT_SOURCE_DIR}/scripts/compile-simple")
 
 include_directories(
     "${PROJECT_SOURCE_DIR}/include"
@@ -67,36 +67,14 @@ add_compile_options(
     "$<$<CONFIG:RELWITHDEBINFO>:-g>"
     )
 
-##################################################
-### MAIN TARGET
-##################################################
-
-add_executable(mucs ${SRCS} src/main.cpp)
-
-set_target_properties(mucs PROPERTIES LINKER_LANGUAGE CXX)
-
-check_binary_dependency(_GIT_PATH git)
-check_binary_dependency(_MAKE_PATH make)
-
-target_compile_definitions(mucs PRIVATE
-    "_GIT_PATH=${_GIT_PATH}"
-    "_MAKE_PATH=${_MAKE_PATH}"
-    )
-
-if(DEFINED _MUCS_ROOT)
-    target_compile_definitions(mucs PRIVATE "_MUCS_ROOT=${_MUCS_ROOT}")
-elseif(DEFINED _PREFIX)
-    target_compile_definitions(mucs PRIVATE "_MUCS_ROOT=${_PREFIX}")
-else()
-    target_compile_definitions(mucs PRIVATE "_MUCS_ROOT=${_DEFAULT_MUCS_ROOT}")
-endif()
-
-if(DEFINED _COMPILE_SCRIPT)
-    target_compile_definitions(mucs PRIVATE "_COMPILE_SCRIPT=${_COMPILE_SCRIPT}")
-elseif(DEFINED _PREFIX)
-    target_compile_definitions(mucs PRIVATE "_COMPILE_SCRIPT=${_PREFIX}/bin/compile")
-else()
-    target_compile_definitions(mucs PRIVATE "_COMPILE_SCRIPT=${_DEFAULT_COMPILE_SCRIPT}")
+if(DEFINED _PREFIX AND NOT "${_PREFIX}" MATCHES "^/")
+    message(WARNING
+        "_PREFIX is not an absolute path, be sure to call mucs inside the "
+            "build directory\n"
+        "_PREFIX=${_PREFIX}\n"
+        "Hint: prepend the value of _PREFIX with $PWD/ if given on the "
+            "command-line"
+        )
 endif()
 
 ##################################################
@@ -122,58 +100,89 @@ if(DEFINED _COVERAGE)
 endif()
 
 ##################################################
-### INSTALLATION
+### MAIN TARGET
 ##################################################
 
-if(_PREFIX)
-    set(CMAKE_INSTALL_PREFIX "${_PREFIX}")
+add_executable(mucs ${SRCS} src/main.cpp)
 
-    set(_COLORGCC_PATH "${_PREFIX}/scripts/colorgcc.pl")
-    set(_FZF_PATH "${_PREFIX}/scripts/fzf")
-    set(_GEN_ROSTER_VENV "${_PREFIX}/scripts/.gen-roster-venv")
-    configure_file(scripts/compile . @ONLY)
-    configure_file(scripts/fzf-roster . @ONLY)
-    configure_file(scripts/fzf-student . @ONLY)
-    configure_file(scripts/fzf-submit . @ONLY)
-    configure_file(scripts/gen-roster . @ONLY)
-    configure_file(scripts/post-install . @ONLY)
+set_target_properties(mucs PROPERTIES LINKER_LANGUAGE CXX)
 
-    install(
-        TARGETS mucs
-        DESTINATION bin
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-                    GROUP_READ             GROUP_EXECUTE
-                    WORLD_READ             WORLD_EXECUTE
-                    SETGID
-        )
+find_dependency(_GIT_PATH git)
+find_dependency(_MAKE_PATH make)
 
-    install(
-        FILES schema.json
-        DESTINATION .
-        )
+target_compile_definitions(mucs PRIVATE
+    "_GIT_PATH=${_GIT_PATH}"
+    "_MAKE_PATH=${_MAKE_PATH}"
+    )
 
-    install(
-        PROGRAMS
-            scripts/get-course-students
-            scripts/student-vimrc
-        DESTINATION scripts
-        )
-
-    install(
-        PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/compile"
-        DESTINATION bin
-        )
-
-    install(
-        PROGRAMS
-            "${CMAKE_CURRENT_BINARY_DIR}/fzf-roster"
-            "${CMAKE_CURRENT_BINARY_DIR}/fzf-student"
-            "${CMAKE_CURRENT_BINARY_DIR}/fzf-submit"
-            "${CMAKE_CURRENT_BINARY_DIR}/gen-roster"
-        DESTINATION scripts
-        )
-
-    install(CODE "execute_process(
-        COMMAND \"${CMAKE_CURRENT_BINARY_DIR}/post-install\" \"${_PREFIX}\"
-        )")
+if(DEFINED _COMPILE_SCRIPT)
+    target_compile_definitions(mucs PRIVATE "_COMPILE_SCRIPT=${_COMPILE_SCRIPT}")
+elseif(DEFINED _PREFIX)
+    target_compile_definitions(mucs PRIVATE "_COMPILE_SCRIPT=${_PREFIX}/bin/compile")
+else()
+    target_compile_definitions(mucs PRIVATE "_COMPILE_SCRIPT=${_DEFAULT_COMPILE_SCRIPT}")
 endif()
+
+if(DEFINED _PREFIX)
+    target_compile_definitions(mucs PRIVATE "_MUCS_ROOT=${_PREFIX}")
+else()
+    set(_PREFIX "${_DEFAULT_PREFIX}")
+    target_compile_definitions(mucs PRIVATE "_MUCS_ROOT=${_DEFAULT_PREFIX}")
+endif()
+
+##################################################
+### MAIN TARGET INSTALLATION
+##################################################
+
+set(CMAKE_INSTALL_PREFIX "${_PREFIX}")
+
+set(_COLORGCC_PATH "${_PREFIX}/scripts/colorgcc.pl")
+set(_FZF_PATH "${_PREFIX}/scripts/fzf")
+set(_SCRIPTS_VENV "${_PREFIX}/scripts/.venv")
+set(_SCRIPTS_VENV_REQUIREMENTS "${PROJECT_SOURCE_DIR}/scripts-requirements.txt")
+configure_file(scripts/compile . @ONLY)
+configure_file(scripts/fzf-roster . @ONLY)
+configure_file(scripts/fzf-student . @ONLY)
+configure_file(scripts/fzf-submit . @ONLY)
+configure_file(scripts/gen-roster . @ONLY)
+configure_file(scripts/post-install . @ONLY)
+
+install(
+    TARGETS mucs
+    DESTINATION bin
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                GROUP_READ             GROUP_EXECUTE
+                WORLD_READ             WORLD_EXECUTE
+                SETGID
+    )
+
+install(
+    FILES schema.json
+    DESTINATION .
+    )
+
+install(
+    PROGRAMS
+        scripts/get-course-students
+        scripts/student-vimrc
+    DESTINATION scripts
+    )
+
+install(
+    PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/compile"
+    DESTINATION bin
+    )
+
+install(
+    PROGRAMS
+        "${CMAKE_CURRENT_BINARY_DIR}/fzf-roster"
+        "${CMAKE_CURRENT_BINARY_DIR}/fzf-student"
+        "${CMAKE_CURRENT_BINARY_DIR}/fzf-submit"
+        "${CMAKE_CURRENT_BINARY_DIR}/gen-roster"
+    DESTINATION scripts
+    )
+
+install(
+    CODE
+    "execute_process(COMMAND \"${CMAKE_CURRENT_BINARY_DIR}/post-install\")"
+    )

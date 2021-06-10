@@ -72,7 +72,7 @@ done
 mkdir -p "$ROSTER_OUT_DIR"
 
 # Activate the python virtual environment for xlsx2csv
-. '@_GEN_ROSTER_VENV@/bin/activate'
+. '@_SCRIPTS_VENV@/bin/activate'
 
 while read fn; do
     # Extract lab id from the xlsx filename

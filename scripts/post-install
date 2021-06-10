@@ -1,74 +1,83 @@
 #!/usr/bin/env bash
+#
+# Finish installation, do stuff that cmake can't.
+#
 
 set -e
 
-usage() {
-    cat <<HERE
-Usage: $0 PREFIX
-
-Finish installation, do stuff that cmake can't.
-
-OPTIONS
-  -h, --help    Print this help message and exit.
-
-ARGUMENTS
-  PREFIX        The directory into which mucs was installed.
-HERE
-    exit "${1:-0}"
+status() {
+    MSG="$1"
+    echo "$MSG"
 }
 
-PREFIX=
+status_done() {
+    echo "$MSG - done"
+    unset MSG
+}
 
-while [ $# -gt 0 ]; do
-    case "$1" in
-        -h|--help) usage ;;
-        *) [ "$PREFIX" ] && usage 1 >&2 || PREFIX="$1" ;;
-    esac
-    shift
-done
+bin_exists() {
+    [ -f "$1" -a -x "$1" ]
+}
+
+cleanup_trap() {
+    trap "$1" HUP TERM INT EXIT
+}
 
 echo '==========[ POST INSTALL SCRIPT ]==========' >&2
 
-[ "$PREFIX" ] && cd "$PREFIX" || usage 1 >&2
+cd '@_PREFIX@'
 
-mkdir -p "$PREFIX"/{config.d,roster.d,submissions}
+mkdir -p config.d roster.d submissions
 
 # Do these in subshells so that the trap executes sooner rather than later
 
-(   # Download the colorgcc script
+(
+    bin_exists scripts/colorgcc.pl && exit
+    status 'Downloading colorgcc'
     URL='https://github.com/colorgcc/colorgcc/archive/1.4.5.tar.gz'
     ARCHIVE="$(mktemp /tmp/colorgcc-archive.XXXXXX)"
-    trap 'rm -f "$ARCHIVE"' HUP TERM INT EXIT
+    cleanup_trap 'rm -f "$ARCHIVE"'
     curl -sSL "$URL" -o "$ARCHIVE"
-    tar -xzf "$ARCHIVE" -C '@_PREFIX@/scripts' \
+    tar -xzf "$ARCHIVE" -C scripts \
         --strip-components=1 --wildcards 'colorgcc-*/colorgcc.pl'
+    status_done
 )
 
-(   # Download the fzf binary
+(
+    bin_exists scripts/fzf && exit
+    status 'Downloading fzf'
     URL='https://github.com/junegunn/fzf/releases/download/0.26.0/fzf-0.26.0-linux_amd64.tar.gz'
     ARCHIVE="$(mktemp /tmp/fzf-archive.XXXXXX)"
-    trap 'rm -f "$ARCHIVE"' HUP TERM INT EXIT
+    cleanup_trap 'rm -f "$ARCHIVE"'
     curl -sSL "$URL" -o "$ARCHIVE"
-    tar -xzf "$ARCHIVE" -C '@_PREFIX@/scripts'
+    tar -xzf "$ARCHIVE" -C scripts
+    status_done
 )
 
 # Create a venv for the gen-roster script and install its dependencies
-VENV='@_GEN_ROSTER_VENV@'
-if ! [ -d "$VENV" ]; then
+VENV='@_SCRIPTS_VENV@'
+if [ ! -d "$VENV" ]; then
+    status 'Creating venv for scripts'
     python3 -m venv --system-site-packages "$VENV"
-    . "$VENV/bin/activate"
-    pip3 install -r '@PROJECT_SOURCE_DIR@/gen-roster-requirements.txt'
-    deactivate
+    status_done
 fi
+status 'Installing venv dependencies for scripts'
+. "$VENV/bin/activate"
+pip3 install -r '@_SCRIPTS_VENV_REQUIREMENTS@'
+deactivate
+status_done
 
 # Fix file permisisons
 # The chgrp command clears special permission bits (setuid, setgid, and sticky)
 #   so find is used to chgrp then re-enable setgid
 
+status 'Fixing permissions'
+CHGRP_TARGETS='schema.json bin scripts config.d roster.d'
 # Change group on files with setgid enabled
-find . ! -type l -perm -g=s \
+find $CHGRP_TARGETS ! -type l -perm -g=s \
     -exec chgrp cs1050-ta {} + \
-    -exec chmod g+s {} +
+    -exec chmod g+s {} + || true
 # Change group on files with setgid NOT enabled
-find . ! -type l ! -perm -g=s \
-    -exec chgrp cs1050-ta {} +
+find $CHGRP_TARGETS ! -type l ! -perm -g=s \
+    -exec chgrp cs1050-ta {} + || true
+status_done

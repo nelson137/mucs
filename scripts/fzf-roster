@@ -2,7 +2,7 @@
 
 set -e
 
-ROSTER_D='@_MUCS_ROOT@/roster.d'
+ROSTER_D='@_PREFIX@/roster.d'
 
 find "$ROSTER_D" -type f -printf '%f %p\n' | while read id fn; do
     awk -v OFS=, "{print $id,\$1}" "$fn"

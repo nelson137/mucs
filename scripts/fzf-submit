@@ -10,7 +10,7 @@ my_fzf() {
     '@_FZF_PATH@' --border=rounded
 }
 
-ROOT='@_MUCS_ROOT@'
+ROOT='@_PREFIX@'
 
 COURSE="$(find_depth 1 "$ROOT/submissions")"
 [ "$(echo "$COURSE" | wc -l)" -gt 1 ] && COURSE="$(echo "$COURSE" | my_fzf)"
