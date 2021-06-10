@@ -1,17 +1,16 @@
 #include "config.hpp"
 
 
-void Roster::safe_insert(string user, string lab_id) {
-    if (this->count(user) == 0)
-        map<string, string>::insert({ user, lab_id });
-    else
+void Roster::safe_insert(const string& user, string lab_id) {
+    if (this->count(user))
         throw mucs_exception(
             "Student cannot be in lab sessions '" + this->at(user) + "' and '"
             + lab_id + "': " + user);
+    map::insert({ user, lab_id });
 }
 
 
-const string& Roster::safe_get(const string& user) const {
+string& Roster::safe_get(const string& user) {
     auto it = this->find(user);
     if (it == this->end())
         throw mucs_exception("Student not in course:", user);
@@ -19,8 +18,8 @@ const string& Roster::safe_get(const string& user) const {
 }
 
 
-string& Roster::safe_get(const string& user) {
-    return const_cast<string&>(const_cast<const Roster*>(this)->safe_get(user));
+const string& Roster::safe_get(const string& user) const {
+    return const_cast<Roster*>(this)->safe_get(user);
 }
 
 

@@ -130,7 +130,7 @@ string rand_user() {
 }
 
 
-RandLabSesh::RandLabSesh() {
+RandLabSesh::RandLabSesh() : RandLabSesh(rand_lab_sesh_id()) {
 }
 
 

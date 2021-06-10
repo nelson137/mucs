@@ -275,8 +275,7 @@ TEST_CASE("validate_and_get_assignment returns the matching hw assignment",
     string expected_name = rand_hw_name();
     Config config;
     config.homeworks.emplace(expected_name, sys_seconds{});
-    const auto& actual = dynamic_cast<const Hw&>(
-        config.validate_and_get_asgmt(expected_name));
+    const auto& actual = config.validate_and_get_asgmt(expected_name);
     REQUIRE(actual.name == expected_name);
 }
 
@@ -286,8 +285,7 @@ TEST_CASE("validate_and_get_assignment returns the matching lab assignment",
     string expected_name = rand_lab_asgmt_name();
     Config config;
     config.lab_assignments.emplace(expected_name, year_month_day{}, get_day());
-    const auto& actual = dynamic_cast<const LabAsgmt&>(
-        config.validate_and_get_asgmt(expected_name));
+    const auto& actual = config.validate_and_get_asgmt(expected_name);
     REQUIRE(actual.name == expected_name);
 }
 
@@ -305,13 +303,69 @@ TEST_CASE("validate_and_get_lab throws when the lab is invalid",
 }
 
 
-TEST_CASE("validate_and_get_lab returns the LabSesh assigned to the given user",
+TEST_CASE("validate_and_get_lab returns the correct LabSesh when there is "
+              "only 1 matching",
           "[config][validate-and-get-lab]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     Config config;
     config.roster[user] = lab_id;
-    auto expected_ls = RandLabSesh(lab_id).today().now(true).get();
-    config.lab_sessions.insert({ lab_id, expected_ls });
+
+    config.lab_sessions.push_back(RandLabSesh().today().now().get());
+    config.lab_sessions.push_back(RandLabSesh(lab_id).today().now().get());
+    config.lab_sessions.push_back(RandLabSesh().today().now().get());
+
     REQUIRE(config.validate_and_get_lab(user).id == lab_id);
+}
+
+
+TEST_CASE("validate_and_get_lab returns the correct LabSesh when there are "
+              "multiple matching with 1 active",
+          "[config][validate-and-get-lab]") {
+    string user = rand_user();
+    string lab_id = rand_lab_sesh_id();
+    Config config;
+    config.roster[user] = lab_id;
+
+    const LabSesh& expected = RandLabSesh(lab_id).today().now().get();
+    config.lab_sessions.push_back(
+        RandLabSesh().today().now().get());
+    config.lab_sessions.push_back(
+        RandLabSesh(lab_id).today(false).now().get());
+    config.lab_sessions.push_back(
+        expected);
+    config.lab_sessions.push_back(
+        RandLabSesh().today().now().get());
+
+    const LabSesh& actual = config.validate_and_get_lab(user);
+    REQUIRE(actual.id == expected.id);
+    REQUIRE(actual.wd == expected.wd);
+    REQUIRE(actual.start == expected.start);
+    REQUIRE(actual.end == expected.end);
+}
+
+
+TEST_CASE("validate_and_get_lab returns the correct LabSesh when there are "
+              "multiple matching with multiple active",
+          "[config][validate-and-get-lab]") {
+    string user = rand_user();
+    string lab_id = rand_lab_sesh_id();
+    Config config;
+    config.roster[user] = lab_id;
+
+    const LabSesh& expected = RandLabSesh(lab_id).today().now().get();
+    config.lab_sessions.push_back(
+        RandLabSesh().today().now().get());
+    config.lab_sessions.push_back(
+        expected);
+    config.lab_sessions.push_back(
+        RandLabSesh(lab_id).today().now().get());
+    config.lab_sessions.push_back(
+        RandLabSesh().today().now().get());
+
+    const LabSesh& actual = config.validate_and_get_lab(user);
+    REQUIRE(actual.id == expected.id);
+    REQUIRE(actual.wd == expected.wd);
+    REQUIRE(actual.start == expected.start);
+    REQUIRE(actual.end == expected.end);
 }

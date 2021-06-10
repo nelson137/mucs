@@ -21,10 +21,9 @@ TEST_CASE("submit throws", "[mucs][submit]") {
     mucs.user = user;
     mucs.asgmt_name = lab_name;
     mucs.config.course_id = rand_course();
-    mucs.config.roster.safe_insert(user, lab_id);
-    mucs.config.lab_sessions.insert({
-        lab_id, RandLabSesh().today().now().get()
-    });
+    mucs.config.roster[user] = lab_id;
+    mucs.config.lab_sessions.push_back(
+        RandLabSesh(lab_id).today().now().get());
     mucs.config.lab_assignments.insert(
         RandLabAsgmt(lab_name).this_week(true).get());
 
@@ -101,10 +100,9 @@ TEST_CASE("submit succeeds", "[mucs][submit]") {
     mucs.user = user;
     mucs.asgmt_name = asgmt_name;
     mucs.course = course_id;
-    mucs.config.roster.safe_insert(user, lab_sesh_id);
-    mucs.config.lab_sessions.insert({
-        lab_sesh_id, RandLabSesh(lab_sesh_id).today(lab_sesh_active).now().get()
-    });
+    mucs.config.roster[user] = lab_sesh_id;
+    mucs.config.lab_sessions.push_back(
+        RandLabSesh(lab_sesh_id).today(lab_sesh_active).now().get());
 
     Mock<Mucs> spy(mucs);
     When(Method(spy, compile_sources)).AlwaysReturn(compiles);
@@ -149,10 +147,9 @@ TEST_CASE("double submit homework too quickly", "[mucs][submit]") {
     mucs.user = user;
     mucs.asgmt_name = hw_name;
     mucs.course = mucs.config.course_id = "1050";
-    mucs.config.roster.safe_insert(user, lab_id);
-    mucs.config.lab_sessions.insert({
-        lab_id, RandLabSesh(lab_id).today().now().get()
-    });
+    mucs.config.roster[user] = lab_id;
+    mucs.config.lab_sessions.push_back(
+        RandLabSesh(lab_id).today().now().get());
     mucs.config.homeworks.insert({ hw_name, dd });
 
     Mock<Mucs> spy(mucs);

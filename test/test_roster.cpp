@@ -1,13 +1,13 @@
 #include "test_roster.hpp"
 
 
-TEST_CASE("safe_insert adds an entry when the user doesn't have an entry yet",
+TEST_CASE("safe_insert adds an entry when the user doesn't have one yet",
           "[roster][safe-insert]") {
     string user = rand_user();
     string lab_id = rand_lab_sesh_id();
     Roster roster;
 
-    roster.safe_insert(user, lab_id);
+    REQUIRE_NOTHROW(roster.safe_insert(user, lab_id));
 
     REQUIRE(roster.size() == 1);
     REQUIRE(roster.count(user) == 1);

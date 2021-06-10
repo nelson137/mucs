@@ -190,9 +190,15 @@ struct LabSesh {
 };
 
 
-struct LabSessions : public map<string, LabSesh>, public Tabular {
+struct LabSessions : public vector<LabSesh>, public Tabular {
 
-    using map<string, LabSesh>::map;
+    using vector<LabSesh>::vector;
+
+    /**
+     * Return a filtered list of LabSesh objects whose id's match id.
+     * An empty list is returned if none match.
+     */
+    vector<LabSesh> get_with_id(const string& id) const;
 
     list<vector<string>> to_table() const override;
 
@@ -266,14 +272,14 @@ struct Roster : public map<string, string>, public Tabular {
      * Insert a new record into the roster object.
      * Throw if a record already exists for user.
      */
-    void safe_insert(string user, string lab_id);
+    void safe_insert(const string& user, string lab_id);
 
     /**
      * Return the lab id that is associated with user.
      * Throw if user is not found.
      */
-    const string& safe_get(const string& user) const;
     string& safe_get(const string& user);
+    const string& safe_get(const string& user) const;
 
     list<vector<string>> to_table() const override;
 
@@ -420,11 +426,17 @@ struct Config {
     const IAssignment& validate_and_get_asgmt(const string& name) const;
 
     /**
-     * Return the active LabSesh that is associated with user in roster.
+     * Return the first active LabSesh whose id matches that of the one
+     * associated with user in the roster.
      * Throw if user isn't in roster.
-     * Throw if the LabSesh isn't active.
+     *
+     * Lab sessions can be declared multiple times in the config with different
+     * days/times. It is suggested that they do not overlap as the first active
+     * one with a matching id is returned.
+     *
+     * Note: tests break if return value is a const&.
      */
-    const LabSesh& validate_and_get_lab(const string& user) const;
+    LabSesh validate_and_get_lab(const string& user) const;
 
     friend void from_json(const json& j, Config& c);
     friend void to_json(json& j, const Config& c);

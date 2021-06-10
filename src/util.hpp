@@ -125,6 +125,13 @@ bool stl_contains(const Container& c, const T& val) {
     return ::find(c.begin(), c.end(), val) != c.end();
 }
 
+template<typename Container, typename Pred>
+Container stl_copy_into_with(const Container& c, Pred pred) {
+    Container out;
+    copy_if(c.cbegin(), c.cend(), back_inserter(out), pred);
+    return out;
+}
+
 /**
  * Return the first element of container for which op returns true.
  * If none is found return Container::end().
@@ -163,13 +170,15 @@ void stl_transform(Container& c, UnaryOp op) {
 }
 
 /**
- * Map each element of a into b, passing each element to op.
+ * Return a new container of each element of c_in mapped with op.
  * Container b is resized to have the same number of elements as a.
  */
-template<typename ContainerA, typename ContainerB, typename UnaryOp>
-void stl_transform_into(const ContainerA& a, ContainerB& b, UnaryOp op) {
-    b.reserve(a.size());
-    transform(a.begin(), a.end(), back_inserter(b), op);
+template<typename ContainerOut, typename ContainerIn, typename UnaryOp>
+ContainerOut stl_transform_into(const ContainerIn& c_in, UnaryOp op) {
+    ContainerOut c_out;
+    c_out.reserve(c_in.size());
+    transform(c_in.cbegin(), c_in.cend(), back_inserter(c_out), op);
+    return c_out;
 }
 
 /**

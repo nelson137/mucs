@@ -150,13 +150,19 @@ const IAssignment& Config::validate_and_get_asgmt(const string& name) const {
 }
 
 
-const LabSesh& Config::validate_and_get_lab(const string& user) const {
-    const string& id = this->roster.safe_get(user);
-    auto it = this->lab_sessions.find(id);
-    if (it == this->lab_sessions.end())
+LabSesh Config::validate_and_get_lab(const string& user) const {
+    const string lab_id = this->roster.safe_get(user);
+    const vector<LabSesh>& user_labs = this->lab_sessions.get_with_id(lab_id);
+    if (user_labs.size() == 0)
         throw mucs_exception(
-            "Student '" + user + "' has invalid lab: " + id);
-    return it->second;
+            "Student '" + user + "' has invalid lab: " + lab_id);
+
+    for (const LabSesh& ls : user_labs)
+        if (ls.is_active())
+            return ls;
+
+    // None are active so it doesn't matter which is returned
+    return user_labs[0];
 }
 
 

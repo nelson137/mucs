@@ -61,21 +61,29 @@ string LabSesh::format(string fmt) const {
 }
 
 
+vector<LabSesh> LabSessions::get_with_id(const string& id) const {
+    return stl_copy_into_with<vector<LabSesh>>(
+        *this,
+        [&] (const LabSesh& ls) { return ls.id == id; }
+    );
+}
+
+
 list<vector<string>> LabSessions::to_table() const {
     list<vector<string>> table;
-    for (auto it=this->begin(); it!=this->end(); it++) {
+    for (const LabSesh& ls : *this) {
         // Create row
         vector<string> row;
         row.reserve(3);
         // Column 1
-        row.push_back(it->first);
+        row.push_back(ls.id);
         // Column 2
-        row.push_back(::format("%A", it->second.wd));
+        row.push_back(::format("%A", ls.wd));
         // Column 3
         stringstream time_range;
-        time_range << ::format(TIME_FMT, it->second.start)
-                   << " - "
-                   << ::format(TIME_FMT, it->second.end);
+        time_range << ::format(TIME_FMT, ls.start)
+                << " - "
+                << ::format(TIME_FMT, ls.end);
         row.push_back(time_range.str());
         // Append row
         table.push_back(move(row));
@@ -125,7 +133,7 @@ void from_json(const json& j, LabSesh& ls) {
 void from_json(const json& j, LabSessions& lab_sessions) {
     for (const json& j_ls : j) {
         auto ls = j_ls.get<LabSesh>();
-        lab_sessions[ls.id] = ls;
+        lab_sessions.push_back(ls);
     }
 }
 
@@ -143,5 +151,5 @@ void to_json(json& j, const LabSesh& ls) {
 void to_json(json& j, const LabSessions& lab_sessions) {
     j = json::array();
     for (auto& ls : lab_sessions)
-        j.push_back(ls.second);
+        j.push_back(ls);
 }

@@ -213,13 +213,10 @@ void Path::copy_into(const Path& dir, mode_t mode, bool preserve_times) const {
 
 
 vector<string> Path::ls() const {
-    vector<string> children;
-    stl_transform_into(
+    return stl_transform_into<vector<string>>(
         this->ls_base(),
-        children,
         bind(join_paths<>, this->m_path, _1)
     );
-    return children;
 }
 
 
