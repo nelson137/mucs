@@ -19,19 +19,18 @@ LabAsgmt::LabAsgmt(string n, year_month_day s, year_month_day e) : LabAsgmt(n) {
 
 
 bool LabAsgmt::compare::operator()(const LabAsgmt& a, const LabAsgmt& b) const {
-    /**
-     * Sort a before b iff:
-     *   a starts and ends before b starts and ends
-     *   overlapping and a starts first
-     *   b is inside of a
-     *   a and b start at the same time but a ends first
-     * Otherwise sort b before a
-     */
     if (a.start < b.start)
+        // a starts before b
         return true;
     else if (a.start == b.start)
-        return a.end < b.end;
+        // a and b start at the same time
+        /**
+         * if a and b also end at the same time: sort by name
+         * else: sort by end time
+         */
+        return a.end == b.end ? a.name < b.name : a.end < b.end;
     else
+        // a starts after b
         return false;
 }
 
