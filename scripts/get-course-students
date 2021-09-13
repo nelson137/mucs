@@ -10,7 +10,7 @@ in a file.
 ARGUMENTS
   COURSE_ID     The ID of the Canvas course. This can be found in the URL of
                 the course on Canvas which is in the format
-                https://missouri.instructure.com/courses/COURSE_ID.
+                https://umsystem.instructure.com/courses/COURSE_ID.
   OUTFILE       If given, store the output in OUTFILE. Otherwise store the
                 output in a random tempfile and print the filename.
 
@@ -52,7 +52,7 @@ PAGES_DIR="$(mktemp -d '/tmp/canvas-pages-dir.XXXXXX')"
 PAGE_INDEX=1
 trap 'rm -rf "$RESPONSE_HEADER" "$PAGES_DIR"' HUP INT TERM EXIT
 
-BASE_URL='https://missouri.instructure.com/api/v1'
+BASE_URL='https://umsystem.instructure.com/api/v1'
 TOKEN='5617~TbiyHETFMt6BcjmVNTXGjMHI3eeZqfSy9wCTSyISowQOy4DKRGuVROMPaIrhZfvG'
 URL="$BASE_URL/courses/$COURSE_ID/users?per_page=100"
 
