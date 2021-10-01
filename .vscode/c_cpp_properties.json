@@ -11,8 +11,16 @@
     "configurations": [
         {
             "name": "Linux",
-            "configurationProvider": "ms-vscode.cmake-tools",
+            "compilerPath": "/usr/bin/gcc",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "cStandard": "c11",
+            "cppStandard": "gnu++11",
+            "compilerArgs": [
+                "-pedantic",
+                "-Wall",
+                "-Werror",
+                "-Wno-except-type"
+            ],
             "includePath": [
                 "${myProjectIncludes}"
             ],
@@ -20,8 +28,8 @@
                 "path": [
                     "${myProjectIncludes}"
                 ]
-            }
+            },
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
-
     ]
 }
