@@ -172,18 +172,19 @@ string Path::read() const {
 }
 
 
-void Path::for_each_line(function<void(const string&)> unary_op) const {
+vector<string> Path::read_lines() const {
     ifstream is(this->m_path);
-    string buf;
+    vector<string> lines;
     do {
         try {
-            getline(is, buf);
-            unary_op(buf);
+            vector<string>::iterator it = lines.emplace(lines.end());
+            getline(is, *it);
         } catch (const exception& e) {
             is.close();
             throw;
         }
     } while (not is.eof());
+    return lines;
 }
 
 

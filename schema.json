@@ -69,7 +69,7 @@
                     "items": {
                         "type": "object",
                         "description": "",
-                        "required": ["user", "name"],
+                        "required": ["user", "override_to"],
                         "properties": {
                             "user": {
                                 "type": "string",
@@ -77,11 +77,8 @@
                                 "description": "",
                                 "examples": ["nwewnh"]
                             },
-                            "name": {
-                                "type": "string",
-                                "format": "homework name",
-                                "description": "",
-                                "examples": ["hw1"]
+                            "override_to": {
+                                "$ref": "#/properties/homeworks/items"
                             }
                         }
                     }

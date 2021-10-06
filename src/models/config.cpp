@@ -103,12 +103,14 @@ void Config::load_roster(const Path& roster_d) {
         throw mucs_exception("Roster path must be a directory:", roster_d);
 
     for (const Path& lab_roster_p : roster_d.ls()) {
+        if (!lab_roster_p.is_file())
+            continue;
         string lab_id = lab_roster_p.basename();
-        lab_roster_p.for_each_line([&] (const string& line) {
+        for (const string& line : lab_roster_p.read_lines()) {
             string user = string_strip(line);
             if (user.size())
                 this->roster.safe_insert(user, lab_id);
-        });
+        }
     }
 }
 

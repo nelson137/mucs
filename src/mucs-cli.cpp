@@ -5,7 +5,7 @@ void Mucs::invoke_with_setup(void (Mucs::*subcmd)()) {
     this->user = get_user();
     this->config = Config(Path(CONFIG_DIR) / this->course);
     this->config.validate().deserialize();
-    this->config.load_roster(Path(ROSTER_DIR));
+    this->config.load_roster(Path(ROSTER_DIR) / this->course);
     (this->*subcmd)();
 }
 

@@ -136,7 +136,7 @@ TEST_CASE("load_roster throws when the given path isn't a directory",
 TEST_CASE("load_roster loads the files of the given directory",
           "[config][load-roster]") {
     Config config;
-    config.load_roster(Path(ROSTER_DIR));
+    config.load_roster(Path(ROSTER_DIR) / "1050");
 
     const auto& r = config.roster;
     REQUIRE(r.size() == 4);

@@ -153,7 +153,7 @@ public:
     /**
      * Read this path one line at a time, calling unary_op with each line.
      */
-    virtual void for_each_line(function<void(const string&)> unary_op) const;
+    virtual vector<string> read_lines() const;
 
     /**
      * Copy this path into dir with mode mode.
