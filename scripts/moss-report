@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+RESULT_ID=444673366
+RESULT_ID=586311413
+MOSS_URL="http://moss.stanford.edu/results/$RESULT_ID"
+
+# extract_match_urls() {
+    # pup 'body > table > tbody > tr > td:first-child > a attr{href}'
+# }
+
+[ -e "./$RESULT_ID" ] && rm -rf "./$RESULT_ID"
+mkdir -p $RESULT_ID
+
+pushd $RESULT_ID >/dev/null
+
+    # Download report
+    curl -sSL "$MOSS_URL" | sed "s#$MOSS_URL/##" >index.html
+
+    LAST_N="$(grep -Po '(?<=match)[0-9]+(?=\.html)' index.html | tail -1)"
+    # curl -LO "$MOSS_URL/match[0-$LAST_N]{,-0,-1}.html"  # XXX: all at once
+
+    MATCHES_PER_SESSION=10
+    MAX_SESSIONS=10
+
+    # count=1
+    # sessions=0
+    # for n in $(seq 0 $LAST_N); do
+        # if (( count == 1 )); then
+            # begin=$n
+        # elif (( count >= MATCHES_PER_SESSION || n == LAST_N )); then
+            # if (( sessions >= 10 || n == LAST_N )); then
+                # wait
+                # sessions=0
+            # else
+                # curl -sSLO "$MOSS_URL/match[$begin-$n]{,-0,-1}.html" \
+                    # -w '%{filename_effective}\n' \
+                    # &
+                # count=0
+                # (( sessions++ ))
+            # fi
+        # fi
+        # (( count++ ))
+    # done
+
+    echo "last = $LAST_N"
+    echo ===============================
+
+    count=0
+    sessions=0
+    for n in $(seq 0 $LAST_N); do
+        (( count++ ))
+
+        if (( count == 1 )); then
+            begin=$n
+            continue
+        fi
+
+        if (( count >= MATCHES_PER_SESSION || n == LAST_N )); then
+            (( sessions++ ))
+            if (( sessions >= MAX_SESSIONS || n == LAST_N )); then
+                echo ===============================
+                sleep 1
+                sessions=0
+            else
+                echo "$begin - $n  sessions=$sessions count=$count"
+                count=0
+            fi
+        fi
+    done
+
+popd >/dev/null
