@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+usage() {
+    cat <<HERE
+Usage: $0 [-h] [-f]
+
+Verify that all users in CONFIG's roster exist and are in the cs1050 group.
+
+It expects a JSON file with a "roster" key that is an object where the keys are
+pawprints and the values are lab ids.
+
+OPTIONS
+  -h,--help       Print this help message and exit.
+  -f,--fix-group  Attempt to add users to group cs1050.
+HERE
+    exit "${1:-0}"
+}
+
+FIX_GROUP=
+JOB_TITLE=Verifying
+ROSTER_DIR='@_PREFIX@/roster.d'
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help) usage ;;
+        -f|--fix-group) FIX_GROUP=1; JOB_TITLE=Fixing ;;
+    esac
+    shift
+done
+
+CS1050_USERS="$(getent group cs1050)"
+USERS=( $(find "$ROSTER_DIR" -mindepth 1 -maxdepth 1 -type f -exec cat {} +) )
+N_USERS=${#USERS[@]}
+
+echo "*** $JOB_TITLE $N_USERS Users ***"
+
+N_NOT_FOUND=0
+N_NOT_IN_GROUP=0
+N_FIXED=0
+N_NOT_FIXED=0
+for user in "${USERS[@]}"; do
+    if ! id -u "$user" &>/dev/null; then
+        echo "User not found: $user"
+        ((N_NOT_FOUND++))
+        continue
+    fi
+
+    if ! [[ "$CS1050_USERS" =~ .*$user.* ]]; then
+        printf "User not in group cs1050: $user"
+        ((N_NOT_IN_GROUP++))
+        if [ "$FIX_GROUP" ]; then
+            if gpasswd cs1050 -a "$user" &>/dev/null; then
+                printf ' ... fixed'
+                ((N_FIXED++))
+            else
+                printf ' ... unable to fix'
+                ((N_NOT_FIXED++))
+            fi
+        fi
+        printf '\n'
+        continue
+    fi
+done
+
+echo '*** Done ***'
+
+echo
+
+echo "Total Users  = $N_USERS"
+echo "Not Found    = $N_NOT_FOUND"
+if [ "$FIX_GROUP" ]; then
+echo "Fixed        = $N_FIXED"
+echo "Not Fixed    = $N_NOT_FIXED"
+else
+echo "Not In Group = $N_NOT_IN_GROUP"
+fi
